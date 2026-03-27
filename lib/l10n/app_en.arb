@@ -1,0 +1,22 @@
+{
+  "@@locale": "en",
+  "appName": "BebeTap",
+  "formula": "Formula",
+  "breast": "Breastfeed",
+  "diaper": "Diaper",
+  "sleep": "Sleep",
+  "temperature": "Temperature",
+  "growth": "Growth",
+  "tapToRecord": "Tap to record",
+  "today": "Today",
+  "statistics": "Statistics",
+  "family": "Family",
+  "settings": "Settings",
+  "sleepActive": "Sleeping",
+  "lastFeeding": "Last feeding",
+  "formulaTotal": "Formula total",
+  "noRecord": "No records yet",
+  "createFamily": "Create family group",
+  "joinFamily": "Join with invite code",
+  "inviteCode": "Invite code"
+}

@@ -1,0 +1,77 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart' hide Family;
+import 'package:riverpod_annotation/riverpod_annotation.dart' hide Family;
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../../core/providers/database_provider.dart';
+import '../../../../core/sync/realtime_listener.dart';
+import '../../../feeding/presentation/providers/feeding_provider.dart';
+import '../../../home/presentation/providers/home_provider.dart';
+import '../../../sleep/presentation/providers/sleep_provider.dart';
+import '../../data/family_repository_impl.dart';
+import '../../domain/models/family.dart';
+import '../../domain/models/family_member.dart';
+
+part 'family_provider.g.dart';
+
+@Riverpod(keepAlive: true)
+FamilyRepository familyRepository(Ref ref) =>
+    FamilyRepository(Supabase.instance.client);
+
+@riverpod
+Future<Family?> myFamily(Ref ref) =>
+    ref.watch(familyRepositoryProvider).getMyFamily();
+
+@riverpod
+Future<List<FamilyMember>> familyMembers(Ref ref) async {
+  final family = await ref.watch(myFamilyProvider.future);
+  if (family == null) return [];
+  return ref.watch(familyRepositoryProvider).getMembers(family.id);
+}
+
+@riverpod
+class FamilyNotifier extends _$FamilyNotifier {
+  @override
+  AsyncValue<void> build() => const AsyncData(null);
+
+  Future<void> createFamily(String name) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(familyRepositoryProvider).createFamily(name);
+      ref.invalidate(myFamilyProvider);
+      ref.invalidate(familyMembersProvider);
+    });
+  }
+
+  Future<void> joinFamily(String inviteCode) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(familyRepositoryProvider).joinFamily(inviteCode);
+      ref.invalidate(myFamilyProvider);
+      ref.invalidate(familyMembersProvider);
+    });
+  }
+}
+
+/// 가족 실시간 동기화 활성화 — keepAlive: true로 한번 활성화되면 계속 유지
+@Riverpod(keepAlive: true)
+void familyRealtime(Ref ref) {
+  final listener = RealtimeListener(
+    Supabase.instance.client,
+    ref.watch(appDatabaseProvider),
+  );
+
+  ref.listen(myFamilyProvider, (_, next) {
+    final family = next.valueOrNull;
+    if (family != null) {
+      listener.subscribe(family.id, onRemoteChange: () {
+        ref.invalidate(homeSummaryProvider);
+        ref.invalidate(todayFeedingsProvider);
+        ref.invalidate(activeSleepProvider);
+      });
+    } else {
+      listener.unsubscribe();
+    }
+  }, fireImmediately: true);
+
+  ref.onDispose(listener.unsubscribe);
+}

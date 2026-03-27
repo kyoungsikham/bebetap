@@ -1,0 +1,22 @@
+{
+  "@@locale": "ko",
+  "appName": "BebeTap",
+  "formula": "분유",
+  "breast": "모유",
+  "diaper": "기저귀",
+  "sleep": "수면",
+  "temperature": "체온",
+  "growth": "성장",
+  "tapToRecord": "탭해서 기록",
+  "today": "오늘",
+  "statistics": "통계",
+  "family": "가족 공유",
+  "settings": "설정",
+  "sleepActive": "수면 중",
+  "lastFeeding": "마지막 수유",
+  "formulaTotal": "분유 총량",
+  "noRecord": "아직 기록이 없어요",
+  "createFamily": "새 가족 그룹 만들기",
+  "joinFamily": "초대 코드로 합류하기",
+  "inviteCode": "초대 코드"
+}
