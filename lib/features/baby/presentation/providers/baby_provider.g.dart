@@ -23,7 +23,7 @@ final babyRepositoryProvider = AutoDisposeProvider<BabyRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef BabyRepositoryRef = AutoDisposeProviderRef<BabyRepository>;
-String _$babiesHash() => r'134a11c83d4c3f884fc25a11f97c24717947589c';
+String _$babiesHash() => r'5fae22dceabf9a11f1d764644102355b68635c92';
 
 /// See also [babies].
 @ProviderFor(babies)
@@ -77,7 +77,7 @@ final selectedBabyIdProvider =
     );
 
 typedef _$SelectedBabyId = AutoDisposeNotifier<String?>;
-String _$babySetupNotifierHash() => r'68e32166735000eb536c48542966759514f16887';
+String _$babySetupNotifierHash() => r'd23c70b8fb414c5e6939ac8c1439b5192cf6670e';
 
 /// 온보딩에서 가족 + 아기 생성을 처리하는 Notifier.
 ///

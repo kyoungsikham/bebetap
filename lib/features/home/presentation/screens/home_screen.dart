@@ -14,7 +14,16 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final babiesAsync = ref.watch(babiesProvider);
     final babyAsync = ref.watch(selectedBabyProvider);
+
+    // 세션 복원 시 babies 로딩 중이면 스피너만 표시 (깜빡임 방지)
+    if (babiesAsync.isLoading && !babiesAsync.hasValue) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,

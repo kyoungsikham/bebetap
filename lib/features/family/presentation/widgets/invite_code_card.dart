@@ -7,9 +7,27 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../domain/models/family.dart';
 
-class InviteCodeCard extends StatelessWidget {
+class InviteCodeCard extends StatefulWidget {
   const InviteCodeCard({super.key, required this.family});
   final Family family;
+
+  @override
+  State<InviteCodeCard> createState() => _InviteCodeCardState();
+}
+
+class _InviteCodeCardState extends State<InviteCodeCard> {
+  final _shareButtonKey = GlobalKey();
+
+  void _share() {
+    final box =
+        _shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
+    Share.share(
+      'BebeTap 앱에서 ${widget.family.name}에 합류하세요!\n초대 코드: ${widget.family.inviteCode}',
+      subject: 'BebeTap 가족 초대',
+      sharePositionOrigin:
+          box != null ? box.localToGlobal(Offset.zero) & box.size : null,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +54,7 @@ class InviteCodeCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                family.inviteCode,
+                widget.family.inviteCode,
                 style: AppTypography.titleLarge.copyWith(
                   color: AppColors.onSurface,
                   fontWeight: FontWeight.w700,
@@ -49,7 +67,7 @@ class InviteCodeCard extends StatelessWidget {
                 label: '복사',
                 onTap: () async {
                   await Clipboard.setData(
-                    ClipboardData(text: family.inviteCode),
+                    ClipboardData(text: widget.family.inviteCode),
                   );
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -63,12 +81,10 @@ class InviteCodeCard extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.sm),
               _ActionButton(
+                widgetKey: _shareButtonKey,
                 icon: Icons.share_outlined,
                 label: '공유',
-                onTap: () => Share.share(
-                  'BebeTap 앱에서 ${family.name}에 합류하세요!\n초대 코드: ${family.inviteCode}',
-                  subject: 'BebeTap 가족 초대',
-                ),
+                onTap: _share,
               ),
             ],
           ),
@@ -85,11 +101,13 @@ class InviteCodeCard extends StatelessWidget {
 
 class _ActionButton extends StatelessWidget {
   const _ActionButton({
+    this.widgetKey,
     required this.icon,
     required this.label,
     required this.onTap,
   });
 
+  final Key? widgetKey;
   final IconData icon;
   final String label;
   final VoidCallback onTap;
@@ -97,6 +115,7 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      key: widgetKey,
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),

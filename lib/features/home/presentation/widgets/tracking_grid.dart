@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../diaper/presentation/widgets/diaper_bottom_sheet.dart';
+import '../../../feeding/presentation/widgets/baby_food_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/breast_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/formula_bottom_sheet.dart';
 import '../../../sleep/presentation/providers/sleep_provider.dart';
@@ -110,11 +111,17 @@ class TrackingGrid extends ConsumerWidget {
           ),
         ),
         TrackingTile(
-          icon: Icons.monitor_weight_outlined,
-          label: '성장',
-          sublabel: 'Phase 4',
-          color: AppColors.onSurfaceMuted,
-          onTap: () {},
+          icon: Icons.restaurant,
+          label: '이유식',
+          sublabel: summary != null && summary.todayBabyFoodTotalMl > 0
+              ? '오늘 ${summary.todayBabyFoodTotalMl}ml'
+              : '탭해서 기록',
+          color: const Color(0xFFFF9800),
+          onTap: () => showAppBottomSheet(
+            context: context,
+            child: const BabyFoodBottomSheet(),
+            title: '이유식 기록',
+          ),
         ),
       ],
     )

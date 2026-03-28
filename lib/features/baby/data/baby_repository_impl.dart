@@ -39,6 +39,7 @@ class BabyRepository {
     required DateTime birthDate,
     String? gender,
     double? weightKg,
+    String? nickname,
   }) async {
     final user = _client.auth.currentUser;
     if (user == null) throw Exception('로그인이 필요합니다');
@@ -56,6 +57,7 @@ class BabyRepository {
       'family_id': familyId,
       'user_id': user.id,
       'role': 'owner',
+      if (nickname != null) 'nickname': nickname,
     });
 
     // 3. 아기 생성

@@ -19,7 +19,7 @@ class TemperatureBottomSheet extends ConsumerStatefulWidget {
 class _TemperatureBottomSheetState
     extends ConsumerState<TemperatureBottomSheet> {
   final _controller = TextEditingController();
-  String _method = 'axillary';
+  String _method = 'ear';
 
   static const _methods = [
     ('axillary', '겨드랑이'),

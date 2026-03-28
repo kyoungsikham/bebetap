@@ -15,6 +15,12 @@ class MedicalConstants {
   static const double threeMonthSleepTargetHours = 15.0; // 3-6개월
   static const double sixMonthSleepTargetHours = 14.0; // 6-12개월
 
+  // 이유식
+  static const int babyFoodPickerMinMl = 10;
+  static const int babyFoodPickerMaxMl = 300;
+  static const int babyFoodPickerStepMl = 10;
+  static const int babyFoodDefaultMl = 80;
+
   // 기저귀
   static const int diaperChangeIntervalHours = 2;
 

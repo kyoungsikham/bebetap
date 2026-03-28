@@ -77,7 +77,7 @@ final familyRealtimeProvider = Provider<void>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FamilyRealtimeRef = ProviderRef<void>;
-String _$familyNotifierHash() => r'59de61fdf81e236c9b23926819244f9b8bc5ce06';
+String _$familyNotifierHash() => r'272d559d77eacee885958b0ccf76560fe38476fb';
 
 /// See also [FamilyNotifier].
 @ProviderFor(FamilyNotifier)

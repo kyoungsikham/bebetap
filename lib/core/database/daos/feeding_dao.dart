@@ -44,6 +44,21 @@ class FeedingDao extends DatabaseAccessor<AppDatabase> with _$FeedingDaoMixin {
     return rows.fold<int>(0, (sum, r) => sum + (r.amountMl ?? 0));
   }
 
+  Future<int> getDailyBabyFoodTotalMl(String babyId, DateTime date) async {
+    final from = DateTime(date.year, date.month, date.day);
+    final to = from.add(const Duration(days: 1));
+    final rows = await (select(feedingEntriesTable)
+          ..where(
+            (t) =>
+                t.babyId.equals(babyId) &
+                t.type.equals('baby_food') &
+                t.startedAt.isBetweenValues(from, to) &
+                t.deletedAt.isNull(),
+          ))
+        .get();
+    return rows.fold<int>(0, (sum, r) => sum + (r.amountMl ?? 0));
+  }
+
   Future<void> upsertFeeding(FeedingEntriesTableCompanion entry) =>
       into(feedingEntriesTable).insertOnConflictUpdate(entry);
 

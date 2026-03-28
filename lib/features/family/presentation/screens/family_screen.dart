@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' hide Family;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -8,7 +9,7 @@ import '../../domain/models/family.dart';
 import '../../domain/models/family_member.dart';
 import '../providers/family_provider.dart';
 import '../widgets/invite_code_card.dart';
-import '../widgets/join_family_form.dart';
+import '../widgets/join_family_bottom_sheet.dart';
 
 class FamilyScreen extends ConsumerStatefulWidget {
   const FamilyScreen({super.key});
@@ -18,7 +19,6 @@ class FamilyScreen extends ConsumerStatefulWidget {
 }
 
 class _FamilyScreenState extends ConsumerState<FamilyScreen> {
-  bool _showJoinForm = false;
   final _familyNameController = TextEditingController();
 
   @override
@@ -95,13 +95,11 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
         data: (family) {
           if (family == null) {
             return _NoFamilyView(
-              showJoinForm: _showJoinForm,
-              onShowJoin: () => setState(() => _showJoinForm = true),
+              onShowJoin: () => showJoinFamilyBottomSheet(
+                context,
+                onJoined: () => ref.invalidate(myFamilyProvider),
+              ),
               onCreateTap: _showCreateDialog,
-              onJoined: () {
-                ref.invalidate(myFamilyProvider);
-                setState(() => _showJoinForm = false);
-              },
             );
           }
           return _FamilyView(family: family, membersAsync: membersAsync);
@@ -113,16 +111,12 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
 
 class _NoFamilyView extends StatelessWidget {
   const _NoFamilyView({
-    required this.showJoinForm,
     required this.onShowJoin,
     required this.onCreateTap,
-    required this.onJoined,
   });
 
-  final bool showJoinForm;
   final VoidCallback onShowJoin;
   final VoidCallback onCreateTap;
-  final VoidCallback onJoined;
 
   @override
   Widget build(BuildContext context) {
@@ -169,15 +163,6 @@ class _NoFamilyView extends StatelessWidget {
             side: const BorderSide(color: AppColors.divider),
           ),
         ),
-        if (showJoinForm) ...[
-          const SizedBox(height: AppSpacing.xxl),
-          Text(
-            '초대 코드 입력',
-            style: AppTypography.titleMedium,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          JoinFamilyForm(onJoined: onJoined),
-        ],
       ],
     );
   }
@@ -214,9 +199,14 @@ class _FamilyView extends StatelessWidget {
             '불러오기 실패',
             style: AppTypography.bodySmall,
           ),
-          data: (members) => Column(
-            children: members.map((m) => _MemberTile(member: m)).toList(),
-          ),
+          data: (members) {
+            final myId = Supabase.instance.client.auth.currentUser?.id;
+            return Column(
+              children: members
+                  .map((m) => _MemberTile(member: m, isMe: m.userId == myId))
+                  .toList(),
+            );
+          },
         ),
       ],
     );
@@ -224,26 +214,48 @@ class _FamilyView extends StatelessWidget {
 }
 
 class _MemberTile extends StatelessWidget {
-  const _MemberTile({required this.member});
+  const _MemberTile({required this.member, required this.isMe});
   final FamilyMember member;
+  final bool isMe;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+    final badgeColor = isMe
+        ? AppColors.success
+        : member.isOwner
+            ? AppColors.primary
+            : AppColors.onSurfaceMuted;
+    final badgeBg = isMe
+        ? AppColors.success.withValues(alpha: 0.12)
+        : member.isOwner
+            ? AppColors.primary.withValues(alpha: 0.1)
+            : AppColors.surfaceVariant;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 10),
+      decoration: BoxDecoration(
+        color: isMe ? AppColors.success.withValues(alpha: 0.05) : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        border: isMe
+            ? Border.all(color: AppColors.success.withValues(alpha: 0.3))
+            : null,
+      ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 20,
-            backgroundColor: AppColors.surfaceVariant,
+            backgroundColor: isMe
+                ? AppColors.success.withValues(alpha: 0.15)
+                : AppColors.surfaceVariant,
             backgroundImage: member.avatarUrl != null
                 ? NetworkImage(member.avatarUrl!)
                 : null,
             child: member.avatarUrl == null
-                ? const Icon(
+                ? Icon(
                     Icons.person_outline,
                     size: 20,
-                    color: AppColors.onSurfaceMuted,
+                    color: isMe ? AppColors.success : AppColors.onSurfaceMuted,
                   )
                 : null,
           ),
@@ -251,24 +263,31 @@ class _MemberTile extends StatelessWidget {
           Expanded(
             child: Text(
               member.name ?? '사용자',
-              style: AppTypography.bodyMedium,
+              style: AppTypography.bodyMedium.copyWith(
+                fontWeight: isMe ? FontWeight.w600 : FontWeight.normal,
+              ),
             ),
           ),
+          if (isMe)
+            Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: Text(
+                '나',
+                style: AppTypography.labelSmall.copyWith(
+                  color: AppColors.success,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              color: member.isOwner
-                  ? AppColors.primary.withValues(alpha: 0.1)
-                  : AppColors.surfaceVariant,
+              color: badgeBg,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               member.roleLabel,
-              style: AppTypography.labelSmall.copyWith(
-                color: member.isOwner
-                    ? AppColors.primary
-                    : AppColors.onSurfaceMuted,
-              ),
+              style: AppTypography.labelSmall.copyWith(color: badgeColor),
             ),
           ),
         ],

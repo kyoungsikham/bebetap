@@ -6,28 +6,27 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/constants/medical_constants.dart';
 import '../../../../shared/widgets/date_time_wheel_picker.dart';
-import '../../../baby/presentation/providers/baby_provider.dart';
 import '../providers/feeding_provider.dart';
 
-class FormulaBottomSheet extends ConsumerStatefulWidget {
-  const FormulaBottomSheet({super.key});
+class BabyFoodBottomSheet extends ConsumerStatefulWidget {
+  const BabyFoodBottomSheet({super.key});
 
   @override
-  ConsumerState<FormulaBottomSheet> createState() =>
-      _FormulaBottomSheetState();
+  ConsumerState<BabyFoodBottomSheet> createState() =>
+      _BabyFoodBottomSheetState();
 }
 
-class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
-  int _selectedMl = MedicalConstants.formulaDefaultMl;
+class _BabyFoodBottomSheetState extends ConsumerState<BabyFoodBottomSheet> {
+  int _selectedMl = MedicalConstants.babyFoodDefaultMl;
   late DateTime _selectedDateTime;
   late final FixedExtentScrollController _scrollController;
 
   static final _items = List.generate(
-    (MedicalConstants.formulaPickerMaxMl - MedicalConstants.formulaPickerMinMl) ~/
-            MedicalConstants.formulaPickerStepMl +
+    (MedicalConstants.babyFoodPickerMaxMl - MedicalConstants.babyFoodPickerMinMl) ~/
+            MedicalConstants.babyFoodPickerStepMl +
         1,
-    (i) => MedicalConstants.formulaPickerMinMl +
-        i * MedicalConstants.formulaPickerStepMl,
+    (i) => MedicalConstants.babyFoodPickerMinMl +
+        i * MedicalConstants.babyFoodPickerStepMl,
   );
 
   @override
@@ -35,8 +34,8 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
     super.initState();
     _selectedDateTime = DateTime.now();
     final initialIndex =
-        (_selectedMl - MedicalConstants.formulaPickerMinMl) ~/
-            MedicalConstants.formulaPickerStepMl;
+        (_selectedMl - MedicalConstants.babyFoodPickerMinMl) ~/
+            MedicalConstants.babyFoodPickerStepMl;
     _scrollController =
         FixedExtentScrollController(initialItem: initialIndex);
   }
@@ -81,10 +80,6 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final baby = ref.watch(selectedBabyProvider).valueOrNull;
-    final recommendedMl = baby?.weightKg != null
-        ? MedicalConstants.formulaDailyTargetMl(baby!.weightKg!).toInt()
-        : null;
     final isLoading = ref.watch(feedingNotifierProvider).isLoading;
 
     return Padding(
@@ -174,20 +169,6 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
             ),
           ),
 
-          // 권장량
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              recommendedMl != null
-                  ? '${baby!.weightKg!.toStringAsFixed(1)}kg 기준 권장량 ${recommendedMl}ml/일'
-                  : '아기 몸무게를 등록하면 권장량을 알 수 있어요',
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.onSurfaceMuted,
-                fontSize: 11,
-              ),
-            ),
-          ),
-
           const SizedBox(height: AppSpacing.md),
           SizedBox(
             width: double.infinity,
@@ -198,7 +179,7 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
                   : () async {
                       await ref
                           .read(feedingNotifierProvider.notifier)
-                          .saveFormula(
+                          .saveBabyFood(
                             amountMl: _selectedMl,
                             startedAt: _selectedDateTime,
                           );

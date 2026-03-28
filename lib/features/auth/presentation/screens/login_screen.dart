@@ -5,9 +5,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../data/auth_repository_impl.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -115,9 +117,77 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  /// 소셜 로그인 시 기존 계정 확인 후 병합 안내 다이얼로그 표시.
+  Future<void> _socialSignInWithCheck({
+    required Future<SocialCredential?> Function() getCredential,
+    required Future<void> Function(SocialCredential) completeSignIn,
+    required String providerName,
+  }) async {
+    if (_loading) return;
+    setState(() => _loading = true);
+    try {
+      final credential = await getCredential();
+      if (credential == null) return; // 사용자 취소
+
+      // 이메일이 있으면 기존 계정 + provider 연결 상태 확인
+      if (credential.email != null && mounted) {
+        final repo = ref.read(authRepositoryProvider);
+        final status = await repo.checkProviderLinked(
+          credential.email!,
+          credential.provider,
+        );
+
+        // 'not_linked': 이메일은 존재하지만 이 provider가 아직 미연결 → 병합 안내
+        // 'linked': 이미 연결됨 → 바로 로그인
+        // 'not_found': 신규 → 바로 가입
+        if (status == 'not_linked' && mounted) {
+          final confirmed = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('계정 연결'),
+              content: Text(
+                '${credential.email}은(는) 이미 가입된 이메일입니다.\n\n'
+                '$providerName 계정을 연결하시겠습니까?\n'
+                '연결 후 기존 로그인 방식과 $providerName 모두 사용할 수 있습니다.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('취소'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text('연결하기'),
+                ),
+              ],
+            ),
+          );
+          if (confirmed != true) return;
+        }
+      }
+
+      await completeSignIn(credential);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('로그인 실패: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final repo = ref.read(authRepositoryProvider);
+
+    // 인증 후 babies 로딩 중이면 스피너 유지 (로그인 화면에 머무르는 동안)
+    final authAsync = ref.watch(authStateProvider);
+    final isLoggedIn = authAsync.valueOrNull?.session != null;
+    final babiesAsync = ref.watch(babiesProvider);
+    final showPostLoginLoading = isLoggedIn && !babiesAsync.hasValue;
+    final isLoading = _loading || showPostLoginLoading;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -210,14 +280,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               SizedBox(
                 height: 52,
                 child: FilledButton(
-                  onPressed: _loading ? null : _signInWithEmail,
+                  onPressed: isLoading ? null : _signInWithEmail,
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: _loading
+                  child: isLoading
                       ? const SizedBox(
                           width: 20,
                           height: 20,
@@ -254,11 +324,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
               const SizedBox(height: AppSpacing.lg),
 
-              if (!_loading) ...[
+              if (!isLoading) ...[
                 _SocialLoginButton(
                   icon: Icons.g_mobiledata,
                   label: 'Google로 계속하기',
-                  onTap: () => _runSocial(repo.signInWithGoogle),
+                  onTap: () => _socialSignInWithCheck(
+                    getCredential: repo.getGoogleCredential,
+                    completeSignIn: repo.completeGoogleSignIn,
+                    providerName: 'Google',
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 _SocialLoginButton(
@@ -266,7 +340,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   label: '카카오로 계속하기',
                   color: const Color(0xFFFEE500),
                   textColor: AppColors.onSurface,
-                  onTap: () => _runSocial(repo.signInWithKakao),
+                  onTap: () => _socialSignInWithCheck(
+                    getCredential: repo.getKakaoCredential,
+                    completeSignIn: repo.completeKakaoSignIn,
+                    providerName: '카카오',
+                  ),
                 ),
                 // const SizedBox(height: AppSpacing.sm),
                 // _SocialLoginButton(

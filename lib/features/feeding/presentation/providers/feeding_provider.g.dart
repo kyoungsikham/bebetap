@@ -59,7 +59,25 @@ final dailyFormulaTotalProvider = AutoDisposeFutureProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DailyFormulaTotalRef = AutoDisposeFutureProviderRef<int>;
-String _$feedingNotifierHash() => r'473fa7ff1a117476ebda03d27df93a75c7e9bb63';
+String _$dailyBabyFoodTotalHash() =>
+    r'bae942e471900930fde0ba15cc5f6166e0cea4d2';
+
+/// See also [dailyBabyFoodTotal].
+@ProviderFor(dailyBabyFoodTotal)
+final dailyBabyFoodTotalProvider = AutoDisposeFutureProvider<int>.internal(
+  dailyBabyFoodTotal,
+  name: r'dailyBabyFoodTotalProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$dailyBabyFoodTotalHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef DailyBabyFoodTotalRef = AutoDisposeFutureProviderRef<int>;
+String _$feedingNotifierHash() => r'922a896c2a8a7d0c16fc2cef67a861d96dddd417';
 
 /// See also [FeedingNotifier].
 @ProviderFor(FeedingNotifier)

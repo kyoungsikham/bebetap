@@ -172,4 +172,15 @@ class AppDatabase extends _$AppDatabase {
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'bebetap_local');
   }
+
+  Future<void> clearAllData() async {
+    await transaction(() async {
+      await delete(syncQueueTable).go();
+      await delete(temperatureEntriesTable).go();
+      await delete(sleepEntriesTable).go();
+      await delete(diaperEntriesTable).go();
+      await delete(feedingEntriesTable).go();
+      await delete(babiesTable).go();
+    });
+  }
 }

@@ -36,11 +36,23 @@ Future<int> dailyFormulaTotal(Ref ref) async {
 }
 
 @riverpod
+Future<int> dailyBabyFoodTotal(Ref ref) async {
+  final baby = await ref.watch(selectedBabyProvider.future);
+  if (baby == null) return 0;
+  return ref
+      .watch(feedingRepositoryProvider)
+      .getDailyBabyFoodTotalMl(baby.id, DateTime.now());
+}
+
+@riverpod
 class FeedingNotifier extends _$FeedingNotifier {
   @override
   AsyncValue<void> build() => const AsyncData(null);
 
-  Future<void> saveFormula({required int amountMl}) async {
+  Future<void> saveFormula({
+    required int amountMl,
+    DateTime? startedAt,
+  }) async {
     final baby = ref.read(selectedBabyProvider).valueOrNull;
     if (baby == null) return;
 
@@ -50,12 +62,35 @@ class FeedingNotifier extends _$FeedingNotifier {
             babyId: baby.id,
             familyId: baby.familyId,
             amountMl: amountMl,
+            startedAt: startedAt,
           );
       ref.invalidate(todayFeedingsProvider);
       ref.invalidate(dailyFormulaTotalProvider);
       ref.invalidate(homeSummaryProvider);
       ref.read(syncEngineProvider).trigger();
       _pushFeedingWidget(amountMl: amountMl);
+    });
+  }
+
+  Future<void> saveBabyFood({
+    required int amountMl,
+    DateTime? startedAt,
+  }) async {
+    final baby = ref.read(selectedBabyProvider).valueOrNull;
+    if (baby == null) return;
+
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(feedingRepositoryProvider).saveBabyFoodFeeding(
+            babyId: baby.id,
+            familyId: baby.familyId,
+            amountMl: amountMl,
+            startedAt: startedAt,
+          );
+      ref.invalidate(todayFeedingsProvider);
+      ref.invalidate(dailyBabyFoodTotalProvider);
+      ref.invalidate(homeSummaryProvider);
+      ref.read(syncEngineProvider).trigger();
     });
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/providers/auth_provider.dart';
 import '../../data/baby_repository_impl.dart';
 import '../../domain/models/baby.dart';
 
@@ -16,8 +17,10 @@ BabyRepository babyRepository(Ref ref) =>
 // ── Baby list ─────────────────────────────────────────────────────────────────
 
 @riverpod
-Future<List<Baby>> babies(Ref ref) =>
-    ref.watch(babyRepositoryProvider).fetchBabies();
+Future<List<Baby>> babies(Ref ref) {
+  ref.watch(authStateProvider); // auth 상태 변경 시 자동 re-fetch
+  return ref.watch(babyRepositoryProvider).fetchBabies();
+}
 
 // ── Selected baby ─────────────────────────────────────────────────────────────
 
@@ -55,6 +58,7 @@ class BabySetupNotifier extends _$BabySetupNotifier {
     required DateTime birthDate,
     String? gender,
     double? weightKg,
+    String? nickname,
   }) async {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(() async {
@@ -63,6 +67,7 @@ class BabySetupNotifier extends _$BabySetupNotifier {
             birthDate: birthDate,
             gender: gender,
             weightKg: weightKg,
+            nickname: nickname,
           );
       ref.invalidate(babiesProvider);
       return baby;

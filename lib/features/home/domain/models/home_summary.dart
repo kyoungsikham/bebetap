@@ -9,6 +9,7 @@ class HomeSummary {
     this.lastFeedingType,
     this.lastFeedingAmountMl,
     this.todayFormulaTotalMl = 0,
+    this.todayBabyFoodTotalMl = 0,
     this.todayDiaperCount = 0,
     this.todaySleepTotal = Duration.zero,
     this.activeSleep,
@@ -21,6 +22,7 @@ class HomeSummary {
   final String? lastFeedingType; // formula | breast
   final int? lastFeedingAmountMl;
   final int todayFormulaTotalMl;
+  final int todayBabyFoodTotalMl;
   final int todayDiaperCount;
   final Duration todaySleepTotal;
   final SleepEntry? activeSleep;

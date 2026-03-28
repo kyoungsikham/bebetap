@@ -9,6 +9,7 @@ class FamilyMember {
     required this.joinedAt,
     this.name,
     this.avatarUrl,
+    this.nickname,
   });
 
   final String userId;
@@ -17,7 +18,8 @@ class FamilyMember {
   final DateTime joinedAt;
   final String? name;
   final String? avatarUrl;
+  final String? nickname; // 아기와의 관계 (엄마, 아빠, 할머니 등)
 
   bool get isOwner => role == 'owner';
-  String get roleLabel => isOwner ? '보호자' : '양육자';
+  String get roleLabel => nickname ?? (isOwner ? '양육자' : '가족');
 }

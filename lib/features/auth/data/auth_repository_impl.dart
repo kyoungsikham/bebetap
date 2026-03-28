@@ -3,7 +3,23 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:flutter_naver_login/interface/types/naver_login_status.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+/// 소셜 로그인 credential (SDK에서 획득한 토큰 + 이메일).
+class SocialCredential {
+  final String provider;
+  final String idToken;
+  final String? accessToken;
+  final String? email;
+
+  const SocialCredential({
+    required this.provider,
+    required this.idToken,
+    this.accessToken,
+    this.email,
+  });
+}
 
 /// 인증 저장소.
 /// 각 소셜 로그인 메서드는 플랫폼 SDK → Supabase 세션 획득 순서로 동작.
@@ -13,24 +29,40 @@ class AuthRepository {
   AuthRepository(this._client);
 
   // ── Google ────────────────────────────────────────────────────────────────
-  /// 네이티브 Google Sign-In → Supabase signInWithIdToken.
-  /// TODO: Google Cloud Console에서 iOS/Android 클라이언트 ID를 발급받아
-  ///       아래 serverClientId를 채워야 합니다.
-  Future<void> signInWithGoogle() async {
+
+  /// Google SDK에서 credential만 획득 (Supabase 로그인 X).
+  Future<SocialCredential?> getGoogleCredential() async {
     const webClientId =
         '343593600698-ji8aqb4t29ecmr7i6hea3st5bhfejpre.apps.googleusercontent.com';
     final googleSignIn = GoogleSignIn(serverClientId: webClientId);
     final account = await googleSignIn.signIn();
-    if (account == null) return; // 사용자 취소
+    if (account == null) return null; // 사용자 취소
 
     final auth = await account.authentication;
     if (auth.idToken == null) throw Exception('Google ID 토큰을 받지 못했습니다');
 
-    await _client.auth.signInWithIdToken(
-      provider: OAuthProvider.google,
+    return SocialCredential(
+      provider: 'google',
       idToken: auth.idToken!,
       accessToken: auth.accessToken,
+      email: account.email,
     );
+  }
+
+  /// Google credential로 Supabase 로그인 완료.
+  Future<void> completeGoogleSignIn(SocialCredential credential) async {
+    await _client.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: credential.idToken,
+      accessToken: credential.accessToken,
+    );
+  }
+
+  /// 기존 호환용: 한 번에 Google 로그인.
+  Future<void> signInWithGoogle() async {
+    final credential = await getGoogleCredential();
+    if (credential == null) return;
+    await completeGoogleSignIn(credential);
   }
 
   // ── Apple ─────────────────────────────────────────────────────────────────
@@ -53,9 +85,9 @@ class AuthRepository {
   }
 
   // ── Kakao ─────────────────────────────────────────────────────────────────
-  /// 네이티브 Kakao SDK → Supabase signInWithIdToken.
-  /// account_email 스코프 없이 openid + profile_nickname 만 요청.
-  Future<void> signInWithKakao() async {
+
+  /// Kakao SDK에서 credential만 획득 (Supabase 로그인 X).
+  Future<SocialCredential?> getKakaoCredential() async {
     OAuthToken token;
     if (await isKakaoTalkInstalled()) {
       token = await UserApi.instance.loginWithKakaoTalk();
@@ -65,11 +97,35 @@ class AuthRepository {
 
     if (token.idToken == null) throw Exception('카카오 ID 토큰을 받지 못했습니다');
 
-    await _client.auth.signInWithIdToken(
-      provider: OAuthProvider.kakao,
+    // 카카오는 이메일을 제공하지 않을 수 있음
+    String? email;
+    try {
+      final user = await UserApi.instance.me();
+      email = user.kakaoAccount?.email;
+    } catch (_) {}
+
+    return SocialCredential(
+      provider: 'kakao',
       idToken: token.idToken!,
       accessToken: token.accessToken,
+      email: email,
     );
+  }
+
+  /// Kakao credential로 Supabase 로그인 완료.
+  Future<void> completeKakaoSignIn(SocialCredential credential) async {
+    await _client.auth.signInWithIdToken(
+      provider: OAuthProvider.kakao,
+      idToken: credential.idToken,
+      accessToken: credential.accessToken,
+    );
+  }
+
+  /// 기존 호환용: 한 번에 카카오 로그인.
+  Future<void> signInWithKakao() async {
+    final credential = await getKakaoCredential();
+    if (credential == null) return;
+    await completeKakaoSignIn(credential);
   }
 
   // ── Naver ─────────────────────────────────────────────────────────────────
@@ -160,6 +216,15 @@ class AuthRepository {
   Future<bool> checkEmailExists(String email) async {
     final result = await _client.rpc('check_email_exists', params: {'check_email': email});
     return result as bool;
+  }
+
+  /// 이메일+provider 연결 상태 확인: 'not_found' | 'linked' | 'not_linked'
+  Future<String> checkProviderLinked(String email, String provider) async {
+    final result = await _client.rpc('check_provider_linked', params: {
+      'check_email': email,
+      'check_provider': provider,
+    });
+    return result as String;
   }
 
   Future<void> sendEmailOtp(String email) async {

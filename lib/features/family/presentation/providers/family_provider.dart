@@ -33,19 +33,19 @@ class FamilyNotifier extends _$FamilyNotifier {
   @override
   AsyncValue<void> build() => const AsyncData(null);
 
-  Future<void> createFamily(String name) async {
+  Future<void> createFamily(String name, {String? nickname}) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await ref.read(familyRepositoryProvider).createFamily(name);
+      await ref.read(familyRepositoryProvider).createFamily(name, nickname: nickname);
       ref.invalidate(myFamilyProvider);
       ref.invalidate(familyMembersProvider);
     });
   }
 
-  Future<void> joinFamily(String inviteCode) async {
+  Future<void> joinFamily(String inviteCode, {String? nickname}) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await ref.read(familyRepositoryProvider).joinFamily(inviteCode);
+      await ref.read(familyRepositoryProvider).joinFamily(inviteCode, nickname: nickname);
       ref.invalidate(myFamilyProvider);
       ref.invalidate(familyMembersProvider);
     });

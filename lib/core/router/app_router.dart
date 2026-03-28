@@ -19,6 +19,22 @@ import 'app_routes.dart';
 
 part 'app_router.g.dart';
 
+/// 페이드 전환 페이지 헬퍼.
+CustomTransitionPage<void> _fadePage({
+  required LocalKey key,
+  required Widget child,
+  Duration duration = const Duration(milliseconds: 200),
+}) {
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: duration,
+    reverseTransitionDuration: duration,
+    transitionsBuilder: (_, animation, __, child) =>
+        FadeTransition(opacity: animation, child: child),
+  );
+}
+
 /// GoRouter의 refreshListenable로 사용. 인증/아기 상태 변경 시 리디렉션 재평가.
 class _RouterRefreshNotifier extends ChangeNotifier {
   void refresh() => notifyListeners();
@@ -41,33 +57,35 @@ GoRouter appRouter(Ref ref) {
 
       final isLoggedIn = authAsync.valueOrNull?.session != null;
       final hasBaby = babiesAsync.valueOrNull?.isNotEmpty ?? false;
-      final babiesLoaded = babiesAsync.hasValue;
+      final babiesLoaded = babiesAsync.hasValue && !babiesAsync.isLoading;
       final loc = state.matchedLocation;
 
-      // 비밀번호 재설정 이벤트 → 재설정 화면으로 (인증 여부 무관)
+      // 1. 비밀번호 재설정 이벤트 → 재설정 화면으로
       final authEvent = authAsync.valueOrNull?.event;
       if (authEvent == AuthChangeEvent.passwordRecovery) {
         return AppRoutes.resetPassword;
       }
 
-      // 미인증 → 로그인 화면으로 (email-auth는 회원가입용으로 허용)
+      // 2. 미인증 → 로그인 화면으로 (email-auth는 회원가입용으로 허용)
       if (!isLoggedIn) {
         const publicRoutes = {AppRoutes.login, AppRoutes.emailAuth};
         return publicRoutes.contains(loc) ? null : AppRoutes.login;
       }
 
-      // 로그인 화면에 있고 이미 인증됨 → 적절한 화면으로
-      if (loc == AppRoutes.login) {
-        if (!babiesLoaded) return AppRoutes.home; // 아기 로딩 중엔 홈으로 (스켈레톤 표시)
+      // 3. 인증됨 + 아기 목록 아직 로딩 중 → 현재 위치 유지 (깜빡임 방지)
+      if (!babiesLoaded) return null;
+
+      // 4. 로그인/이메일인증 화면 → 올바른 목적지로 직접 이동
+      if (loc == AppRoutes.login || loc == AppRoutes.emailAuth) {
         return hasBaby ? AppRoutes.home : AppRoutes.babySetup;
       }
 
-      // 아기 미등록 → 아기 설정 화면으로 (email-auth는 비밀번호 설정 완료까지 유지)
-      if (babiesLoaded && !hasBaby && loc != AppRoutes.babySetup && loc != AppRoutes.emailAuth) {
+      // 5. 아기 미등록 → 아기 설정 화면으로
+      if (!hasBaby && loc != AppRoutes.babySetup) {
         return AppRoutes.babySetup;
       }
 
-      // 이미 아기가 있는데 설정 화면 접근 → 홈으로
+      // 6. 이미 아기가 있는데 설정 화면 접근 → 홈으로
       if (hasBaby && loc == AppRoutes.babySetup) {
         return AppRoutes.home;
       }
@@ -78,19 +96,31 @@ GoRouter appRouter(Ref ref) {
       // 인증
       GoRoute(
         path: AppRoutes.login,
-        builder: (_, s) => const LoginScreen(),
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const LoginScreen(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.emailAuth,
-        builder: (_, s) => const EmailAuthScreen(),
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const EmailAuthScreen(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.babySetup,
-        builder: (_, s) => const BabySetupScreen(),
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const BabySetupScreen(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.resetPassword,
-        builder: (_, s) => const ResetPasswordScreen(),
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const ResetPasswordScreen(),
+        ),
       ),
 
       // 메인 ShellRoute (5탭 바텀 네비)
@@ -100,28 +130,38 @@ GoRouter appRouter(Ref ref) {
         routes: [
           GoRoute(
             path: AppRoutes.home,
-            pageBuilder: (_, s) =>
-                const NoTransitionPage(child: HomeScreen()),
+            pageBuilder: (_, s) => _fadePage(
+              key: const ValueKey('home'),
+              child: const HomeScreen(),
+            ),
           ),
           GoRoute(
             path: AppRoutes.statistics,
-            pageBuilder: (_, s) =>
-                const NoTransitionPage(child: StatisticsScreen()),
+            pageBuilder: (_, s) => _fadePage(
+              key: const ValueKey('statistics'),
+              child: const StatisticsScreen(),
+            ),
           ),
           GoRoute(
             path: AppRoutes.log,
-            pageBuilder: (_, s) =>
-                const NoTransitionPage(child: HomeScreen()),
+            pageBuilder: (_, s) => _fadePage(
+              key: const ValueKey('log'),
+              child: const HomeScreen(),
+            ),
           ),
           GoRoute(
             path: AppRoutes.family,
-            pageBuilder: (_, s) =>
-                const NoTransitionPage(child: FamilyScreen()),
+            pageBuilder: (_, s) => _fadePage(
+              key: const ValueKey('family'),
+              child: const FamilyScreen(),
+            ),
           ),
           GoRoute(
             path: AppRoutes.settings,
-            pageBuilder: (_, s) =>
-                const NoTransitionPage(child: SettingsScreen()),
+            pageBuilder: (_, s) => _fadePage(
+              key: const ValueKey('settings'),
+              child: const SettingsScreen(),
+            ),
           ),
         ],
       ),

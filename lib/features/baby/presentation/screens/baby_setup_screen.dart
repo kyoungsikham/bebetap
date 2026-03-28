@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../family/presentation/widgets/join_family_bottom_sheet.dart';
+import '../../../family/presentation/widgets/relationship_selector.dart';
 import '../providers/baby_provider.dart';
 
 class BabySetupScreen extends ConsumerStatefulWidget {
@@ -21,6 +23,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
 
   DateTime? _birthDate;
   String? _gender; // 'male' | 'female' | null
+  String? _nickname;
 
   static final _dateFormat = DateFormat('yyyy년 MM월 dd일');
 
@@ -56,11 +59,19 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
     final weightKg =
         weightText.isNotEmpty ? double.tryParse(weightText) : null;
 
+    if (_nickname == null || _nickname!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('아기와의 관계를 선택해주세요')),
+      );
+      return;
+    }
+
     final baby = await ref.read(babySetupNotifierProvider.notifier).createBaby(
           name: _nameController.text.trim(),
           birthDate: _birthDate!,
           gender: _gender,
           weightKg: weightKg,
+          nickname: _nickname,
         );
 
     if (!mounted) return;
@@ -192,6 +203,16 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                       .copyWith(color: AppColors.onSurfaceMuted),
                 ),
 
+                const SizedBox(height: AppSpacing.xl),
+
+                // 아기와의 관계
+                const _SectionLabel('아기와의 관계 *'),
+                const SizedBox(height: AppSpacing.sm),
+                RelationshipSelector(
+                  selected: _nickname,
+                  onChanged: (v) => setState(() => _nickname = v),
+                ),
+
                 const SizedBox(height: AppSpacing.xxxl),
 
                 // 저장 버튼
@@ -217,6 +238,44 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                             ),
                           )
                         : const Text('시작하기'),
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.xl),
+
+                // 구분선
+                Row(
+                  children: [
+                    const Expanded(child: Divider(color: AppColors.divider)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md),
+                      child: Text(
+                        '또는',
+                        style: AppTypography.bodySmall
+                            .copyWith(color: AppColors.onSurfaceMuted),
+                      ),
+                    ),
+                    const Expanded(child: Divider(color: AppColors.divider)),
+                  ],
+                ),
+
+                const SizedBox(height: AppSpacing.md),
+
+                // 초대 코드 합류 버튼
+                TextButton.icon(
+                  onPressed: () => showJoinFamilyBottomSheet(
+                    context,
+                    onJoined: () => ref.invalidate(babiesProvider),
+                  ),
+                  icon: Icon(
+                    Icons.login,
+                    color: AppColors.primary,
+                  ),
+                  label: Text(
+                    '초대 코드로 합류하기',
+                    style: AppTypography.labelLarge
+                        .copyWith(color: AppColors.primary),
                   ),
                 ),
               ],

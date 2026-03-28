@@ -34,8 +34,33 @@ class FamilyRepository {
     }
   }
 
-  Future<Family> createFamily(String name) async {
+  Future<void> _ensureProfile() async {
+    final user = _client.auth.currentUser;
+    if (user == null) return;
+
+    // 먼저 profile이 존재하는지 확인
+    final existing = await _client
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+    if (existing == null) {
+      // profile이 없으면 INSERT (RLS: service_role 우회 대신 직접 INSERT)
+      await _client.from('profiles').insert({
+        'id': user.id,
+        'display_name': user.userMetadata?['full_name'] ??
+            user.userMetadata?['name'] ??
+            user.email,
+        'avatar_url': user.userMetadata?['avatar_url'] ??
+            user.userMetadata?['picture'],
+      });
+    }
+  }
+
+  Future<Family> createFamily(String name, {String? nickname}) async {
     final uid = _userId!;
+    await _ensureProfile();
     final familyData = await _client
         .from('families')
         .insert({'name': name, 'created_by': uid})
@@ -46,6 +71,7 @@ class FamilyRepository {
       'family_id': familyData['id'],
       'user_id': uid,
       'role': 'owner',
+      if (nickname != null) 'nickname': nickname,
     });
 
     return Family(
@@ -56,15 +82,17 @@ class FamilyRepository {
     );
   }
 
-  Future<Family> joinFamily(String inviteCode) async {
+  Future<Family> joinFamily(String inviteCode, {String? nickname}) async {
     final uid = _userId!;
-    final familyData = await _client
-        .from('families')
-        .select()
-        .eq('invite_code', inviteCode.toUpperCase().trim())
-        .maybeSingle();
+    await _ensureProfile();
+    // SECURITY DEFINER 함수로 RLS 우회하여 초대 코드 조회
+    final rows = await _client.rpc(
+      'find_family_by_invite_code',
+      params: {'code': inviteCode},
+    ) as List;
 
-    if (familyData == null) throw Exception('초대 코드를 찾을 수 없습니다');
+    if (rows.isEmpty) throw Exception('초대 코드를 찾을 수 없습니다');
+    final familyData = rows.first as Map<String, dynamic>;
 
     final familyId = familyData['id'] as String;
 
@@ -80,6 +108,7 @@ class FamilyRepository {
         'family_id': familyId,
         'user_id': uid,
         'role': 'caregiver',
+        if (nickname != null) 'nickname': nickname,
       });
     }
 
@@ -107,6 +136,7 @@ class FamilyRepository {
           role: m['role'] as String? ?? 'caregiver',
           name: profile?['display_name'] as String?,
           avatarUrl: profile?['avatar_url'] as String?,
+          nickname: m['nickname'] as String?,
           joinedAt: DateTime.parse(m['joined_at'] as String),
         );
       }).toList();
@@ -123,6 +153,7 @@ class FamilyRepository {
               userId: m['user_id'] as String,
               familyId: m['family_id'] as String,
               role: m['role'] as String? ?? 'caregiver',
+              nickname: m['nickname'] as String?,
               joinedAt: DateTime.parse(m['joined_at'] as String),
             ),
           )

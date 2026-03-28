@@ -27,6 +27,9 @@ class FeedingRepository {
   Future<int> getDailyFormulaTotalMl(String babyId, DateTime date) =>
       _db.feedingDao.getDailyFormulaTotalMl(babyId, date);
 
+  Future<int> getDailyBabyFoodTotalMl(String babyId, DateTime date) =>
+      _db.feedingDao.getDailyBabyFoodTotalMl(babyId, date);
+
   Future<FeedingEntry> saveFormulaFeeding({
     required String babyId,
     required String familyId,
@@ -52,6 +55,36 @@ class FeedingRepository {
       babyId: babyId,
       familyId: familyId,
       type: 'formula',
+      amountMl: amountMl,
+      startedAt: now,
+    );
+  }
+
+  Future<FeedingEntry> saveBabyFoodFeeding({
+    required String babyId,
+    required String familyId,
+    required int amountMl,
+    DateTime? startedAt,
+  }) async {
+    final id = _uuid.v4();
+    final now = startedAt ?? DateTime.now();
+    await _db.feedingDao.upsertFeeding(
+      FeedingEntriesTableCompanion(
+        id: Value(id),
+        babyId: Value(babyId),
+        familyId: Value(familyId),
+        type: const Value('baby_food'),
+        amountMl: Value(amountMl),
+        startedAt: Value(now),
+        localId: Value(id),
+        syncStatus: const Value('pending_create'),
+      ),
+    );
+    return FeedingEntry(
+      id: id,
+      babyId: babyId,
+      familyId: familyId,
+      type: 'baby_food',
       amountMl: amountMl,
       startedAt: now,
     );
