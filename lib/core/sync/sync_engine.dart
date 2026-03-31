@@ -1,7 +1,9 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../database/app_database.dart';
+import 'supabase_datetime.dart';
 
 /// 로컬 SQLite → Supabase 동기화 오케스트레이터.
 /// 각 save 후 trigger()를 호출해 백그라운드에서 실행된다.
@@ -18,6 +20,150 @@ class SyncEngine {
     _syncAll().catchError((Object e) {
       debugPrint('SyncEngine error: $e');
     });
+  }
+
+  /// Supabase → 로컬 SQLite: 최근 7일치 데이터 pull
+  /// 가족 구성원이 로그인할 때 기존 기록을 가져오기 위해 호출
+  Future<void> pullRemoteData(String familyId) async {
+    try {
+      await Future.wait([
+        _pullFeeding(familyId),
+        _pullDiaper(familyId),
+        _pullSleep(familyId),
+        _pullTemperature(familyId),
+      ]);
+    } catch (e) {
+      debugPrint('SyncEngine pullRemoteData error: $e');
+    }
+  }
+
+  String _resolveId(Map<String, dynamic> r) =>
+      (r['local_id'] as String?) ?? (r['id'] as String);
+
+  Future<void> _pullFeeding(String familyId) async {
+    final from = DateTime.now().subtract(const Duration(days: 7));
+    final rows = await _client
+        .from('feeding_entries')
+        .select()
+        .eq('family_id', familyId)
+        .gte('started_at', from.toUtc().toIso8601String())
+        .isFilter('deleted_at', null) as List<dynamic>;
+    for (final raw in rows) {
+      final r = raw as Map<String, dynamic>;
+      try {
+        await _db.feedingDao.upsertFeeding(
+          FeedingEntriesTableCompanion(
+            id: Value(_resolveId(r)),
+            babyId: Value(r['baby_id'] as String),
+            familyId: Value(r['family_id'] as String),
+            type: Value(r['type'] as String),
+            amountMl: Value(r['amount_ml'] as int?),
+            durationLeftSec: Value(r['duration_left_sec'] as int?),
+            durationRightSec: Value(r['duration_right_sec'] as int?),
+            startedAt: Value(parseSupabaseDateTime(r['started_at'] as String)),
+            endedAt: Value(
+              r['ended_at'] != null
+                  ? parseSupabaseDateTime(r['ended_at'] as String)
+                  : null,
+            ),
+            syncStatus: const Value('synced'),
+            remoteId: Value(r['id'] as String),
+          ),
+        );
+      } catch (e) {
+        debugPrint('pull feeding upsert error: $e');
+      }
+    }
+  }
+
+  Future<void> _pullDiaper(String familyId) async {
+    final from = DateTime.now().subtract(const Duration(days: 7));
+    final rows = await _client
+        .from('diaper_entries')
+        .select()
+        .eq('family_id', familyId)
+        .gte('occurred_at', from.toUtc().toIso8601String())
+        .isFilter('deleted_at', null) as List<dynamic>;
+    for (final raw in rows) {
+      final r = raw as Map<String, dynamic>;
+      try {
+        await _db.diaperDao.upsertDiaper(
+          DiaperEntriesTableCompanion(
+            id: Value(_resolveId(r)),
+            babyId: Value(r['baby_id'] as String),
+            familyId: Value(r['family_id'] as String),
+            type: Value(r['type'] as String),
+            occurredAt: Value(parseSupabaseDateTime(r['occurred_at'] as String)),
+            syncStatus: const Value('synced'),
+            remoteId: Value(r['id'] as String),
+          ),
+        );
+      } catch (e) {
+        debugPrint('pull diaper upsert error: $e');
+      }
+    }
+  }
+
+  Future<void> _pullSleep(String familyId) async {
+    final from = DateTime.now().subtract(const Duration(days: 7));
+    final rows = await _client
+        .from('sleep_entries')
+        .select()
+        .eq('family_id', familyId)
+        .gte('started_at', from.toUtc().toIso8601String())
+        .isFilter('deleted_at', null) as List<dynamic>;
+    for (final raw in rows) {
+      final r = raw as Map<String, dynamic>;
+      try {
+        await _db.sleepDao.upsertSleep(
+          SleepEntriesTableCompanion(
+            id: Value(_resolveId(r)),
+            babyId: Value(r['baby_id'] as String),
+            familyId: Value(r['family_id'] as String),
+            startedAt: Value(parseSupabaseDateTime(r['started_at'] as String)),
+            endedAt: Value(
+              r['ended_at'] != null
+                  ? parseSupabaseDateTime(r['ended_at'] as String)
+                  : null,
+            ),
+            quality: Value(r['quality'] as String?),
+            syncStatus: const Value('synced'),
+            remoteId: Value(r['id'] as String),
+          ),
+        );
+      } catch (e) {
+        debugPrint('pull sleep upsert error: $e');
+      }
+    }
+  }
+
+  Future<void> _pullTemperature(String familyId) async {
+    final from = DateTime.now().subtract(const Duration(days: 7));
+    final rows = await _client
+        .from('temperature_entries')
+        .select()
+        .eq('family_id', familyId)
+        .gte('occurred_at', from.toUtc().toIso8601String())
+        .isFilter('deleted_at', null) as List<dynamic>;
+    for (final raw in rows) {
+      final r = raw as Map<String, dynamic>;
+      try {
+        await _db.temperatureDao.upsertTemperature(
+          TemperatureEntriesTableCompanion(
+            id: Value(_resolveId(r)),
+            babyId: Value(r['baby_id'] as String),
+            familyId: Value(r['family_id'] as String),
+            celsius: Value((r['celsius'] as num).toDouble()),
+            method: Value(r['method'] as String? ?? 'axillary'),
+            occurredAt: Value(parseSupabaseDateTime(r['occurred_at'] as String)),
+            syncStatus: const Value('synced'),
+            remoteId: Value(r['id'] as String),
+          ),
+        );
+      } catch (e) {
+        debugPrint('pull temperature upsert error: $e');
+      }
+    }
   }
 
   Future<void> _syncAll() async {
@@ -47,15 +193,15 @@ class SyncEngine {
           'amount_ml': row.amountMl,
           'duration_left_sec': row.durationLeftSec,
           'duration_right_sec': row.durationRightSec,
-          'started_at': row.startedAt.toIso8601String(),
-          'ended_at': row.endedAt?.toIso8601String(),
+          'started_at': row.startedAt.toUtc().toIso8601String(),
+          'ended_at': row.endedAt?.toUtc().toIso8601String(),
           'notes': row.notes,
           'local_id': row.id,
         };
         if (row.syncStatus == 'pending_delete') {
           await _client
               .from('feeding_entries')
-              .update({'deleted_at': DateTime.now().toIso8601String()})
+              .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
               .eq('local_id', row.id);
         } else {
           await _client.from('feeding_entries').upsert(payload);
@@ -77,13 +223,13 @@ class SyncEngine {
           'family_id': row.familyId,
           'recorded_by': _client.auth.currentUser?.id,
           'type': row.type,
-          'occurred_at': row.occurredAt.toIso8601String(),
+          'occurred_at': row.occurredAt.toUtc().toIso8601String(),
           'local_id': row.id,
         };
         if (row.syncStatus == 'pending_delete') {
           await _client
               .from('diaper_entries')
-              .update({'deleted_at': DateTime.now().toIso8601String()})
+              .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
               .eq('local_id', row.id);
         } else {
           await _client.from('diaper_entries').upsert(payload);
@@ -104,15 +250,15 @@ class SyncEngine {
           'baby_id': row.babyId,
           'family_id': row.familyId,
           'recorded_by': _client.auth.currentUser?.id,
-          'started_at': row.startedAt.toIso8601String(),
-          'ended_at': row.endedAt?.toIso8601String(),
+          'started_at': row.startedAt.toUtc().toIso8601String(),
+          'ended_at': row.endedAt?.toUtc().toIso8601String(),
           'quality': row.quality,
           'local_id': row.id,
         };
         if (row.syncStatus == 'pending_delete') {
           await _client
               .from('sleep_entries')
-              .update({'deleted_at': DateTime.now().toIso8601String()})
+              .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
               .eq('local_id', row.id);
         } else {
           await _client.from('sleep_entries').upsert(payload);
@@ -135,13 +281,13 @@ class SyncEngine {
           'recorded_by': _client.auth.currentUser?.id,
           'celsius': row.celsius,
           'method': row.method,
-          'occurred_at': row.occurredAt.toIso8601String(),
+          'occurred_at': row.occurredAt.toUtc().toIso8601String(),
           'local_id': row.id,
         };
         if (row.syncStatus == 'pending_delete') {
           await _client
               .from('temperature_entries')
-              .update({'deleted_at': DateTime.now().toIso8601String()})
+              .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
               .eq('local_id', row.id);
         } else {
           await _client.from('temperature_entries').upsert(payload);

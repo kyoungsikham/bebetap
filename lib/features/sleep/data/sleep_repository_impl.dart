@@ -35,8 +35,29 @@ class SleepRepository {
     return id;
   }
 
-  Future<void> endSleep(String id) =>
-      _db.sleepDao.endSleep(id, DateTime.now());
+  Future<void> endSleep(String id, {DateTime? endedAt}) =>
+      _db.sleepDao.endSleep(id, endedAt ?? DateTime.now());
+
+  Future<void> updateSleep(
+    String id, {
+    required DateTime startedAt,
+    DateTime? endedAt,
+  }) async {
+    final existing = await _db.sleepDao.getSleepById(id);
+    if (existing == null) return;
+    await _db.sleepDao.upsertSleep(
+      SleepEntriesTableCompanion(
+        id: Value(id),
+        babyId: Value(existing.babyId),
+        familyId: Value(existing.familyId),
+        startedAt: Value(startedAt),
+        endedAt: Value(endedAt),
+        localId: Value(existing.localId ?? id),
+        syncStatus: const Value('pending_update'),
+        remoteId: Value(existing.remoteId),
+      ),
+    );
+  }
 
   Future<Duration> getTodaySleepTotal(String babyId) =>
       _db.sleepDao.getTodaySleepTotal(babyId);

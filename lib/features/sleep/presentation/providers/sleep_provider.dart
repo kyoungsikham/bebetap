@@ -8,6 +8,7 @@ import '../../../../core/providers/database_provider.dart';
 import '../../../../core/providers/sync_provider.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../home/presentation/providers/home_provider.dart';
+import '../../../log/presentation/providers/log_provider.dart';
 import '../../data/sleep_repository_impl.dart';
 import '../../domain/models/sleep_entry.dart';
 
@@ -29,7 +30,7 @@ class SleepSessionNotifier extends _$SleepSessionNotifier {
   @override
   AsyncValue<void> build() => const AsyncData(null);
 
-  Future<void> startSleep() async {
+  Future<void> startSleep({DateTime? startedAt}) async {
     final baby = ref.read(selectedBabyProvider).valueOrNull;
     if (baby == null) return;
 
@@ -38,32 +39,54 @@ class SleepSessionNotifier extends _$SleepSessionNotifier {
       await ref.read(sleepRepositoryProvider).startSleep(
             babyId: baby.id,
             familyId: baby.familyId,
+            startedAt: startedAt,
           );
       ref.invalidate(activeSleepProvider);
       ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
-      _pushSleepWidget(active: true);
+      _pushSleepWidget(active: true, startedAt: startedAt);
     });
   }
 
-  Future<void> endSleep(String sleepId) async {
+  Future<void> updateSleep(
+    String id, {
+    required DateTime startedAt,
+    DateTime? endedAt,
+  }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await ref.read(sleepRepositoryProvider).endSleep(sleepId);
+      await ref.read(sleepRepositoryProvider).updateSleep(
+            id,
+            startedAt: startedAt,
+            endedAt: endedAt,
+          );
       ref.invalidate(activeSleepProvider);
       ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
+      ref.read(syncEngineProvider).trigger();
+    });
+  }
+
+  Future<void> endSleep(String sleepId, {DateTime? endedAt}) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(sleepRepositoryProvider).endSleep(sleepId, endedAt: endedAt);
+      ref.invalidate(activeSleepProvider);
+      ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
       _pushSleepWidget(active: false);
     });
   }
 
-  void _pushSleepWidget({required bool active}) {
+  void _pushSleepWidget({required bool active, DateTime? startedAt}) {
     unawaited(HomeWidget.saveWidgetData<bool>('sleepActive', active));
     if (active) {
       unawaited(
         HomeWidget.saveWidgetData<String>(
           'sleepStartTime',
-          DateTime.now().toIso8601String(),
+          (startedAt ?? DateTime.now()).toIso8601String(),
         ),
       );
     }

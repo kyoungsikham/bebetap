@@ -74,6 +74,10 @@ class DiaperDao extends DatabaseAccessor<AppDatabase> with _$DiaperDaoMixin {
             ))
           .get();
 
+  Future<DiaperEntriesTableData?> getDiaperById(String id) =>
+      (select(diaperEntriesTable)..where((t) => t.id.equals(id)))
+          .getSingleOrNull();
+
   Future<List<DiaperEntriesTableData>> getPendingSync() =>
       (select(diaperEntriesTable)
             ..where((t) => t.syncStatus.isNotValue('synced')))

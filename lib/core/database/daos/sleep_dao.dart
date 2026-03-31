@@ -89,6 +89,10 @@ class SleepDao extends DatabaseAccessor<AppDatabase> with _$SleepDaoMixin {
             ))
           .get();
 
+  Future<SleepEntriesTableData?> getSleepById(String id) =>
+      (select(sleepEntriesTable)..where((t) => t.id.equals(id)))
+          .getSingleOrNull();
+
   Future<List<SleepEntriesTableData>> getPendingSync() =>
       (select(sleepEntriesTable)
             ..where((t) => t.syncStatus.isNotValue('synced')))

@@ -126,6 +126,74 @@ class FeedingRepository {
     );
   }
 
+  Future<void> updateFormulaFeeding(
+    String id, {
+    required int amountMl,
+    required DateTime startedAt,
+  }) async {
+    final existing = await _db.feedingDao.getFeedingById(id);
+    if (existing == null) return;
+    await _db.feedingDao.upsertFeeding(
+      FeedingEntriesTableCompanion(
+        id: Value(id),
+        babyId: Value(existing.babyId),
+        familyId: Value(existing.familyId),
+        type: const Value('formula'),
+        amountMl: Value(amountMl),
+        startedAt: Value(startedAt),
+        localId: Value(existing.localId ?? id),
+        syncStatus: const Value('pending_update'),
+        remoteId: Value(existing.remoteId),
+      ),
+    );
+  }
+
+  Future<void> updateBabyFoodFeeding(
+    String id, {
+    required int amountMl,
+    required DateTime startedAt,
+  }) async {
+    final existing = await _db.feedingDao.getFeedingById(id);
+    if (existing == null) return;
+    await _db.feedingDao.upsertFeeding(
+      FeedingEntriesTableCompanion(
+        id: Value(id),
+        babyId: Value(existing.babyId),
+        familyId: Value(existing.familyId),
+        type: const Value('baby_food'),
+        amountMl: Value(amountMl),
+        startedAt: Value(startedAt),
+        localId: Value(existing.localId ?? id),
+        syncStatus: const Value('pending_update'),
+        remoteId: Value(existing.remoteId),
+      ),
+    );
+  }
+
+  Future<void> updateBreastFeeding(
+    String id, {
+    required int durationLeftSec,
+    required int durationRightSec,
+    required DateTime startedAt,
+  }) async {
+    final existing = await _db.feedingDao.getFeedingById(id);
+    if (existing == null) return;
+    await _db.feedingDao.upsertFeeding(
+      FeedingEntriesTableCompanion(
+        id: Value(id),
+        babyId: Value(existing.babyId),
+        familyId: Value(existing.familyId),
+        type: const Value('breast'),
+        durationLeftSec: Value(durationLeftSec),
+        durationRightSec: Value(durationRightSec),
+        startedAt: Value(startedAt),
+        localId: Value(existing.localId ?? id),
+        syncStatus: const Value('pending_update'),
+        remoteId: Value(existing.remoteId),
+      ),
+    );
+  }
+
   FeedingEntry _fromRow(FeedingEntriesTableData row) => FeedingEntry(
         id: row.id,
         babyId: row.babyId,

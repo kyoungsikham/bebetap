@@ -23,6 +23,21 @@ class TemperatureDao extends DatabaseAccessor<AppDatabase>
             ..orderBy([(t) => OrderingTerm.desc(t.occurredAt)]))
           .watch();
 
+  Future<List<TemperatureEntriesTableData>> getTemperaturesByBabyAndDate(
+    String babyId,
+    DateTime from,
+    DateTime to,
+  ) =>
+      (select(temperatureEntriesTable)
+            ..where(
+              (t) =>
+                  t.babyId.equals(babyId) &
+                  t.occurredAt.isBetweenValues(from, to) &
+                  t.deletedAt.isNull(),
+            )
+            ..orderBy([(t) => OrderingTerm.desc(t.occurredAt)]))
+          .get();
+
   Future<TemperatureEntriesTableData?> getLastTemperature(String babyId) =>
       (select(temperatureEntriesTable)
             ..where((t) => t.babyId.equals(babyId) & t.deletedAt.isNull())
@@ -46,6 +61,10 @@ class TemperatureDao extends DatabaseAccessor<AppDatabase>
           remoteId: remoteId != null ? Value(remoteId) : const Value.absent(),
         ),
       );
+
+  Future<TemperatureEntriesTableData?> getTemperatureById(String id) =>
+      (select(temperatureEntriesTable)..where((t) => t.id.equals(id)))
+          .getSingleOrNull();
 
   Future<List<TemperatureEntriesTableData>> getPendingSync() =>
       (select(temperatureEntriesTable)

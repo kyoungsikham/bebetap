@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../baby/domain/models/baby.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
+import '../../../family/presentation/providers/family_provider.dart';
 import '../widgets/status_card.dart';
 import '../widgets/stats_strip.dart';
 import '../widgets/tracking_grid.dart';
@@ -14,6 +16,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(familyRealtimeProvider); // 실시간 동기화 + 초기 pull 활성화
     final babiesAsync = ref.watch(babiesProvider);
     final babyAsync = ref.watch(selectedBabyProvider);
 
@@ -25,34 +28,19 @@ class HomeScreen extends ConsumerWidget {
       );
     }
 
+    final baby = babyAsync.valueOrNull;
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: babyAsync.when(
-          loading: () => const SizedBox.shrink(),
-          error: (_, _) => const Text('BebeTap'),
-          data: (baby) => Text(
-            baby != null ? '${baby.name}의 하루' : 'BebeTap',
-            style: AppTypography.titleLarge,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_outlined),
-            color: AppColors.onSurface,
-            onPressed: () {},
-          ),
-        ],
-      ),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(selectedBabyProvider);
         },
         child: CustomScrollView(
           slivers: [
+            SliverToBoxAdapter(
+              child: _HomeHeader(baby: baby),
+            ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.pagePadding,
@@ -81,6 +69,132 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _HomeHeader extends StatelessWidget {
+  const _HomeHeader({this.baby});
+
+  final Baby? baby;
+
+  @override
+  Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final name = baby?.name ?? '아기';
+
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFFFFEEF0),
+            Color(0xFFFFF5F6),
+            Color(0xFFFFFFFF),
+          ],
+          stops: [0.0, 0.6, 1.0],
+        ),
+      ),
+      padding: EdgeInsets.only(
+        top: topPadding + AppSpacing.sm,
+        bottom: AppSpacing.lg,
+        left: AppSpacing.pagePadding,
+        right: AppSpacing.pagePadding,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 상단 바: BebeTap 로고 + 햄버거 메뉴
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'BebeTap',
+                style: AppTypography.titleLarge.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.menu),
+                color: AppColors.onSurface,
+                onPressed: () {},
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          // 인사 영역: 텍스트(좌) + 아바타(우)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '안녕, $name!',
+                      style: AppTypography.headlineMedium,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      '아기도 힘들지만 엄마 아빠도\n정말 수고하고 있을 거예요 💛',
+                      style: AppTypography.bodyMedium.copyWith(
+                        color: AppColors.onSurfaceMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              _BabyAvatar(photoUrl: baby?.photoUrl),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BabyAvatar extends StatelessWidget {
+  const _BabyAvatar({this.photoUrl});
+
+  final String? photoUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 72,
+      height: 72,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xFFFFD6DA),
+        border: Border.all(color: Colors.white, width: 3),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFFB3BC).withValues(alpha: 0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: photoUrl != null && photoUrl!.isNotEmpty
+          ? Image.network(
+              photoUrl!,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stack) => _defaultIcon(),
+            )
+          : _defaultIcon(),
+    );
+  }
+
+  Widget _defaultIcon() {
+    return const Icon(
+      Icons.child_care,
+      color: Color(0xFFFF6B8A),
+      size: 36,
     );
   }
 }

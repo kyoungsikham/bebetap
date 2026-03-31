@@ -41,6 +41,29 @@ class TemperatureRepository {
     );
   }
 
+  Future<void> updateTemperature(
+    String id, {
+    required double celsius,
+    required String method,
+    required DateTime occurredAt,
+  }) async {
+    final existing = await _db.temperatureDao.getTemperatureById(id);
+    if (existing == null) return;
+    await _db.temperatureDao.upsertTemperature(
+      TemperatureEntriesTableCompanion(
+        id: Value(id),
+        babyId: Value(existing.babyId),
+        familyId: Value(existing.familyId),
+        celsius: Value(celsius),
+        method: Value(method),
+        occurredAt: Value(occurredAt),
+        localId: Value(existing.localId ?? id),
+        syncStatus: const Value('pending_update'),
+        remoteId: Value(existing.remoteId),
+      ),
+    );
+  }
+
   Future<TemperatureEntry?> getLastTemperature(String babyId) async {
     final row = await _db.temperatureDao.getLastTemperature(babyId);
     return row != null ? _fromRow(row) : null;

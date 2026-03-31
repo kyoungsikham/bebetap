@@ -77,7 +77,7 @@ final dailyBabyFoodTotalProvider = AutoDisposeFutureProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DailyBabyFoodTotalRef = AutoDisposeFutureProviderRef<int>;
-String _$feedingNotifierHash() => r'922a896c2a8a7d0c16fc2cef67a861d96dddd417';
+String _$feedingNotifierHash() => r'167aa8b8e6eee1fe95f2801327e5d076a5ab94f7';
 
 /// See also [FeedingNotifier].
 @ProviderFor(FeedingNotifier)

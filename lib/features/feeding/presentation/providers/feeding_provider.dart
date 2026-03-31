@@ -9,6 +9,7 @@ import '../../../../core/providers/database_provider.dart';
 import '../../../../core/providers/sync_provider.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../home/presentation/providers/home_provider.dart';
+import '../../../log/presentation/providers/log_provider.dart';
 import '../../data/feeding_repository_impl.dart';
 import '../../domain/models/feeding_entry.dart';
 
@@ -67,6 +68,7 @@ class FeedingNotifier extends _$FeedingNotifier {
       ref.invalidate(todayFeedingsProvider);
       ref.invalidate(dailyFormulaTotalProvider);
       ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
       _pushFeedingWidget(amountMl: amountMl);
     });
@@ -90,6 +92,7 @@ class FeedingNotifier extends _$FeedingNotifier {
       ref.invalidate(todayFeedingsProvider);
       ref.invalidate(dailyBabyFoodTotalProvider);
       ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
     });
   }
@@ -115,8 +118,70 @@ class FeedingNotifier extends _$FeedingNotifier {
           );
       ref.invalidate(todayFeedingsProvider);
       ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
       _pushFeedingWidget();
+    });
+  }
+
+  Future<void> updateFormula(
+    String id, {
+    required int amountMl,
+    required DateTime startedAt,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(feedingRepositoryProvider).updateFormulaFeeding(
+            id,
+            amountMl: amountMl,
+            startedAt: startedAt,
+          );
+      ref.invalidate(todayFeedingsProvider);
+      ref.invalidate(dailyFormulaTotalProvider);
+      ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
+      ref.read(syncEngineProvider).trigger();
+    });
+  }
+
+  Future<void> updateBabyFood(
+    String id, {
+    required int amountMl,
+    required DateTime startedAt,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(feedingRepositoryProvider).updateBabyFoodFeeding(
+            id,
+            amountMl: amountMl,
+            startedAt: startedAt,
+          );
+      ref.invalidate(todayFeedingsProvider);
+      ref.invalidate(dailyBabyFoodTotalProvider);
+      ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
+      ref.read(syncEngineProvider).trigger();
+    });
+  }
+
+  Future<void> updateBreast(
+    String id, {
+    required int durationLeftSec,
+    required int durationRightSec,
+    required DateTime startedAt,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(feedingRepositoryProvider).updateBreastFeeding(
+            id,
+            durationLeftSec: durationLeftSec,
+            durationRightSec: durationRightSec,
+            startedAt: startedAt,
+          );
+      ref.invalidate(todayFeedingsProvider);
+      ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
+      ref.read(syncEngineProvider).trigger();
     });
   }
 

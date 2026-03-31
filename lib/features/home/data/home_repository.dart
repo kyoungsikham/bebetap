@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../../core/database/app_database.dart';
 import '../domain/models/home_summary.dart';
 import '../../sleep/data/sleep_repository_impl.dart';
@@ -26,6 +28,7 @@ class HomeRepository {
     ]);
 
     final lastFeeding = results[0] as dynamic;
+    debugPrint('[HomeSummary] lastFeeding.startedAt: ${lastFeeding?.startedAt}, now: ${DateTime.now()}');
     final formulaTotal = results[1] as int;
     final babyFoodTotal = results[2] as int;
     final diaperCount = results[3] as int;

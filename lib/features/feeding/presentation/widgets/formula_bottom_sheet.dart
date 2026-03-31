@@ -7,10 +7,13 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/constants/medical_constants.dart';
 import '../../../../shared/widgets/date_time_wheel_picker.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
+import '../../../log/domain/models/timeline_entry.dart';
 import '../providers/feeding_provider.dart';
 
 class FormulaBottomSheet extends ConsumerStatefulWidget {
-  const FormulaBottomSheet({super.key});
+  const FormulaBottomSheet({super.key, this.editEntry});
+
+  final TimelineEntry? editEntry;
 
   @override
   ConsumerState<FormulaBottomSheet> createState() =>
@@ -18,9 +21,11 @@ class FormulaBottomSheet extends ConsumerStatefulWidget {
 }
 
 class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
-  int _selectedMl = MedicalConstants.formulaDefaultMl;
+  late int _selectedMl;
   late DateTime _selectedDateTime;
   late final FixedExtentScrollController _scrollController;
+
+  bool get _isEditMode => widget.editEntry != null;
 
   static final _items = List.generate(
     (MedicalConstants.formulaPickerMaxMl - MedicalConstants.formulaPickerMinMl) ~/
@@ -33,10 +38,12 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _selectedDateTime = DateTime.now();
-    final initialIndex =
-        (_selectedMl - MedicalConstants.formulaPickerMinMl) ~/
-            MedicalConstants.formulaPickerStepMl;
+    final edit = widget.editEntry;
+    _selectedMl = edit?.rawAmountMl ?? MedicalConstants.formulaDefaultMl;
+    _selectedDateTime = edit?.occurredAt ?? DateTime.now();
+    final initialIndex = ((_selectedMl - MedicalConstants.formulaPickerMinMl) ~/
+            MedicalConstants.formulaPickerStepMl)
+        .clamp(0, _items.length - 1);
     _scrollController =
         FixedExtentScrollController(initialItem: initialIndex);
   }
@@ -196,12 +203,22 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
               onPressed: isLoading
                   ? null
                   : () async {
-                      await ref
-                          .read(feedingNotifierProvider.notifier)
-                          .saveFormula(
-                            amountMl: _selectedMl,
-                            startedAt: _selectedDateTime,
-                          );
+                      if (_isEditMode) {
+                        await ref
+                            .read(feedingNotifierProvider.notifier)
+                            .updateFormula(
+                              widget.editEntry!.id,
+                              amountMl: _selectedMl,
+                              startedAt: _selectedDateTime,
+                            );
+                      } else {
+                        await ref
+                            .read(feedingNotifierProvider.notifier)
+                            .saveFormula(
+                              amountMl: _selectedMl,
+                              startedAt: _selectedDateTime,
+                            );
+                      }
                       if (context.mounted) Navigator.of(context).pop();
                     },
               style: ElevatedButton.styleFrom(
@@ -221,7 +238,7 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
                         color: Colors.white,
                       ),
                     )
-                  : Text('$_selectedMl ml 저장'),
+                  : Text(_isEditMode ? '$_selectedMl ml 수정' : '$_selectedMl ml 저장'),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),

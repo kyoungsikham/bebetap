@@ -1,0 +1,168 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/database/app_database.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/extensions/datetime_ext.dart';
+
+enum TimelineEntryType { formula, breast, babyFood, sleep, diaper, temperature }
+
+@immutable
+class TimelineEntry {
+  const TimelineEntry({
+    required this.id,
+    required this.type,
+    required this.occurredAt,
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+    this.rawAmountMl,
+    this.rawDurationLeftSec,
+    this.rawDurationRightSec,
+    this.rawDiaperType,
+    this.rawCelsius,
+    this.rawMethod,
+    this.rawEndedAt,
+  });
+
+  final String id;
+  final TimelineEntryType type;
+  final DateTime occurredAt;
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+
+  // Edit form pre-population
+  final int? rawAmountMl;
+  final int? rawDurationLeftSec;
+  final int? rawDurationRightSec;
+  final String? rawDiaperType;
+  final double? rawCelsius;
+  final String? rawMethod;
+  final DateTime? rawEndedAt;
+
+  factory TimelineEntry.fromFeedingRow(FeedingEntriesTableData row) {
+    switch (row.type) {
+      case 'breast':
+        final leftSec = row.durationLeftSec ?? 0;
+        final rightSec = row.durationRightSec ?? 0;
+        final dur = Duration(seconds: leftSec + rightSec);
+        return TimelineEntry(
+          id: row.id,
+          type: TimelineEntryType.breast,
+          occurredAt: row.startedAt,
+          title: '모유',
+          subtitle: dur.formatKorean(),
+          icon: Icons.favorite_outline,
+          color: const Color(0xFFE91E8C),
+          rawDurationLeftSec: leftSec,
+          rawDurationRightSec: rightSec,
+        );
+      case 'baby_food':
+        return TimelineEntry(
+          id: row.id,
+          type: TimelineEntryType.babyFood,
+          occurredAt: row.startedAt,
+          title: '이유식',
+          subtitle: '${row.amountMl ?? 0}ml',
+          icon: Icons.restaurant,
+          color: const Color(0xFFFF9800),
+          rawAmountMl: row.amountMl,
+        );
+      default: // formula
+        return TimelineEntry(
+          id: row.id,
+          type: TimelineEntryType.formula,
+          occurredAt: row.startedAt,
+          title: '분유',
+          subtitle: '${row.amountMl ?? 0}ml',
+          icon: Icons.local_drink,
+          color: AppColors.primary,
+          rawAmountMl: row.amountMl,
+        );
+    }
+  }
+
+  factory TimelineEntry.fromSleepRow(SleepEntriesTableData row) {
+    final start = row.startedAt;
+    final end = row.endedAt ?? DateTime.now();
+    final dur = end.difference(start);
+    final isActive = row.endedAt == null;
+    return TimelineEntry(
+      id: row.id,
+      type: TimelineEntryType.sleep,
+      occurredAt: row.startedAt,
+      title: '수면',
+      subtitle: isActive ? '자는 중' : dur.formatKorean(),
+      icon: Icons.bedtime,
+      color: const Color(0xFF7B68EE),
+      rawEndedAt: row.endedAt,
+    );
+  }
+
+  factory TimelineEntry.fromDiaperRow(DiaperEntriesTableData row) {
+    String typeLabel;
+    switch (row.type) {
+      case 'wet':
+        typeLabel = '소변';
+      case 'soiled':
+        typeLabel = '대변';
+      case 'both':
+        typeLabel = '소변+대변';
+      case 'dry':
+        typeLabel = '교체';
+      default:
+        typeLabel = row.type;
+    }
+    return TimelineEntry(
+      id: row.id,
+      type: TimelineEntryType.diaper,
+      occurredAt: row.occurredAt,
+      title: '기저귀',
+      subtitle: typeLabel,
+      icon: Icons.baby_changing_station,
+      color: const Color(0xFF52B788),
+      rawDiaperType: row.type,
+    );
+  }
+
+  factory TimelineEntry.fromTemperatureRow(TemperatureEntriesTableData row) {
+    return TimelineEntry(
+      id: row.id,
+      type: TimelineEntryType.temperature,
+      occurredAt: row.occurredAt,
+      title: '체온',
+      subtitle: '${row.celsius.toStringAsFixed(1)}°C',
+      icon: Icons.device_thermostat,
+      color: const Color(0xFFFF7043),
+      rawCelsius: row.celsius,
+      rawMethod: row.method,
+    );
+  }
+}
+
+@immutable
+class LogDaySummary {
+  const LogDaySummary({
+    required this.formulaTotalMl,
+    required this.breastTotalSec,
+    required this.babyFoodTotalMl,
+    required this.diaperCount,
+    required this.sleepTotal,
+  });
+
+  final int formulaTotalMl;
+  final int breastTotalSec;
+  final int babyFoodTotalMl;
+  final int diaperCount;
+  final Duration sleepTotal;
+
+  factory LogDaySummary.empty() => const LogDaySummary(
+        formulaTotalMl: 0,
+        breastTotalSec: 0,
+        babyFoodTotalMl: 0,
+        diaperCount: 0,
+        sleepTotal: Duration.zero,
+      );
+}

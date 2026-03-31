@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../database/app_database.dart';
+import 'supabase_datetime.dart';
 
 /// Supabase Realtime 채널 구독 — 가족 구성원의 실시간 데이터 수신
 class RealtimeListener {
@@ -131,6 +132,11 @@ class RealtimeListener {
   String _resolveId(Map<String, dynamic> r) =>
       (r['local_id'] as String?) ?? (r['id'] as String);
 
+  DateTime _parseDateTime(String s) {
+    debugPrint('[Realtime] raw timestamp: "$s" → parsed: ${parseSupabaseDateTime(s)}');
+    return parseSupabaseDateTime(s);
+  }
+
   Future<void> _upsertFeeding(Map<String, dynamic> r) =>
       _db.feedingDao.upsertFeeding(
         FeedingEntriesTableCompanion(
@@ -141,10 +147,10 @@ class RealtimeListener {
           amountMl: Value(r['amount_ml'] as int?),
           durationLeftSec: Value(r['duration_left_sec'] as int?),
           durationRightSec: Value(r['duration_right_sec'] as int?),
-          startedAt: Value(DateTime.parse(r['started_at'] as String)),
+          startedAt: Value(_parseDateTime(r['started_at'] as String)),
           endedAt: Value(
             r['ended_at'] != null
-                ? DateTime.parse(r['ended_at'] as String)
+                ? _parseDateTime(r['ended_at'] as String)
                 : null,
           ),
           syncStatus: const Value('synced'),
@@ -159,7 +165,7 @@ class RealtimeListener {
           babyId: Value(r['baby_id'] as String),
           familyId: Value(r['family_id'] as String),
           type: Value(r['type'] as String),
-          occurredAt: Value(DateTime.parse(r['occurred_at'] as String)),
+          occurredAt: Value(_parseDateTime(r['occurred_at'] as String)),
           syncStatus: const Value('synced'),
           remoteId: Value(r['id'] as String),
         ),
@@ -171,10 +177,10 @@ class RealtimeListener {
           id: Value(_resolveId(r)),
           babyId: Value(r['baby_id'] as String),
           familyId: Value(r['family_id'] as String),
-          startedAt: Value(DateTime.parse(r['started_at'] as String)),
+          startedAt: Value(_parseDateTime(r['started_at'] as String)),
           endedAt: Value(
             r['ended_at'] != null
-                ? DateTime.parse(r['ended_at'] as String)
+                ? _parseDateTime(r['ended_at'] as String)
                 : null,
           ),
           quality: Value(r['quality'] as String?),
@@ -191,7 +197,7 @@ class RealtimeListener {
           familyId: Value(r['family_id'] as String),
           celsius: Value((r['celsius'] as num).toDouble()),
           method: Value(r['method'] as String? ?? 'axillary'),
-          occurredAt: Value(DateTime.parse(r['occurred_at'] as String)),
+          occurredAt: Value(_parseDateTime(r['occurred_at'] as String)),
           syncStatus: const Value('synced'),
           remoteId: Value(r['id'] as String),
         ),

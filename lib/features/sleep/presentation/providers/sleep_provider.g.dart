@@ -41,7 +41,7 @@ final activeSleepProvider = AutoDisposeStreamProvider<SleepEntry?>.internal(
 // ignore: unused_element
 typedef ActiveSleepRef = AutoDisposeStreamProviderRef<SleepEntry?>;
 String _$sleepSessionNotifierHash() =>
-    r'6e1a0ed031e7cef112f9e12c802b97a0b3587e79';
+    r'2b7a5bcc574472e038755d0b60854208b2cf5951';
 
 /// See also [SleepSessionNotifier].
 @ProviderFor(SleepSessionNotifier)

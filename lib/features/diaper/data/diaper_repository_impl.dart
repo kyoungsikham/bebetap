@@ -46,6 +46,27 @@ class DiaperRepository {
     return row != null ? _fromRow(row) : null;
   }
 
+  Future<void> updateDiaper(
+    String id, {
+    required String type,
+    required DateTime occurredAt,
+  }) async {
+    final existing = await _db.diaperDao.getDiaperById(id);
+    if (existing == null) return;
+    await _db.diaperDao.upsertDiaper(
+      DiaperEntriesTableCompanion(
+        id: Value(id),
+        babyId: Value(existing.babyId),
+        familyId: Value(existing.familyId),
+        type: Value(type),
+        occurredAt: Value(occurredAt),
+        localId: Value(existing.localId ?? id),
+        syncStatus: const Value('pending_update'),
+        remoteId: Value(existing.remoteId),
+      ),
+    );
+  }
+
   DiaperEntry _fromRow(DiaperEntriesTableData row) => DiaperEntry(
         id: row.id,
         babyId: row.babyId,

@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' hide Family;
 import 'package:riverpod_annotation/riverpod_annotation.dart' hide Family;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/database_provider.dart';
+import '../../../../core/providers/sync_provider.dart';
 import '../../../../core/sync/realtime_listener.dart';
 import '../../../feeding/presentation/providers/feeding_provider.dart';
 import '../../../home/presentation/providers/home_provider.dart';
@@ -18,8 +20,10 @@ FamilyRepository familyRepository(Ref ref) =>
     FamilyRepository(Supabase.instance.client);
 
 @riverpod
-Future<Family?> myFamily(Ref ref) =>
-    ref.watch(familyRepositoryProvider).getMyFamily();
+Future<Family?> myFamily(Ref ref) {
+  ref.watch(authStateProvider); // auth 변경 시 자동 re-fetch
+  return ref.watch(familyRepositoryProvider).getMyFamily();
+}
 
 @riverpod
 Future<List<FamilyMember>> familyMembers(Ref ref) async {
@@ -60,7 +64,7 @@ void familyRealtime(Ref ref) {
     ref.watch(appDatabaseProvider),
   );
 
-  ref.listen(myFamilyProvider, (_, next) {
+  ref.listen(myFamilyProvider, (_, next) async {
     final family = next.valueOrNull;
     if (family != null) {
       listener.subscribe(family.id, onRemoteChange: () {
@@ -68,6 +72,10 @@ void familyRealtime(Ref ref) {
         ref.invalidate(todayFeedingsProvider);
         ref.invalidate(activeSleepProvider);
       });
+      // 초기 데이터 pull: 가족 구성원 로그인 시 기존 기록 가져오기
+      await ref.read(syncEngineProvider).pullRemoteData(family.id);
+      ref.invalidate(homeSummaryProvider);
+      ref.invalidate(todayFeedingsProvider);
     } else {
       listener.unsubscribe();
     }

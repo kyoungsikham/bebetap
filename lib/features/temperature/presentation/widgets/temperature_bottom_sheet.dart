@@ -6,10 +6,14 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/constants/medical_constants.dart';
+import '../../../../shared/widgets/date_time_wheel_picker.dart';
+import '../../../log/domain/models/timeline_entry.dart';
 import '../providers/temperature_provider.dart';
 
 class TemperatureBottomSheet extends ConsumerStatefulWidget {
-  const TemperatureBottomSheet({super.key});
+  const TemperatureBottomSheet({super.key, this.editEntry});
+
+  final TimelineEntry? editEntry;
 
   @override
   ConsumerState<TemperatureBottomSheet> createState() =>
@@ -18,8 +22,11 @@ class TemperatureBottomSheet extends ConsumerStatefulWidget {
 
 class _TemperatureBottomSheetState
     extends ConsumerState<TemperatureBottomSheet> {
-  final _controller = TextEditingController();
-  String _method = 'ear';
+  late final TextEditingController _controller;
+  late String _method;
+  late DateTime _selectedDateTime;
+
+  bool get _isEditMode => widget.editEntry != null;
 
   static const _methods = [
     ('axillary', '겨드랑이'),
@@ -29,9 +36,48 @@ class _TemperatureBottomSheetState
   ];
 
   @override
+  void initState() {
+    super.initState();
+    final edit = widget.editEntry;
+    _controller = TextEditingController(
+      text: edit?.rawCelsius?.toStringAsFixed(1) ?? '',
+    );
+    _method = edit?.rawMethod ?? 'ear';
+    _selectedDateTime = edit?.occurredAt ?? DateTime.now();
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  String _formatDisplayDateTime(DateTime dt) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final dtDay = DateTime(dt.year, dt.month, dt.day);
+    String datePart;
+    if (dtDay == today) {
+      datePart = '오늘';
+    } else if (dtDay == yesterday) {
+      datePart = '어제';
+    } else {
+      const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+      datePart = '${dt.month}월 ${dt.day}일 (${weekdays[dt.weekday - 1]})';
+    }
+    final period = dt.hour < 12 ? '오전' : '오후';
+    final h = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+    final timePart = '$period $h:${dt.minute.toString().padLeft(2, '0')}';
+    return '$datePart  $timePart';
+  }
+
+  Future<void> _pickDateTime() async {
+    final result = await showDateTimeWheelPicker(
+      context,
+      initialDateTime: _selectedDateTime,
+    );
+    if (result != null && mounted) setState(() => _selectedDateTime = result);
   }
 
   @override
@@ -61,6 +107,33 @@ class _TemperatureBottomSheetState
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: AppSpacing.xl),
+
+          // 날짜/시간 선택 칩 (edit 모드에서만 표시)
+          if (_isEditMode) ...[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: InkWell(
+                onTap: _pickDateTime,
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.4),
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    _formatDisplayDateTime(_selectedDateTime),
+                    style: AppTypography.bodyMedium
+                        .copyWith(color: AppColors.primary),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
 
           // 체온 입력
           TextField(
@@ -110,7 +183,7 @@ class _TemperatureBottomSheetState
               ),
             ),
             onChanged: (_) => setState(() {}),
-            autofocus: true,
+            autofocus: !_isEditMode,
           ),
 
           if (isFever) ...[
@@ -177,12 +250,23 @@ class _TemperatureBottomSheetState
               onPressed: (isLoading || celsius == null)
                   ? null
                   : () async {
-                      await ref
-                          .read(temperatureNotifierProvider.notifier)
-                          .saveTemperature(
-                            celsius: celsius,
-                            method: _method,
-                          );
+                      if (_isEditMode) {
+                        await ref
+                            .read(temperatureNotifierProvider.notifier)
+                            .updateTemperature(
+                              widget.editEntry!.id,
+                              celsius: celsius,
+                              method: _method,
+                              occurredAt: _selectedDateTime,
+                            );
+                      } else {
+                        await ref
+                            .read(temperatureNotifierProvider.notifier)
+                            .saveTemperature(
+                              celsius: celsius,
+                              method: _method,
+                            );
+                      }
                       if (context.mounted) Navigator.of(context).pop();
                     },
               style: ElevatedButton.styleFrom(
@@ -202,7 +286,7 @@ class _TemperatureBottomSheetState
                         color: Colors.white,
                       ),
                     )
-                  : const Text('저장'),
+                  : Text(_isEditMode ? '수정' : '저장'),
             ),
           ),
         ],

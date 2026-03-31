@@ -94,6 +94,10 @@ class FeedingDao extends DatabaseAccessor<AppDatabase> with _$FeedingDaoMixin {
             ))
           .get();
 
+  Future<FeedingEntriesTableData?> getFeedingById(String id) =>
+      (select(feedingEntriesTable)..where((t) => t.id.equals(id)))
+          .getSingleOrNull();
+
   Future<List<FeedingEntriesTableData>> getPendingSync() =>
       (select(feedingEntriesTable)
             ..where((t) => t.syncStatus.isNotValue('synced')))

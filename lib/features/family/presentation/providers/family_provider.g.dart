@@ -23,7 +23,7 @@ final familyRepositoryProvider = Provider<FamilyRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FamilyRepositoryRef = ProviderRef<FamilyRepository>;
-String _$myFamilyHash() => r'cea4f0b9417724370da9e249ef9295c0759d9992';
+String _$myFamilyHash() => r'51d14c2ca1243a9cdaa3353880dd75ce093e97d5';
 
 /// See also [myFamily].
 @ProviderFor(myFamily)
@@ -58,7 +58,7 @@ final familyMembersProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FamilyMembersRef = AutoDisposeFutureProviderRef<List<FamilyMember>>;
-String _$familyRealtimeHash() => r'a7f8e7bffd288f5b30314b4752ef2340321bc7aa';
+String _$familyRealtimeHash() => r'638ceb244128e5123acaf88e5c11bd36b390b1ab';
 
 /// 가족 실시간 동기화 활성화 — keepAlive: true로 한번 활성화되면 계속 유지
 ///

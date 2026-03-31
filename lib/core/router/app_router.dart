@@ -10,6 +10,7 @@ import '../../features/auth/presentation/screens/reset_password_screen.dart';
 import '../../features/baby/presentation/providers/baby_provider.dart';
 import '../../features/baby/presentation/screens/baby_setup_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/log/presentation/screens/log_screen.dart';
 import '../../features/statistics/presentation/screens/statistics_screen.dart';
 import '../../features/family/presentation/screens/family_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
@@ -146,7 +147,7 @@ GoRouter appRouter(Ref ref) {
             path: AppRoutes.log,
             pageBuilder: (_, s) => _fadePage(
               key: const ValueKey('log'),
-              child: const HomeScreen(),
+              child: const LogScreen(),
             ),
           ),
           GoRoute(
