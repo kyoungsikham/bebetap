@@ -42,5 +42,5 @@
 ## 인프라 / Supabase
 
 - [ ] `supabase/config.toml` 환경변수 `.env` 파일로 분리 (현재 secret 하드코딩)
-- [ ] Supabase Storage 버킷 설정 (아기 프로필 사진 업로드용)
+- [x] Supabase Storage 버킷 설정 (아기 프로필 사진 업로드용)
 - [ ] Edge Function 배포 상태 확인 (`line-auth`, `naver-auth`)

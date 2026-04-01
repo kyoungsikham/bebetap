@@ -48,6 +48,9 @@ class BreastfeedingState {
 class BreastfeedingStopwatch extends _$BreastfeedingStopwatch {
   Timer? _timer;
   DateTime? _sideStartedAt;
+  // _tick()에서 화면 갱신용으로 사용. 일시정지된 쪽의 누적 시간을 보존.
+  Duration _leftAccumulated = Duration.zero;
+  Duration _rightAccumulated = Duration.zero;
 
   @override
   BreastfeedingState build() {
@@ -75,6 +78,8 @@ class BreastfeedingStopwatch extends _$BreastfeedingStopwatch {
     _timer?.cancel();
     _timer = null;
     _sideStartedAt = null;
+    _leftAccumulated = Duration.zero;
+    _rightAccumulated = Duration.zero;
     state = const BreastfeedingState();
   }
 
@@ -84,24 +89,26 @@ class BreastfeedingStopwatch extends _$BreastfeedingStopwatch {
     if (state.activeSide != null && _sideStartedAt != null) {
       final elapsed = DateTime.now().difference(_sideStartedAt!);
       if (state.activeSide == 'left') {
-        state = state.copyWith(leftDuration: state.leftDuration + elapsed);
+        _leftAccumulated += elapsed;
       } else {
-        state = state.copyWith(rightDuration: state.rightDuration + elapsed);
+        _rightAccumulated += elapsed;
       }
+      state = state.copyWith(
+        leftDuration: _leftAccumulated,
+        rightDuration: _rightAccumulated,
+      );
       _sideStartedAt = null;
     }
   }
 
+  /// 화면 갱신 전용: 누적값 + 현재 진행 중인 경과 시간을 표시
   void _tick() {
-    if (state.activeSide == null) return;
+    if (state.activeSide == null || _sideStartedAt == null) return;
+    final elapsed = DateTime.now().difference(_sideStartedAt!);
     if (state.activeSide == 'left') {
-      state = state.copyWith(
-        leftDuration: state.leftDuration + const Duration(seconds: 1),
-      );
+      state = state.copyWith(leftDuration: _leftAccumulated + elapsed);
     } else {
-      state = state.copyWith(
-        rightDuration: state.rightDuration + const Duration(seconds: 1),
-      );
+      state = state.copyWith(rightDuration: _rightAccumulated + elapsed);
     }
   }
 }
