@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -33,6 +35,20 @@ class BabyRepository {
     return rows.map(_fromMap).toList();
   }
 
+  /// 아기 사진을 Supabase Storage에 업로드하고 public URL을 반환합니다.
+  Future<String> uploadBabyPhoto(String babyId, File imageFile) async {
+    final ext = imageFile.path.split('.').last.toLowerCase();
+    final path = '$babyId.$ext';
+
+    await _client.storage.from('baby-photos').upload(
+          path,
+          imageFile,
+          fileOptions: const FileOptions(upsert: true),
+        );
+
+    return _client.storage.from('baby-photos').getPublicUrl(path);
+  }
+
   /// 새 가족을 생성하고 아기를 등록합니다 (온보딩 최초 1회).
   Future<Baby> createBabyWithFamily({
     required String name,
@@ -40,6 +56,7 @@ class BabyRepository {
     String? gender,
     double? weightKg,
     String? nickname,
+    String? photoUrl,
   }) async {
     final user = _client.auth.currentUser;
     if (user == null) throw Exception('로그인이 필요합니다');
@@ -57,7 +74,7 @@ class BabyRepository {
       'family_id': familyId,
       'user_id': user.id,
       'role': 'owner',
-      if (nickname != null) 'nickname': nickname,
+      'nickname': ?nickname,
     });
 
     // 3. 아기 생성
@@ -71,11 +88,62 @@ class BabyRepository {
           'birth_date': _toDateString(birthDate),
           'gender': gender,
           'weight_kg': weightKg,
+          'photo_url': ?photoUrl,
         })
         .select()
         .single();
 
     return _fromMap(babyRow);
+  }
+
+  /// 기존 아기 정보를 수정합니다.
+  Future<Baby> updateBaby({
+    required String id,
+    required String name,
+    required DateTime birthDate,
+    String? gender,
+    double? weightKg,
+    String? photoUrl,
+  }) async {
+    final row = await _client
+        .from('babies')
+        .update({
+          'name': name,
+          'birth_date': _toDateString(birthDate),
+          'gender': gender,
+          'weight_kg': weightKg,
+          'photo_url': ?photoUrl,
+        })
+        .eq('id', id)
+        .select()
+        .single();
+    return _fromMap(row);
+  }
+
+  /// 기존 가족에 새 아기를 추가합니다.
+  Future<Baby> addBabyToFamily({
+    required String familyId,
+    required String name,
+    required DateTime birthDate,
+    String? gender,
+    double? weightKg,
+    String? photoUrl,
+  }) async {
+    final babyId = _uuid.v4();
+    final row = await _client
+        .from('babies')
+        .insert({
+          'id': babyId,
+          'family_id': familyId,
+          'name': name,
+          'birth_date': _toDateString(birthDate),
+          'gender': gender,
+          'weight_kg': weightKg,
+          'photo_url': ?photoUrl,
+        })
+        .select()
+        .single();
+    return _fromMap(row);
   }
 
   Baby _fromMap(Map<String, dynamic> map) => Baby(

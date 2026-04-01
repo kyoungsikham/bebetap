@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/widgets/baby_avatar_widget.dart';
 import '../../../family/presentation/widgets/join_family_bottom_sheet.dart';
 import '../../../family/presentation/widgets/relationship_selector.dart';
 import '../providers/baby_provider.dart';
@@ -22,8 +26,9 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
   final _weightController = TextEditingController();
 
   DateTime? _birthDate;
-  String? _gender; // 'male' | 'female' | null
+  String? _gender;
   String? _nickname;
+  File? _imageFile;
 
   static final _dateFormat = DateFormat('yyyy년 MM월 dd일');
 
@@ -32,6 +37,16 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
     _nameController.dispose();
     _weightController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 512,
+      maxHeight: 512,
+      imageQuality: 85,
+    );
+    if (picked != null) setState(() => _imageFile = File(picked.path));
   }
 
   Future<void> _pickBirthDate() async {
@@ -54,16 +69,24 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
       );
       return;
     }
-
-    final weightText = _weightController.text.trim();
-    final weightKg =
-        weightText.isNotEmpty ? double.tryParse(weightText) : null;
-
     if (_nickname == null || _nickname!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('아기와의 관계를 선택해주세요')),
       );
       return;
+    }
+
+    final weightText = _weightController.text.trim();
+    final weightKg =
+        weightText.isNotEmpty ? double.tryParse(weightText) : null;
+    final repo = ref.read(babyRepositoryProvider);
+
+    // 사진 먼저 업로드 (임시 ID 사용, 실제 babyId는 생성 후 알 수 있음)
+    // 온보딩에서는 이름 기반 임시 key로 업로드 후 DB에 저장
+    String? photoUrl;
+    if (_imageFile != null) {
+      final tempKey = 'setup_${DateTime.now().millisecondsSinceEpoch}';
+      photoUrl = await repo.uploadBabyPhoto(tempKey, _imageFile!);
     }
 
     final baby = await ref.read(babySetupNotifierProvider.notifier).createBaby(
@@ -72,6 +95,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
           gender: _gender,
           weightKg: weightKg,
           nickname: _nickname,
+          photoUrl: photoUrl,
         );
 
     if (!mounted) return;
@@ -105,6 +129,27 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: AppSpacing.lg),
+
+                // 프로필 사진
+                Center(
+                  child: BabyAvatarWidget(
+                    localFile: _imageFile,
+                    gender: _gender,
+                    size: 96,
+                    showEditOverlay: true,
+                    onTap: _pickImage,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Center(
+                  child: Text(
+                    '사진 선택 (선택)',
+                    style: AppTypography.bodySmall
+                        .copyWith(color: AppColors.onSurfaceMuted),
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.xl),
 
                 // 아기 이름
                 const _SectionLabel('아기 이름 *'),
@@ -268,10 +313,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                     context,
                     onJoined: () => ref.invalidate(babiesProvider),
                   ),
-                  icon: Icon(
-                    Icons.login,
-                    color: AppColors.primary,
-                  ),
+                  icon: const Icon(Icons.login, color: AppColors.primary),
                   label: Text(
                     '초대 코드로 합류하기',
                     style: AppTypography.labelLarge

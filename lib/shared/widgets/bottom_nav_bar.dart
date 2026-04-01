@@ -14,7 +14,6 @@ class ScaffoldWithBottomNav extends StatelessWidget {
     (path: AppRoutes.statistics, icon: Icons.bar_chart_outlined,  activeIcon: Icons.bar_chart,         label: '통계'),
     (path: AppRoutes.log,        icon: Icons.list_alt_outlined,   activeIcon: Icons.list_alt,          label: '기록'),
     (path: AppRoutes.family,     icon: Icons.people_outline,      activeIcon: Icons.people,            label: '가족'),
-    (path: AppRoutes.settings,   icon: Icons.settings_outlined,   activeIcon: Icons.settings,          label: '설정'),
   ];
 
   int _currentIndex(BuildContext context) {

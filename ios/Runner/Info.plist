@@ -72,6 +72,10 @@
 	<string>343593600698-9grl6ecn6goj31inah608rlv6tfbec1k.apps.googleusercontent.com</string>
 	<key>GIDServerClientID</key>
 	<string>343593600698-ji8aqb4t29ecmr7i6hea3st5bhfejpre.apps.googleusercontent.com</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>아이 프로필 사진을 선택하기 위해 사진 라이브러리에 접근합니다.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>아이 프로필 사진을 촬영하기 위해 카메라에 접근합니다.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

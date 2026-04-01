@@ -45,6 +45,60 @@ Future<Baby?> selectedBaby(Ref ref) async {
   return list.first;
 }
 
+// ── Baby manage notifier ─────────────────────────────────────────────────────
+
+class BabyManageNotifier extends AsyncNotifier<void> {
+  @override
+  Future<void> build() async {}
+
+  Future<void> updateBaby({
+    required String id,
+    required String name,
+    required DateTime birthDate,
+    String? gender,
+    double? weightKg,
+    String? photoUrl,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(babyRepositoryProvider).updateBaby(
+            id: id,
+            name: name,
+            birthDate: birthDate,
+            gender: gender,
+            weightKg: weightKg,
+            photoUrl: photoUrl,
+          );
+      ref.invalidate(babiesProvider);
+    });
+  }
+
+  Future<void> addBaby({
+    required String familyId,
+    required String name,
+    required DateTime birthDate,
+    String? gender,
+    double? weightKg,
+    String? photoUrl,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(babyRepositoryProvider).addBabyToFamily(
+            familyId: familyId,
+            name: name,
+            birthDate: birthDate,
+            gender: gender,
+            weightKg: weightKg,
+            photoUrl: photoUrl,
+          );
+      ref.invalidate(babiesProvider);
+    });
+  }
+}
+
+final babyManageNotifierProvider =
+    AsyncNotifierProvider<BabyManageNotifier, void>(BabyManageNotifier.new);
+
 // ── Baby setup notifier ───────────────────────────────────────────────────────
 
 /// 온보딩에서 가족 + 아기 생성을 처리하는 Notifier.
@@ -59,6 +113,7 @@ class BabySetupNotifier extends _$BabySetupNotifier {
     String? gender,
     double? weightKg,
     String? nickname,
+    String? photoUrl,
   }) async {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(() async {
@@ -68,6 +123,7 @@ class BabySetupNotifier extends _$BabySetupNotifier {
             gender: gender,
             weightKg: weightKg,
             nickname: nickname,
+            photoUrl: photoUrl,
           );
       ref.invalidate(babiesProvider);
       return baby;

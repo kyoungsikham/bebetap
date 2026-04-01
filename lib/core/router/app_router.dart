@@ -13,7 +13,7 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/log/presentation/screens/log_screen.dart';
 import '../../features/statistics/presentation/screens/statistics_screen.dart';
 import '../../features/family/presentation/screens/family_screen.dart';
-import '../../features/settings/presentation/screens/settings_screen.dart';
+import '../../features/baby/presentation/screens/baby_manage_screen.dart';
 import '../../shared/widgets/bottom_nav_bar.dart';
 import '../providers/auth_provider.dart';
 import 'app_routes.dart';
@@ -117,6 +117,13 @@ GoRouter appRouter(Ref ref) {
         ),
       ),
       GoRoute(
+        path: AppRoutes.babyManage,
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const BabyManageScreen(),
+        ),
+      ),
+      GoRoute(
         path: AppRoutes.resetPassword,
         pageBuilder: (_, s) => _fadePage(
           key: s.pageKey,
@@ -155,13 +162,6 @@ GoRouter appRouter(Ref ref) {
             pageBuilder: (_, s) => _fadePage(
               key: const ValueKey('family'),
               child: const FamilyScreen(),
-            ),
-          ),
-          GoRoute(
-            path: AppRoutes.settings,
-            pageBuilder: (_, s) => _fadePage(
-              key: const ValueKey('settings'),
-              child: const SettingsScreen(),
             ),
           ),
         ],
