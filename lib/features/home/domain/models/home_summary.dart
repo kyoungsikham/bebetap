@@ -9,6 +9,7 @@ class HomeSummary {
     this.lastFeedingType,
     this.lastFeedingAmountMl,
     this.todayFormulaTotalMl = 0,
+    this.todayPumpedTotalMl = 0,
     this.todayBabyFoodTotalMl = 0,
     this.todayDiaperCount = 0,
     this.todaySleepTotal = Duration.zero,
@@ -19,9 +20,10 @@ class HomeSummary {
   factory HomeSummary.empty() => const HomeSummary();
 
   final DateTime? lastFeedingAt;
-  final String? lastFeedingType; // formula | breast
+  final String? lastFeedingType; // formula | breast | pumped
   final int? lastFeedingAmountMl;
   final int todayFormulaTotalMl;
+  final int todayPumpedTotalMl;
   final int todayBabyFoodTotalMl;
   final int todayDiaperCount;
   final Duration todaySleepTotal;

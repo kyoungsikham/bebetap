@@ -10,10 +10,13 @@ import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../log/domain/models/timeline_entry.dart';
 import '../providers/feeding_provider.dart';
 
+enum MlFeedingType { formula, pumped }
+
 class FormulaBottomSheet extends ConsumerStatefulWidget {
-  const FormulaBottomSheet({super.key, this.editEntry});
+  const FormulaBottomSheet({super.key, this.editEntry, this.feedingType = MlFeedingType.formula});
 
   final TimelineEntry? editEntry;
+  final MlFeedingType feedingType;
 
   @override
   ConsumerState<FormulaBottomSheet> createState() =>
@@ -89,7 +92,8 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final baby = ref.watch(selectedBabyProvider).valueOrNull;
-    final recommendedMl = baby?.weightKg != null
+    final isPumped = widget.feedingType == MlFeedingType.pumped;
+    final recommendedMl = (!isPumped && baby?.weightKg != null)
         ? MedicalConstants.formulaDailyTargetMl(baby!.weightKg!).toInt()
         : null;
     final isLoading = ref.watch(feedingNotifierProvider).isLoading;
@@ -181,19 +185,20 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
             ),
           ),
 
-          // 권장량
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              recommendedMl != null
-                  ? '${baby!.weightKg!.toStringAsFixed(1)}kg 기준 권장량 ${recommendedMl}ml/일'
-                  : '아기 몸무게를 등록하면 권장량을 알 수 있어요',
-              style: AppTypography.bodySmall.copyWith(
-                color: AppColors.onSurfaceMuted,
-                fontSize: 11,
+          // 권장량 (분유 모드에서만 표시)
+          if (!isPumped)
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                recommendedMl != null
+                    ? '${baby!.weightKg!.toStringAsFixed(1)}kg 기준 권장량 ${recommendedMl}ml/일'
+                    : '아기 몸무게를 등록하면 권장량을 알 수 있어요',
+                style: AppTypography.bodySmall.copyWith(
+                  color: AppColors.onSurfaceMuted,
+                  fontSize: 11,
+                ),
               ),
             ),
-          ),
 
           const SizedBox(height: AppSpacing.md),
           SizedBox(
@@ -204,20 +209,39 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
                   ? null
                   : () async {
                       if (_isEditMode) {
-                        await ref
-                            .read(feedingNotifierProvider.notifier)
-                            .updateFormula(
-                              widget.editEntry!.id,
-                              amountMl: _selectedMl,
-                              startedAt: _selectedDateTime,
-                            );
+                        if (widget.feedingType == MlFeedingType.pumped) {
+                          await ref
+                              .read(feedingNotifierProvider.notifier)
+                              .updatePumped(
+                                widget.editEntry!.id,
+                                amountMl: _selectedMl,
+                                startedAt: _selectedDateTime,
+                              );
+                        } else {
+                          await ref
+                              .read(feedingNotifierProvider.notifier)
+                              .updateFormula(
+                                widget.editEntry!.id,
+                                amountMl: _selectedMl,
+                                startedAt: _selectedDateTime,
+                              );
+                        }
                       } else {
-                        await ref
-                            .read(feedingNotifierProvider.notifier)
-                            .saveFormula(
-                              amountMl: _selectedMl,
-                              startedAt: _selectedDateTime,
-                            );
+                        if (widget.feedingType == MlFeedingType.pumped) {
+                          await ref
+                              .read(feedingNotifierProvider.notifier)
+                              .savePumped(
+                                amountMl: _selectedMl,
+                                startedAt: _selectedDateTime,
+                              );
+                        } else {
+                          await ref
+                              .read(feedingNotifierProvider.notifier)
+                              .saveFormula(
+                                amountMl: _selectedMl,
+                                startedAt: _selectedDateTime,
+                              );
+                        }
                       }
                       if (context.mounted) Navigator.of(context).pop();
                     },

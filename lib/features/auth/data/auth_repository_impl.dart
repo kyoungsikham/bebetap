@@ -87,6 +87,7 @@ class AuthRepository {
   // ── Kakao ─────────────────────────────────────────────────────────────────
 
   /// Kakao SDK에서 credential만 획득 (Supabase 로그인 X).
+  /// UserApi.me() 호출 없이 token만 수집 — 이메일은 Supabase 로그인 후 세션에서 읽음.
   Future<SocialCredential?> getKakaoCredential() async {
     OAuthToken token;
     if (await isKakaoTalkInstalled()) {
@@ -97,18 +98,11 @@ class AuthRepository {
 
     if (token.idToken == null) throw Exception('카카오 ID 토큰을 받지 못했습니다');
 
-    // 카카오는 이메일을 제공하지 않을 수 있음
-    String? email;
-    try {
-      final user = await UserApi.instance.me();
-      email = user.kakaoAccount?.email;
-    } catch (_) {}
-
     return SocialCredential(
       provider: 'kakao',
       idToken: token.idToken!,
       accessToken: token.accessToken,
-      email: email,
+      email: null, // completeKakaoSignIn 후 세션에서 읽음
     );
   }
 

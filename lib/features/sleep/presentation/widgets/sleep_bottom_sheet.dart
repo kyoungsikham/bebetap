@@ -79,7 +79,8 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
   Widget _buildEditMode(BuildContext context) {
     final isLoading = ref.watch(sleepSessionNotifierProvider).isLoading;
     final isActive = widget.editEntry?.rawEndedAt == null;
-    final hasEnd = !isActive;
+
+    if (isActive) ref.watch(minuteTickerProvider);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -95,10 +96,21 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
           const Icon(Icons.bedtime, size: 48, color: AppColors.primary),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            '수면 수정',
+            isActive ? '수면 중' : '수면 수정',
             style: AppTypography.titleMedium,
             textAlign: TextAlign.center,
           ),
+          if (isActive) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              DateTime.now().difference(_startDateTime).formatKorean(),
+              style: AppTypography.headlineMedium.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
           const SizedBox(height: AppSpacing.md),
 
           Row(
@@ -115,10 +127,9 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
               Expanded(
                 child: _TimeChip(
                   label: '종료',
-                  displayText: hasEnd
-                      ? '${_endDateTime.hour}시 ${_endDateTime.minute.toString().padLeft(2, '0')}분'
-                      : '자는 중',
-                  onTap: hasEnd ? _pickEndDateTime : null,
+                  displayText:
+                      '${_endDateTime.hour}시 ${_endDateTime.minute.toString().padLeft(2, '0')}분',
+                  onTap: _pickEndDateTime,
                 ),
               ),
             ],
@@ -131,7 +142,7 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
               onPressed: isLoading
                   ? null
                   : () async {
-                      if (hasEnd && _endDateTime.isBefore(_startDateTime)) {
+                      if (_endDateTime.isBefore(_startDateTime)) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('종료 시간이 시작 시간보다 이전일 수 없어요'),
@@ -144,7 +155,7 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
                           .updateSleep(
                             widget.editEntry!.id,
                             startedAt: _startDateTime,
-                            endedAt: hasEnd ? _endDateTime : null,
+                            endedAt: _endDateTime,
                           );
                       if (context.mounted) Navigator.of(context).pop();
                     },
@@ -165,7 +176,7 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text('수정'),
+                  : Text(isActive ? '수면 종료' : '수정'),
             ),
           ),
         ],

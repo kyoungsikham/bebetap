@@ -8,7 +8,7 @@ import '../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../diaper/presentation/widgets/diaper_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/baby_food_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/breast_bottom_sheet.dart';
-import '../../../feeding/presentation/widgets/formula_bottom_sheet.dart';
+import '../../../feeding/presentation/widgets/formula_bottom_sheet.dart' show FormulaBottomSheet, MlFeedingType;
 import '../../../sleep/presentation/widgets/sleep_bottom_sheet.dart';
 import '../../../temperature/presentation/widgets/temperature_bottom_sheet.dart';
 import '../../domain/models/timeline_entry.dart';
@@ -130,6 +130,9 @@ class LogScreen extends ConsumerWidget {
       case TimelineEntryType.formula:
         sheet = FormulaBottomSheet(editEntry: entry);
         title = '분유 수정';
+      case TimelineEntryType.pumped:
+        sheet = FormulaBottomSheet(editEntry: entry, feedingType: MlFeedingType.pumped);
+        title = '유축 수정';
       case TimelineEntryType.babyFood:
         sheet = BabyFoodBottomSheet(editEntry: entry);
         title = '이유식 수정';
@@ -157,6 +160,9 @@ class LogScreen extends ConsumerWidget {
       case TimelineEntryType.formula:
         sheet = const FormulaBottomSheet();
         title = '분유 수유';
+      case TimelineEntryType.pumped:
+        sheet = const FormulaBottomSheet(feedingType: MlFeedingType.pumped);
+        title = '유축 수유';
       case TimelineEntryType.babyFood:
         sheet = const BabyFoodBottomSheet();
         title = '이유식 기록';

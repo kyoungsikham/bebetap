@@ -7,7 +7,7 @@ part of 'stopwatch_provider.dart';
 // **************************************************************************
 
 String _$breastfeedingStopwatchHash() =>
-    r'90bc14e1fb7e263c41272e96898bd3958980b853';
+    r'f9c24f11215e7f62d262c59340260488827b09ee';
 
 /// See also [BreastfeedingStopwatch].
 @ProviderFor(BreastfeedingStopwatch)

@@ -85,13 +85,19 @@ class BabyAvatarWidget extends StatelessWidget {
 
   Widget _buildContent() {
     if (localFile != null) {
-      return Image.file(localFile!, fit: BoxFit.cover);
+      return ClipOval(
+        child: Image.file(localFile!, fit: BoxFit.cover, width: size, height: size),
+      );
     }
     if (photoUrl != null && photoUrl!.isNotEmpty) {
-      return Image.network(
-        photoUrl!,
-        fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _defaultIcon(),
+      return ClipOval(
+        child: Image.network(
+          photoUrl!,
+          fit: BoxFit.cover,
+          width: size,
+          height: size,
+          errorBuilder: (_, _, _) => _defaultIcon(),
+        ),
       );
     }
     return _defaultIcon();

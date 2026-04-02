@@ -54,6 +54,19 @@ class LogStatsStrip extends ConsumerWidget {
               ),
               const SizedBox(width: 10),
               _StatChip(
+                type: TimelineEntryType.pumped,
+                isSelected: filter == TimelineEntryType.pumped,
+                onTap: () => ref
+                    .read(selectedTimelineFilterProvider.notifier)
+                    .setFilter(TimelineEntryType.pumped),
+                icon: Icons.water_drop_outlined,
+                color: const Color(0xFF8E24AA),
+                bgColor: const Color(0xFFF3E5F5),
+                value: '${summary.pumpedTotalMl}ml',
+                label: '유축',
+              ),
+              const SizedBox(width: 10),
+              _StatChip(
                 type: TimelineEntryType.babyFood,
                 isSelected: filter == TimelineEntryType.babyFood,
                 onTap: () => ref
@@ -188,9 +201,9 @@ class _StripSkeleton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 2),
       child: Row(
         children: List.generate(
-          5,
+          6,
           (i) => Padding(
-            padding: EdgeInsets.only(right: i < 4 ? 10 : 0),
+            padding: EdgeInsets.only(right: i < 5 ? 10 : 0),
             child: Container(
               width: 80,
               height: 86,

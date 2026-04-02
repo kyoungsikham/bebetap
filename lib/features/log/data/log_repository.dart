@@ -44,6 +44,7 @@ class LogRepository {
 
     final results = await Future.wait([
       _db.feedingDao.getDailyFormulaTotalMl(babyId, date),
+      _db.feedingDao.getDailyPumpedTotalMl(babyId, date),
       _db.feedingDao.getDailyBabyFoodTotalMl(babyId, date),
       _db.feedingDao.getFeedingsByBabyAndDate(babyId, from, to),
       _db.diaperDao.getDiapersByBabyAndDate(babyId, from, to),
@@ -51,10 +52,11 @@ class LogRepository {
     ]);
 
     final formulaTotalMl = results[0] as int;
-    final babyFoodTotalMl = results[1] as int;
-    final feedings = results[2] as List<FeedingEntriesTableData>;
-    final diapers = results[3] as List<DiaperEntriesTableData>;
-    final sleeps = results[4] as List<SleepEntriesTableData>;
+    final pumpedTotalMl = results[1] as int;
+    final babyFoodTotalMl = results[2] as int;
+    final feedings = results[3] as List<FeedingEntriesTableData>;
+    final diapers = results[4] as List<DiaperEntriesTableData>;
+    final sleeps = results[5] as List<SleepEntriesTableData>;
 
     // 모유 총 시간 (초)
     final breastTotalSec = feedings
@@ -73,6 +75,7 @@ class LogRepository {
     return LogDaySummary(
       formulaTotalMl: formulaTotalMl,
       breastTotalSec: breastTotalSec,
+      pumpedTotalMl: pumpedTotalMl,
       babyFoodTotalMl: babyFoodTotalMl,
       diaperCount: diapers.length,
       sleepTotal: sleepTotal,

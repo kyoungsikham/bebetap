@@ -77,7 +77,7 @@ final selectedBabyIdProvider =
     );
 
 typedef _$SelectedBabyId = AutoDisposeNotifier<String?>;
-String _$babySetupNotifierHash() => r'd23c70b8fb414c5e6939ac8c1439b5192cf6670e';
+String _$babySetupNotifierHash() => r'65ffe73f04c348bbde348de97dd3763475deb9a5';
 
 /// 온보딩에서 가족 + 아기 생성을 처리하는 Notifier.
 ///

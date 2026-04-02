@@ -18,7 +18,7 @@ class FeedingEntry {
   final String id;
   final String babyId;
   final String familyId;
-  final String type; // formula | breast | baby_food
+  final String type; // formula | breast | pumped | baby_food
   final int? amountMl;
   final int? durationLeftSec;
   final int? durationRightSec;

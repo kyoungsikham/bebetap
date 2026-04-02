@@ -31,7 +31,7 @@ CustomTransitionPage<void> _fadePage({
     child: child,
     transitionDuration: duration,
     reverseTransitionDuration: duration,
-    transitionsBuilder: (_, animation, __, child) =>
+    transitionsBuilder: (_, animation, _, child) =>
         FadeTransition(opacity: animation, child: child),
   );
 }
@@ -57,7 +57,8 @@ GoRouter appRouter(Ref ref) {
       final babiesAsync = ref.read(babiesProvider);
 
       final isLoggedIn = authAsync.valueOrNull?.session != null;
-      final hasBaby = babiesAsync.valueOrNull?.isNotEmpty ?? false;
+      final babies = babiesAsync.valueOrNull;
+      final hasBaby = babies?.isNotEmpty ?? false;
       final babiesLoaded = babiesAsync.hasValue && !babiesAsync.isLoading;
       final loc = state.matchedLocation;
 
@@ -73,20 +74,19 @@ GoRouter appRouter(Ref ref) {
         return publicRoutes.contains(loc) ? null : AppRoutes.login;
       }
 
-      // 3. 인증됨 + 아기 목록 아직 로딩 중 → 현재 위치 유지 (깜빡임 방지)
-      if (!babiesLoaded) return null;
-
-      // 4. 로그인/이메일인증 화면 → 올바른 목적지로 직접 이동
+      // 3. 로그인/이메일인증 화면에서 인증됨 → 즉시 이동 (babies 로딩 기다리지 않음)
+      //    babies 로딩 완료 전이면 일단 home으로, 완료 후 baby 없으면 babySetup으로 재리디렉트
       if (loc == AppRoutes.login || loc == AppRoutes.emailAuth) {
+        if (!babiesLoaded) return AppRoutes.home;
         return hasBaby ? AppRoutes.home : AppRoutes.babySetup;
       }
 
-      // 5. 아기 미등록 → 아기 설정 화면으로
-      if (!hasBaby && loc != AppRoutes.babySetup) {
+      // 4. babies 로딩 완료 후 아기 미등록 → 아기 설정 화면으로
+      if (babiesLoaded && !hasBaby && loc != AppRoutes.babySetup) {
         return AppRoutes.babySetup;
       }
 
-      // 6. 이미 아기가 있는데 설정 화면 접근 → 홈으로
+      // 5. 이미 아기가 있는데 설정 화면 접근 → 홈으로
       if (hasBaby && loc == AppRoutes.babySetup) {
         return AppRoutes.home;
       }

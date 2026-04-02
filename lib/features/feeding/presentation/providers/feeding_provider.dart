@@ -37,6 +37,15 @@ Future<int> dailyFormulaTotal(Ref ref) async {
 }
 
 @riverpod
+Future<int> dailyPumpedTotal(Ref ref) async {
+  final baby = await ref.watch(selectedBabyProvider.future);
+  if (baby == null) return 0;
+  return ref
+      .watch(feedingRepositoryProvider)
+      .getDailyPumpedTotalMl(baby.id, DateTime.now());
+}
+
+@riverpod
 Future<int> dailyBabyFoodTotal(Ref ref) async {
   final baby = await ref.watch(selectedBabyProvider.future);
   if (baby == null) return 0;
@@ -67,6 +76,30 @@ class FeedingNotifier extends _$FeedingNotifier {
           );
       ref.invalidate(todayFeedingsProvider);
       ref.invalidate(dailyFormulaTotalProvider);
+      ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
+      ref.read(syncEngineProvider).trigger();
+      _pushFeedingWidget(amountMl: amountMl);
+    });
+  }
+
+  Future<void> savePumped({
+    required int amountMl,
+    DateTime? startedAt,
+  }) async {
+    final baby = ref.read(selectedBabyProvider).valueOrNull;
+    if (baby == null) return;
+
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(feedingRepositoryProvider).savePumpedFeeding(
+            babyId: baby.id,
+            familyId: baby.familyId,
+            amountMl: amountMl,
+            startedAt: startedAt,
+          );
+      ref.invalidate(todayFeedingsProvider);
+      ref.invalidate(dailyPumpedTotalProvider);
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
@@ -138,6 +171,26 @@ class FeedingNotifier extends _$FeedingNotifier {
           );
       ref.invalidate(todayFeedingsProvider);
       ref.invalidate(dailyFormulaTotalProvider);
+      ref.invalidate(homeSummaryProvider);
+      ref.invalidate(logTimelineProvider);
+      ref.read(syncEngineProvider).trigger();
+    });
+  }
+
+  Future<void> updatePumped(
+    String id, {
+    required int amountMl,
+    required DateTime startedAt,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await ref.read(feedingRepositoryProvider).updatePumpedFeeding(
+            id,
+            amountMl: amountMl,
+            startedAt: startedAt,
+          );
+      ref.invalidate(todayFeedingsProvider);
+      ref.invalidate(dailyPumpedTotalProvider);
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();

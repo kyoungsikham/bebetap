@@ -63,16 +63,25 @@ class StatusCard extends ConsumerWidget {
             iconColor = AppColors.success;
           }
 
-          final typeLabel = summary.lastFeedingType == 'breast'
-              ? '모유 수유'
-              : '분유 수유';
-          final amountLabel = summary.lastFeedingType == 'formula' &&
+          final typeLabel = switch (summary.lastFeedingType) {
+            'breast' => '모유 수유',
+            'pumped' => '유축 수유',
+            'baby_food' => '이유식',
+            _ => '분유 수유',
+          };
+          final amountLabel = summary.lastFeedingType != 'breast' &&
                   summary.lastFeedingAmountMl != null
               ? ' · ${summary.lastFeedingAmountMl}ml'
               : '';
+          final statusIcon = switch (summary.lastFeedingType) {
+            'breast' => Icons.favorite_outline,
+            'pumped' => Icons.water_drop_outlined,
+            'baby_food' => Icons.restaurant,
+            _ => Icons.local_drink_outlined,
+          };
 
           return _StatusCardContent(
-            icon: Icons.local_drink_outlined,
+            icon: statusIcon,
             iconColor: iconColor,
             label: '$typeLabel$amountLabel',
             elapsed: elapsed.formatElapsedKorean(),

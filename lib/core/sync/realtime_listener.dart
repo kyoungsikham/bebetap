@@ -137,69 +137,85 @@ class RealtimeListener {
     return parseSupabaseDateTime(s);
   }
 
-  Future<void> _upsertFeeding(Map<String, dynamic> r) =>
-      _db.feedingDao.upsertFeeding(
-        FeedingEntriesTableCompanion(
-          id: Value(_resolveId(r)),
-          babyId: Value(r['baby_id'] as String),
-          familyId: Value(r['family_id'] as String),
-          type: Value(r['type'] as String),
-          amountMl: Value(r['amount_ml'] as int?),
-          durationLeftSec: Value(r['duration_left_sec'] as int?),
-          durationRightSec: Value(r['duration_right_sec'] as int?),
-          startedAt: Value(_parseDateTime(r['started_at'] as String)),
-          endedAt: Value(
-            r['ended_at'] != null
-                ? _parseDateTime(r['ended_at'] as String)
-                : null,
-          ),
-          syncStatus: const Value('synced'),
-          remoteId: Value(r['id'] as String),
+  Future<void> _upsertFeeding(Map<String, dynamic> r) async {
+    final localId = _resolveId(r);
+    final existing = await _db.feedingDao.getFeedingById(localId);
+    if (existing != null && existing.syncStatus != 'synced') return;
+    await _db.feedingDao.upsertFeeding(
+      FeedingEntriesTableCompanion(
+        id: Value(localId),
+        babyId: Value(r['baby_id'] as String),
+        familyId: Value(r['family_id'] as String),
+        type: Value(r['type'] as String),
+        amountMl: Value(r['amount_ml'] as int?),
+        durationLeftSec: Value(r['duration_left_sec'] as int?),
+        durationRightSec: Value(r['duration_right_sec'] as int?),
+        startedAt: Value(_parseDateTime(r['started_at'] as String)),
+        endedAt: Value(
+          r['ended_at'] != null
+              ? _parseDateTime(r['ended_at'] as String)
+              : null,
         ),
-      );
+        syncStatus: const Value('synced'),
+        remoteId: Value(r['id'] as String),
+      ),
+    );
+  }
 
-  Future<void> _upsertDiaper(Map<String, dynamic> r) =>
-      _db.diaperDao.upsertDiaper(
-        DiaperEntriesTableCompanion(
-          id: Value(_resolveId(r)),
-          babyId: Value(r['baby_id'] as String),
-          familyId: Value(r['family_id'] as String),
-          type: Value(r['type'] as String),
-          occurredAt: Value(_parseDateTime(r['occurred_at'] as String)),
-          syncStatus: const Value('synced'),
-          remoteId: Value(r['id'] as String),
-        ),
-      );
+  Future<void> _upsertDiaper(Map<String, dynamic> r) async {
+    final localId = _resolveId(r);
+    final existing = await _db.diaperDao.getDiaperById(localId);
+    if (existing != null && existing.syncStatus != 'synced') return;
+    await _db.diaperDao.upsertDiaper(
+      DiaperEntriesTableCompanion(
+        id: Value(localId),
+        babyId: Value(r['baby_id'] as String),
+        familyId: Value(r['family_id'] as String),
+        type: Value(r['type'] as String),
+        occurredAt: Value(_parseDateTime(r['occurred_at'] as String)),
+        syncStatus: const Value('synced'),
+        remoteId: Value(r['id'] as String),
+      ),
+    );
+  }
 
-  Future<void> _upsertSleep(Map<String, dynamic> r) =>
-      _db.sleepDao.upsertSleep(
-        SleepEntriesTableCompanion(
-          id: Value(_resolveId(r)),
-          babyId: Value(r['baby_id'] as String),
-          familyId: Value(r['family_id'] as String),
-          startedAt: Value(_parseDateTime(r['started_at'] as String)),
-          endedAt: Value(
-            r['ended_at'] != null
-                ? _parseDateTime(r['ended_at'] as String)
-                : null,
-          ),
-          quality: Value(r['quality'] as String?),
-          syncStatus: const Value('synced'),
-          remoteId: Value(r['id'] as String),
+  Future<void> _upsertSleep(Map<String, dynamic> r) async {
+    final localId = _resolveId(r);
+    final existing = await _db.sleepDao.getSleepById(localId);
+    if (existing != null && existing.syncStatus != 'synced') return;
+    await _db.sleepDao.upsertSleep(
+      SleepEntriesTableCompanion(
+        id: Value(localId),
+        babyId: Value(r['baby_id'] as String),
+        familyId: Value(r['family_id'] as String),
+        startedAt: Value(_parseDateTime(r['started_at'] as String)),
+        endedAt: Value(
+          r['ended_at'] != null
+              ? _parseDateTime(r['ended_at'] as String)
+              : null,
         ),
-      );
+        quality: Value(r['quality'] as String?),
+        syncStatus: const Value('synced'),
+        remoteId: Value(r['id'] as String),
+      ),
+    );
+  }
 
-  Future<void> _upsertTemperature(Map<String, dynamic> r) =>
-      _db.temperatureDao.upsertTemperature(
-        TemperatureEntriesTableCompanion(
-          id: Value(_resolveId(r)),
-          babyId: Value(r['baby_id'] as String),
-          familyId: Value(r['family_id'] as String),
-          celsius: Value((r['celsius'] as num).toDouble()),
-          method: Value(r['method'] as String? ?? 'axillary'),
-          occurredAt: Value(_parseDateTime(r['occurred_at'] as String)),
-          syncStatus: const Value('synced'),
-          remoteId: Value(r['id'] as String),
-        ),
-      );
+  Future<void> _upsertTemperature(Map<String, dynamic> r) async {
+    final localId = _resolveId(r);
+    final existing = await _db.temperatureDao.getTemperatureById(localId);
+    if (existing != null && existing.syncStatus != 'synced') return;
+    await _db.temperatureDao.upsertTemperature(
+      TemperatureEntriesTableCompanion(
+        id: Value(localId),
+        babyId: Value(r['baby_id'] as String),
+        familyId: Value(r['family_id'] as String),
+        celsius: Value((r['celsius'] as num).toDouble()),
+        method: Value(r['method'] as String? ?? 'axillary'),
+        occurredAt: Value(_parseDateTime(r['occurred_at'] as String)),
+        syncStatus: const Value('synced'),
+        remoteId: Value(r['id'] as String),
+      ),
+    );
+  }
 }

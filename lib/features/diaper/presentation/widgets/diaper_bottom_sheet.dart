@@ -19,6 +19,7 @@ class DiaperBottomSheet extends ConsumerStatefulWidget {
 
 class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
   late DateTime _selectedDateTime;
+  late String? _selectedType;
 
   bool get _isEditMode => widget.editEntry != null;
 
@@ -26,6 +27,7 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
   void initState() {
     super.initState();
     _selectedDateTime = widget.editEntry?.occurredAt ?? DateTime.now();
+    _selectedType = widget.editEntry?.rawDiaperType;
   }
 
   String _formatDisplayDateTime(DateTime dt) {
@@ -58,6 +60,8 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(diaperNotifierProvider).isLoading;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.pagePadding,
@@ -70,7 +74,7 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            _isEditMode ? '기저귀 종류를 선택하세요' : '기저귀 종류를 선택하세요',
+            '기저귀 종류를 선택하세요',
             style: AppTypography.titleMedium,
             textAlign: TextAlign.center,
           ),
@@ -111,8 +115,11 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
                   color: const Color(0xFFE3F0FF),
                   textColor: const Color(0xFF3D7ED6),
                   occurredAt: _selectedDateTime,
-                  editId: _isEditMode ? widget.editEntry!.id : null,
-                  isSelected: widget.editEntry?.rawDiaperType == 'wet',
+                  editId: _isEditMode ? null : null,
+                  isSelected: _selectedType == 'wet',
+                  onSelectType: _isEditMode
+                      ? (t) => setState(() => _selectedType = t)
+                      : null,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -124,42 +131,69 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
                   color: const Color(0xFFFFF3E0),
                   textColor: const Color(0xFFB07040),
                   occurredAt: _selectedDateTime,
-                  editId: _isEditMode ? widget.editEntry!.id : null,
-                  isSelected: widget.editEntry?.rawDiaperType == 'soiled',
+                  editId: _isEditMode ? null : null,
+                  isSelected: _selectedType == 'soiled',
+                  onSelectType: _isEditMode
+                      ? (t) => setState(() => _selectedType = t)
+                      : null,
                 ),
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: [
-              Expanded(
-                child: _DiaperTypeButton(
-                  label: '소변+대변',
-                  emoji: '🔄',
-                  type: 'both',
-                  color: const Color(0xFFE8F5E9),
-                  textColor: const Color(0xFF388E3C),
-                  occurredAt: _selectedDateTime,
-                  editId: _isEditMode ? widget.editEntry!.id : null,
-                  isSelected: widget.editEntry?.rawDiaperType == 'both',
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _DiaperTypeButton(
-                  label: '교체',
-                  emoji: '✨',
-                  type: 'dry',
-                  color: AppColors.surfaceVariant,
-                  textColor: AppColors.onSurfaceMuted,
-                  occurredAt: _selectedDateTime,
-                  editId: _isEditMode ? widget.editEntry!.id : null,
-                  isSelected: widget.editEntry?.rawDiaperType == 'dry',
-                ),
-              ),
-            ],
+          _DiaperTypeButton(
+            label: '소변+대변',
+            emoji: '🔄',
+            type: 'both',
+            color: const Color(0xFFE8F5E9),
+            textColor: const Color(0xFF388E3C),
+            occurredAt: _selectedDateTime,
+            editId: _isEditMode ? null : null,
+            isSelected: _selectedType == 'both',
+            onSelectType: _isEditMode
+                ? (t) => setState(() => _selectedType = t)
+                : null,
           ),
+
+          // 수정 모드 저장 버튼
+          if (_isEditMode) ...[
+            const SizedBox(height: AppSpacing.xl),
+            SizedBox(
+              height: 52,
+              child: ElevatedButton(
+                onPressed: (isLoading || _selectedType == null)
+                    ? null
+                    : () async {
+                        await ref
+                            .read(diaperNotifierProvider.notifier)
+                            .updateDiaper(
+                              widget.editEntry!.id,
+                              type: _selectedType!,
+                              occurredAt: _selectedDateTime,
+                            );
+                        if (context.mounted) Navigator.of(context).pop();
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('수정'),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -176,6 +210,7 @@ class _DiaperTypeButton extends ConsumerWidget {
     required this.occurredAt,
     this.editId,
     this.isSelected = false,
+    this.onSelectType,
   });
 
   final String label;
@@ -186,6 +221,7 @@ class _DiaperTypeButton extends ConsumerWidget {
   final DateTime occurredAt;
   final String? editId;
   final bool isSelected;
+  final void Function(String)? onSelectType;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -195,22 +231,29 @@ class _DiaperTypeButton extends ConsumerWidget {
       onTap: isLoading
           ? null
           : () async {
-              if (editId != null) {
+              if (onSelectType != null) {
+                // 수정 모드: 선택만 하고 저장하지 않음
+                onSelectType!(type);
+              } else if (editId != null) {
                 await ref.read(diaperNotifierProvider.notifier).updateDiaper(
                       editId!,
                       type: type,
                       occurredAt: occurredAt,
                     );
+                await Future<void>.delayed(
+                  const Duration(milliseconds: 400),
+                );
+                if (context.mounted) Navigator.of(context).pop();
               } else {
                 await ref.read(diaperNotifierProvider.notifier).saveDiaper(
                       type: type,
                       occurredAt: occurredAt,
                     );
+                await Future<void>.delayed(
+                  const Duration(milliseconds: 400),
+                );
+                if (context.mounted) Navigator.of(context).pop();
               }
-              await Future<void>.delayed(
-                const Duration(milliseconds: 400),
-              );
-              if (context.mounted) Navigator.of(context).pop();
             },
       child: Container(
         height: 72,

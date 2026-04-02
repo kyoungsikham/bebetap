@@ -117,7 +117,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  /// 소셜 로그인 시 기존 계정 확인 후 병합 안내 다이얼로그 표시.
+  /// 소셜 로그인: credential 획득 → Supabase 로그인.
+  /// 계정 연결은 Supabase가 동일 이메일 자동 처리.
   Future<void> _socialSignInWithCheck({
     required Future<SocialCredential?> Function() getCredential,
     required Future<void> Function(SocialCredential) completeSignIn,
@@ -128,44 +129,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       final credential = await getCredential();
       if (credential == null) return; // 사용자 취소
-
-      // 이메일이 있으면 기존 계정 + provider 연결 상태 확인
-      if (credential.email != null && mounted) {
-        final repo = ref.read(authRepositoryProvider);
-        final status = await repo.checkProviderLinked(
-          credential.email!,
-          credential.provider,
-        );
-
-        // 'not_linked': 이메일은 존재하지만 이 provider가 아직 미연결 → 병합 안내
-        // 'linked': 이미 연결됨 → 바로 로그인
-        // 'not_found': 신규 → 바로 가입
-        if (status == 'not_linked' && mounted) {
-          final confirmed = await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: const Text('계정 연결'),
-              content: Text(
-                '${credential.email}은(는) 이미 가입된 이메일입니다.\n\n'
-                '$providerName 계정을 연결하시겠습니까?\n'
-                '연결 후 기존 로그인 방식과 $providerName 모두 사용할 수 있습니다.',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: const Text('취소'),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: const Text('연결하기'),
-                ),
-              ],
-            ),
-          );
-          if (confirmed != true) return;
-        }
-      }
-
       await completeSignIn(credential);
     } catch (e) {
       if (mounted) {

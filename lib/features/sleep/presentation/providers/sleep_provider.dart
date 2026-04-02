@@ -65,6 +65,7 @@ class SleepSessionNotifier extends _$SleepSessionNotifier {
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
+      if (endedAt != null) _pushSleepWidget(active: false);
     });
   }
 

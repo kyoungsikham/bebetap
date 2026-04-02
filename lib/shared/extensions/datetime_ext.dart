@@ -10,19 +10,23 @@ extension DateTimeExt on DateTime {
 }
 
 extension DurationExt on Duration {
-  /// "3시간 30분" 형식
+  /// "3시간 30분" 형식 (1분 미만은 "17초")
   String formatKorean() {
     final h = inHours;
     final m = inMinutes % 60;
+    final s = inSeconds % 60;
+    if (h == 0 && m == 0) return '$s초';
     if (h == 0) return '$m분';
     if (m == 0) return '$h시간';
     return '$h시간 $m분';
   }
 
-  /// "3h 30m" 형식
+  /// "3h 30m" 형식 (1분 미만은 "17s")
   String formatHhMm() {
     final h = inHours;
     final m = inMinutes % 60;
+    final s = inSeconds % 60;
+    if (h == 0 && m == 0) return '${s}s';
     if (h == 0) return '${m}m';
     if (m == 0) return '${h}h';
     return '${h}h ${m}m';

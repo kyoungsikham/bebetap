@@ -22,6 +22,7 @@ class HomeRepository {
     final results = await Future.wait([
       feedingRepo.getLastFeeding(babyId),
       feedingRepo.getDailyFormulaTotalMl(babyId, DateTime.now()),
+      feedingRepo.getDailyPumpedTotalMl(babyId, DateTime.now()),
       feedingRepo.getDailyBabyFoodTotalMl(babyId, DateTime.now()),
       diaperRepo.getTodayDiaperCount(babyId),
       sleepRepo.getTodaySleepTotal(babyId),
@@ -30,9 +31,10 @@ class HomeRepository {
     final lastFeeding = results[0] as dynamic;
     debugPrint('[HomeSummary] lastFeeding.startedAt: ${lastFeeding?.startedAt}, now: ${DateTime.now()}');
     final formulaTotal = results[1] as int;
-    final babyFoodTotal = results[2] as int;
-    final diaperCount = results[3] as int;
-    final sleepTotal = results[4] as Duration;
+    final pumpedTotal = results[2] as int;
+    final babyFoodTotal = results[3] as int;
+    final diaperCount = results[4] as int;
+    final sleepTotal = results[5] as Duration;
 
     // Active sleep is fetched separately via stream (watchActiveSleep)
     return HomeSummary(
@@ -40,6 +42,7 @@ class HomeRepository {
       lastFeedingType: lastFeeding?.type as String?,
       lastFeedingAmountMl: lastFeeding?.amountMl as int?,
       todayFormulaTotalMl: formulaTotal,
+      todayPumpedTotalMl: pumpedTotal,
       todayBabyFoodTotalMl: babyFoodTotal,
       todayDiaperCount: diaperCount,
       todaySleepTotal: sleepTotal,

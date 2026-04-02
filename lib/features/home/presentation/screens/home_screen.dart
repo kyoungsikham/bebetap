@@ -59,7 +59,7 @@ class HomeScreen extends ConsumerWidget {
                   const StatusCard(),
                   const SizedBox(height: AppSpacing.md),
                   const StatsStrip(),
-                  const SizedBox(height: AppSpacing.xl),
+                  const SizedBox(height: AppSpacing.lg),
                   Text(
                     '기록하기',
                     style: AppTypography.titleMedium

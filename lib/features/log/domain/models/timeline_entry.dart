@@ -4,7 +4,7 @@ import '../../../../core/database/app_database.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 
-enum TimelineEntryType { formula, breast, babyFood, sleep, diaper, temperature }
+enum TimelineEntryType { formula, breast, pumped, babyFood, sleep, diaper, temperature }
 
 @immutable
 class TimelineEntry {
@@ -58,6 +58,17 @@ class TimelineEntry {
           color: const Color(0xFFE91E8C),
           rawDurationLeftSec: leftSec,
           rawDurationRightSec: rightSec,
+        );
+      case 'pumped':
+        return TimelineEntry(
+          id: row.id,
+          type: TimelineEntryType.pumped,
+          occurredAt: row.startedAt,
+          title: '유축',
+          subtitle: '${row.amountMl ?? 0}ml',
+          icon: Icons.water_drop_outlined,
+          color: const Color(0xFF8E24AA),
+          rawAmountMl: row.amountMl,
         );
       case 'baby_food':
         return TimelineEntry(
@@ -147,6 +158,7 @@ class LogDaySummary {
   const LogDaySummary({
     required this.formulaTotalMl,
     required this.breastTotalSec,
+    required this.pumpedTotalMl,
     required this.babyFoodTotalMl,
     required this.diaperCount,
     required this.sleepTotal,
@@ -154,6 +166,7 @@ class LogDaySummary {
 
   final int formulaTotalMl;
   final int breastTotalSec;
+  final int pumpedTotalMl;
   final int babyFoodTotalMl;
   final int diaperCount;
   final Duration sleepTotal;
@@ -161,6 +174,7 @@ class LogDaySummary {
   factory LogDaySummary.empty() => const LogDaySummary(
         formulaTotalMl: 0,
         breastTotalSec: 0,
+        pumpedTotalMl: 0,
         babyFoodTotalMl: 0,
         diaperCount: 0,
         sleepTotal: Duration.zero,

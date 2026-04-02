@@ -39,7 +39,10 @@ class SleepDao extends DatabaseAccessor<AppDatabase> with _$SleepDaoMixin {
 
   Future<void> endSleep(String id, DateTime endedAt) =>
       (update(sleepEntriesTable)..where((t) => t.id.equals(id))).write(
-        SleepEntriesTableCompanion(endedAt: Value(endedAt)),
+        SleepEntriesTableCompanion(
+          endedAt: Value(endedAt),
+          syncStatus: const Value('pending_update'),
+        ),
       );
 
   Future<void> softDeleteSleep(String id) =>

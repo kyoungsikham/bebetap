@@ -53,6 +53,7 @@ class TrackingGrid extends ConsumerWidget {
       crossAxisSpacing: 10,
       childAspectRatio: 1.2,
       shrinkWrap: true,
+      padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
       children: [
         TrackingTile(
@@ -75,6 +76,19 @@ class TrackingGrid extends ConsumerWidget {
             context: context,
             child: const BreastBottomSheet(),
             title: '모유 수유',
+          ),
+        ),
+        TrackingTile(
+          icon: Icons.water_drop_outlined,
+          label: '유축수유',
+          sublabel: summary != null && summary.todayPumpedTotalMl > 0
+              ? '오늘 ${summary.todayPumpedTotalMl}ml'
+              : '탭해서 기록',
+          color: const Color(0xFF8E24AA),
+          onTap: () => showAppBottomSheet(
+            context: context,
+            child: const FormulaBottomSheet(feedingType: MlFeedingType.pumped),
+            title: '유축 수유',
           ),
         ),
         TrackingTile(

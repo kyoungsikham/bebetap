@@ -51,9 +51,12 @@ class SyncEngine {
     for (final raw in rows) {
       final r = raw as Map<String, dynamic>;
       try {
+        final localId = _resolveId(r);
+        final existing = await _db.feedingDao.getFeedingById(localId);
+        if (existing != null && existing.syncStatus != 'synced') continue;
         await _db.feedingDao.upsertFeeding(
           FeedingEntriesTableCompanion(
-            id: Value(_resolveId(r)),
+            id: Value(localId),
             babyId: Value(r['baby_id'] as String),
             familyId: Value(r['family_id'] as String),
             type: Value(r['type'] as String),
@@ -87,9 +90,12 @@ class SyncEngine {
     for (final raw in rows) {
       final r = raw as Map<String, dynamic>;
       try {
+        final localId = _resolveId(r);
+        final existing = await _db.diaperDao.getDiaperById(localId);
+        if (existing != null && existing.syncStatus != 'synced') continue;
         await _db.diaperDao.upsertDiaper(
           DiaperEntriesTableCompanion(
-            id: Value(_resolveId(r)),
+            id: Value(localId),
             babyId: Value(r['baby_id'] as String),
             familyId: Value(r['family_id'] as String),
             type: Value(r['type'] as String),
@@ -115,9 +121,12 @@ class SyncEngine {
     for (final raw in rows) {
       final r = raw as Map<String, dynamic>;
       try {
+        final localId = _resolveId(r);
+        final existing = await _db.sleepDao.getSleepById(localId);
+        if (existing != null && existing.syncStatus != 'synced') continue;
         await _db.sleepDao.upsertSleep(
           SleepEntriesTableCompanion(
-            id: Value(_resolveId(r)),
+            id: Value(localId),
             babyId: Value(r['baby_id'] as String),
             familyId: Value(r['family_id'] as String),
             startedAt: Value(parseSupabaseDateTime(r['started_at'] as String)),
