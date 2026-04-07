@@ -40,10 +40,13 @@ class _BabySelectorSheetContent extends ConsumerWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: babies.map((baby) {
+        children: babies.asMap().entries.map((entry) {
+          final index = entry.key;
+          final baby = entry.value;
           final isSelected = baby.id == effectiveId;
           return _BabySelectorTile(
             baby: baby,
+            colorIndex: index,
             isSelected: isSelected,
             dateFormat: _dateFormat,
             onTap: () {
@@ -60,12 +63,14 @@ class _BabySelectorSheetContent extends ConsumerWidget {
 class _BabySelectorTile extends StatelessWidget {
   const _BabySelectorTile({
     required this.baby,
+    required this.colorIndex,
     required this.isSelected,
     required this.dateFormat,
     required this.onTap,
   });
 
   final Baby baby;
+  final int colorIndex;
   final bool isSelected;
   final DateFormat dateFormat;
   final VoidCallback onTap;
@@ -96,6 +101,7 @@ class _BabySelectorTile extends StatelessWidget {
             BabyAvatarWidget(
               photoUrl: baby.photoUrl,
               gender: baby.gender,
+              colorIndex: colorIndex,
               size: 44,
             ),
             const SizedBox(width: AppSpacing.md),

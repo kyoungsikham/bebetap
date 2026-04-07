@@ -58,7 +58,7 @@ final familyMembersProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FamilyMembersRef = AutoDisposeFutureProviderRef<List<FamilyMember>>;
-String _$familyRealtimeHash() => r'638ceb244128e5123acaf88e5c11bd36b390b1ab';
+String _$familyRealtimeHash() => r'e74df716129494746dde10ce26bbf1525f0d8751';
 
 /// 가족 실시간 동기화 활성화 — keepAlive: true로 한번 활성화되면 계속 유지
 ///
@@ -77,7 +77,7 @@ final familyRealtimeProvider = Provider<void>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FamilyRealtimeRef = ProviderRef<void>;
-String _$familyNotifierHash() => r'272d559d77eacee885958b0ccf76560fe38476fb';
+String _$familyNotifierHash() => r'f5ca8e29b731d5476e798144214f3bcec0e33ed3';
 
 /// See also [FamilyNotifier].
 @ProviderFor(FamilyNotifier)

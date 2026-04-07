@@ -6,6 +6,7 @@ abstract class AppRoutes {
   static const String settings    = '/settings';
 
   static const String babyManage    = '/baby-manage';
+  static const String iconSettings  = '/icon-settings';
 
   static const String login         = '/login';
   static const String emailAuth     = '/email-auth';

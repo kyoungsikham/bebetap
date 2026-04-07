@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/models/tracking_category.dart';
+import '../../../../shared/providers/icon_settings_provider.dart';
 import '../../domain/models/timeline_entry.dart';
 import '../providers/log_provider.dart';
 
@@ -14,98 +16,68 @@ class LogStatsStrip extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final summaryAsync = ref.watch(logDaySummaryProvider);
     final filter = ref.watch(selectedTimelineFilterProvider);
+    final visibleTypes = ref.watch(visibleCategoriesProvider);
+
+    // If current filter is hidden, reset to first visible type
+    if (visibleTypes.isNotEmpty && !visibleTypes.contains(filter)) {
+      Future.microtask(() => ref
+          .read(selectedTimelineFilterProvider.notifier)
+          .setFilter(visibleTypes.first));
+    }
 
     return summaryAsync.when(
-      loading: () => const _StripSkeleton(),
+      loading: () => _StripSkeleton(count: visibleTypes.length),
       error: (_, _) => const SizedBox.shrink(),
       data: (summary) {
         final breastDur = Duration(seconds: summary.breastTotalSec);
+
+        String valueFor(TimelineEntryType type) {
+          switch (type) {
+            case TimelineEntryType.formula:
+              return '${summary.formulaTotalMl}ml';
+            case TimelineEntryType.breast:
+              return breastDur == Duration.zero ? '0분' : breastDur.formatKorean();
+            case TimelineEntryType.pumped:
+              return '${summary.pumpedTotalMl}ml';
+            case TimelineEntryType.babyFood:
+              return '${summary.babyFoodTotalMl}ml';
+            case TimelineEntryType.diaper:
+              return '${summary.diaperCount}회';
+            case TimelineEntryType.sleep:
+              return summary.sleepTotal == Duration.zero
+                  ? '0분'
+                  : summary.sleepTotal.formatKorean();
+            case TimelineEntryType.temperature:
+              return '${summary.temperatureCount}회';
+            case TimelineEntryType.diary:
+              return '${summary.diaryCount}편';
+          }
+        }
+
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 2),
           child: Row(
             children: [
-              _StatChip(
-                type: TimelineEntryType.formula,
-                isSelected: filter == TimelineEntryType.formula,
-                onTap: () => ref
-                    .read(selectedTimelineFilterProvider.notifier)
-                    .setFilter(TimelineEntryType.formula),
-                icon: Icons.local_drink,
-                color: AppColors.primary,
-                bgColor: const Color(0xFFEEF2FF),
-                value: '${summary.formulaTotalMl}ml',
-                label: '분유',
-              ),
-              const SizedBox(width: 10),
-              _StatChip(
-                type: TimelineEntryType.breast,
-                isSelected: filter == TimelineEntryType.breast,
-                onTap: () => ref
-                    .read(selectedTimelineFilterProvider.notifier)
-                    .setFilter(TimelineEntryType.breast),
-                icon: Icons.favorite_outline,
-                color: const Color(0xFFE91E8C),
-                bgColor: const Color(0xFFFCE4EC),
-                value: breastDur == Duration.zero
-                    ? '0분'
-                    : breastDur.formatKorean(),
-                label: '모유',
-              ),
-              const SizedBox(width: 10),
-              _StatChip(
-                type: TimelineEntryType.pumped,
-                isSelected: filter == TimelineEntryType.pumped,
-                onTap: () => ref
-                    .read(selectedTimelineFilterProvider.notifier)
-                    .setFilter(TimelineEntryType.pumped),
-                icon: Icons.water_drop_outlined,
-                color: const Color(0xFF8E24AA),
-                bgColor: const Color(0xFFF3E5F5),
-                value: '${summary.pumpedTotalMl}ml',
-                label: '유축',
-              ),
-              const SizedBox(width: 10),
-              _StatChip(
-                type: TimelineEntryType.babyFood,
-                isSelected: filter == TimelineEntryType.babyFood,
-                onTap: () => ref
-                    .read(selectedTimelineFilterProvider.notifier)
-                    .setFilter(TimelineEntryType.babyFood),
-                icon: Icons.restaurant,
-                color: const Color(0xFFFF9800),
-                bgColor: const Color(0xFFFFF3E0),
-                value: '${summary.babyFoodTotalMl}ml',
-                label: '이유식',
-              ),
-              const SizedBox(width: 10),
-              _StatChip(
-                type: TimelineEntryType.diaper,
-                isSelected: filter == TimelineEntryType.diaper,
-                onTap: () => ref
-                    .read(selectedTimelineFilterProvider.notifier)
-                    .setFilter(TimelineEntryType.diaper),
-                icon: Icons.baby_changing_station,
-                color: const Color(0xFF52B788),
-                bgColor: const Color(0xFFE8F5E9),
-                value: '${summary.diaperCount}회',
-                label: '기저귀',
-              ),
-              const SizedBox(width: 10),
-              _StatChip(
-                type: TimelineEntryType.sleep,
-                isSelected: filter == TimelineEntryType.sleep,
-                onTap: () => ref
-                    .read(selectedTimelineFilterProvider.notifier)
-                    .setFilter(TimelineEntryType.sleep),
-                icon: Icons.bedtime_outlined,
-                color: const Color(0xFF7B68EE),
-                bgColor: const Color(0xFFEDE7F6),
-                value: summary.sleepTotal == Duration.zero
-                    ? '0분'
-                    : summary.sleepTotal.formatKorean(),
-                label: '수면',
-              ),
+              for (int i = 0; i < visibleTypes.length; i++) ...[
+                if (i > 0) const SizedBox(width: 10),
+                Builder(builder: (context) {
+                  final type = visibleTypes[i];
+                  final info = TrackingCategoryInfo.all[type]!;
+                  return _StatChip(
+                    type: type,
+                    isSelected: filter == type,
+                    onTap: () => ref
+                        .read(selectedTimelineFilterProvider.notifier)
+                        .setFilter(type),
+                    icon: info.icon,
+                    color: info.color,
+                    bgColor: info.bgColor,
+                    value: valueFor(type),
+                    label: info.label,
+                  );
+                }),
+              ],
             ],
           ),
         );
@@ -192,7 +164,9 @@ class _StatChip extends StatelessWidget {
 }
 
 class _StripSkeleton extends StatelessWidget {
-  const _StripSkeleton();
+  const _StripSkeleton({this.count = 8});
+
+  final int count;
 
   @override
   Widget build(BuildContext context) {
@@ -201,9 +175,9 @@ class _StripSkeleton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 2),
       child: Row(
         children: List.generate(
-          6,
+          count,
           (i) => Padding(
-            padding: EdgeInsets.only(right: i < 5 ? 10 : 0),
+            padding: EdgeInsets.only(right: i < count - 1 ? 10 : 0),
             child: Container(
               width: 80,
               height: 86,

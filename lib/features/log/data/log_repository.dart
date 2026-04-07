@@ -18,18 +18,21 @@ class LogRepository {
       _db.sleepDao.getSleepsByBabyAndDate(babyId, from, to),
       _db.diaperDao.getDiapersByBabyAndDate(babyId, from, to),
       _db.temperatureDao.getTemperaturesByBabyAndDate(babyId, from, to),
+      _db.diaryDao.getDiariesByBabyAndDate(babyId, from, to),
     ]);
 
     final feedings = results[0] as List<FeedingEntriesTableData>;
     final sleeps = results[1] as List<SleepEntriesTableData>;
     final diapers = results[2] as List<DiaperEntriesTableData>;
     final temps = results[3] as List<TemperatureEntriesTableData>;
+    final diaries = results[4] as List<DiaryEntriesTableData>;
 
     final entries = <TimelineEntry>[
       ...feedings.map(TimelineEntry.fromFeedingRow),
       ...sleeps.map(TimelineEntry.fromSleepRow),
       ...diapers.map(TimelineEntry.fromDiaperRow),
       ...temps.map(TimelineEntry.fromTemperatureRow),
+      ...diaries.map(TimelineEntry.fromDiaryRow),
     ]..sort((a, b) => b.occurredAt.compareTo(a.occurredAt));
 
     return entries;
@@ -49,6 +52,8 @@ class LogRepository {
       _db.feedingDao.getFeedingsByBabyAndDate(babyId, from, to),
       _db.diaperDao.getDiapersByBabyAndDate(babyId, from, to),
       _db.sleepDao.getSleepsByBabyAndDate(babyId, from, to),
+      _db.temperatureDao.getTemperaturesByBabyAndDate(babyId, from, to),
+      _db.diaryDao.getDiaryCountForDate(babyId, date),
     ]);
 
     final formulaTotalMl = results[0] as int;
@@ -57,6 +62,8 @@ class LogRepository {
     final feedings = results[3] as List<FeedingEntriesTableData>;
     final diapers = results[4] as List<DiaperEntriesTableData>;
     final sleeps = results[5] as List<SleepEntriesTableData>;
+    final temps = results[6] as List<TemperatureEntriesTableData>;
+    final diaryCount = results[7] as int;
 
     // 모유 총 시간 (초)
     final breastTotalSec = feedings
@@ -79,6 +86,8 @@ class LogRepository {
       babyFoodTotalMl: babyFoodTotalMl,
       diaperCount: diapers.length,
       sleepTotal: sleepTotal,
+      temperatureCount: temps.length,
+      diaryCount: diaryCount,
     );
   }
 }

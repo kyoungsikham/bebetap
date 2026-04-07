@@ -31,6 +31,7 @@ class SyncEngine {
         _pullDiaper(familyId),
         _pullSleep(familyId),
         _pullTemperature(familyId),
+        _pullDiary(familyId),
       ]);
     } catch (e) {
       debugPrint('SyncEngine pullRemoteData error: $e');
@@ -183,6 +184,7 @@ class SyncEngine {
         _syncDiaper(),
         _syncSleep(),
         _syncTemperature(),
+        _syncDiary(),
       ]);
     } finally {
       _syncing = false;
@@ -304,6 +306,83 @@ class SyncEngine {
         await _db.temperatureDao.updateSyncStatus(row.id, 'synced');
       } catch (e) {
         debugPrint('temperature sync error (${row.id}): $e');
+      }
+    }
+  }
+
+  Future<void> _syncDiary() async {
+    final pending = await _db.diaryDao.getPendingSync();
+    for (final row in pending) {
+      try {
+        // entry_date를 YYYY-MM-DD 형식으로 변환
+        final entryDate =
+            '${row.entryDate.year.toString().padLeft(4, '0')}-'
+            '${row.entryDate.month.toString().padLeft(2, '0')}-'
+            '${row.entryDate.day.toString().padLeft(2, '0')}';
+        final payload = {
+          'id': row.remoteId ?? row.id,
+          'baby_id': row.babyId,
+          'family_id': row.familyId,
+          'recorded_by': row.recordedBy ?? _client.auth.currentUser?.id,
+          'title': row.title,
+          'content': row.content,
+          'entry_date': entryDate,
+          'author_nickname': row.authorNickname,
+          'local_id': row.id,
+        };
+        if (row.syncStatus == 'pending_delete') {
+          await _client
+              .from('diary_entries')
+              .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+              .eq('local_id', row.id);
+        } else {
+          await _client.from('diary_entries').upsert(payload);
+        }
+        await _db.diaryDao.updateSyncStatus(row.id, 'synced');
+      } catch (e) {
+        debugPrint('diary sync error (${row.id}): $e');
+      }
+    }
+  }
+
+  Future<void> _pullDiary(String familyId) async {
+    final from = DateTime.now().subtract(const Duration(days: 7));
+    final rows = await _client
+        .from('diary_entries')
+        .select()
+        .eq('family_id', familyId)
+        .gte('entry_date', '${from.year}-${from.month.toString().padLeft(2, '0')}-${from.day.toString().padLeft(2, '0')}')
+        .isFilter('deleted_at', null) as List<dynamic>;
+    for (final raw in rows) {
+      final r = raw as Map<String, dynamic>;
+      try {
+        final localId = _resolveId(r);
+        final existing = await _db.diaryDao.getDiaryById(localId);
+        if (existing != null && existing.syncStatus != 'synced') continue;
+        // entry_date는 'YYYY-MM-DD' 문자열로 옴
+        final dateStr = r['entry_date'] as String;
+        final parts = dateStr.split('-');
+        final entryDate = DateTime.utc(
+          int.parse(parts[0]),
+          int.parse(parts[1]),
+          int.parse(parts[2]),
+        );
+        await _db.diaryDao.upsertDiary(
+          DiaryEntriesTableCompanion(
+            id: Value(localId),
+            babyId: Value(r['baby_id'] as String),
+            familyId: Value(r['family_id'] as String),
+            recordedBy: Value(r['recorded_by'] as String?),
+            title: Value(r['title'] as String),
+            content: Value(r['content'] as String),
+            entryDate: Value(entryDate),
+            authorNickname: Value(r['author_nickname'] as String?),
+            syncStatus: const Value('synced'),
+            remoteId: Value(r['id'] as String),
+          ),
+        );
+      } catch (e) {
+        debugPrint('pull diary upsert error: $e');
       }
     }
   }

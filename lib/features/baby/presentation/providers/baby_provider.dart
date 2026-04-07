@@ -16,7 +16,7 @@ BabyRepository babyRepository(Ref ref) =>
 
 // ── Baby list ─────────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<List<Baby>> babies(Ref ref) {
   ref.watch(authStateProvider); // auth 상태 변경 시 자동 re-fetch
   return ref.watch(babyRepositoryProvider).fetchBabies();

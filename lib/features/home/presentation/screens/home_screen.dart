@@ -118,6 +118,16 @@ class HomeScreen extends ConsumerWidget {
                             const SnackBar(content: Text('준비 중입니다'))));
                       },
                     ),
+                    ListTile(
+                      leading: const Icon(Icons.grid_view_outlined),
+                      title: const Text('아이콘 설정'),
+                      onTap: () {
+                        final router = GoRouter.of(context);
+                        Navigator.of(context, rootNavigator: true).pop();
+                        Future.microtask(
+                            () => router.push(AppRoutes.iconSettings));
+                      },
+                    ),
                     const Divider(),
                     ListTile(
                       leading: const Icon(Icons.logout, color: AppColors.error),
@@ -150,7 +160,11 @@ class HomeScreen extends ConsumerWidget {
                         );
                         if (confirmed == true) {
                           final db = ref.read(appDatabaseProvider);
-                          await db.clearAllData();
+                          try {
+                            await db.clearAllData();
+                          } catch (e) {
+                            debugPrint('clearAllData error (ignored): $e');
+                          }
                           ref.invalidate(babiesProvider);
                           await Supabase.instance.client.auth.signOut();
                         }
@@ -186,6 +200,7 @@ class _HomeHeader extends ConsumerWidget {
     final babies = ref.watch(babiesProvider).valueOrNull ?? [];
     final name = baby?.name ?? '아기';
     final canSwitch = babies.length > 1;
+    final babyColorIndex = baby != null ? babies.indexWhere((b) => b.id == baby.id) : 0;
 
     return Container(
       decoration: const BoxDecoration(
@@ -258,6 +273,7 @@ class _HomeHeader extends ConsumerWidget {
                   BabyAvatarWidget(
                     photoUrl: baby?.photoUrl,
                     gender: baby?.gender,
+                    colorIndex: babyColorIndex >= 0 ? babyColorIndex : null,
                     onTap: canSwitch
                         ? () => showBabySelectorSheet(context, ref)
                         : null,

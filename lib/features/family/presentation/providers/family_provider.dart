@@ -6,8 +6,11 @@ import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/database_provider.dart';
 import '../../../../core/providers/sync_provider.dart';
 import '../../../../core/sync/realtime_listener.dart';
+import '../../../baby/presentation/providers/baby_provider.dart';
+import '../../../diary/presentation/providers/diary_provider.dart';
 import '../../../feeding/presentation/providers/feeding_provider.dart';
 import '../../../home/presentation/providers/home_provider.dart';
+import '../../../log/presentation/providers/log_provider.dart';
 import '../../../sleep/presentation/providers/sleep_provider.dart';
 import '../../data/family_repository_impl.dart';
 import '../../domain/models/family.dart';
@@ -52,6 +55,7 @@ class FamilyNotifier extends _$FamilyNotifier {
       await ref.read(familyRepositoryProvider).joinFamily(inviteCode, nickname: nickname);
       ref.invalidate(myFamilyProvider);
       ref.invalidate(familyMembersProvider);
+      ref.invalidate(babiesProvider);
     });
   }
 }
@@ -71,11 +75,17 @@ void familyRealtime(Ref ref) {
         ref.invalidate(homeSummaryProvider);
         ref.invalidate(todayFeedingsProvider);
         ref.invalidate(activeSleepProvider);
+        ref.invalidate(logTimelineProvider);
+        ref.invalidate(logDaySummaryProvider);
+        ref.invalidate(todayDiaryForCurrentUserProvider);
       });
       // 초기 데이터 pull: 가족 구성원 로그인 시 기존 기록 가져오기
       await ref.read(syncEngineProvider).pullRemoteData(family.id);
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(todayFeedingsProvider);
+      ref.invalidate(logTimelineProvider);
+      ref.invalidate(logDaySummaryProvider);
+      ref.invalidate(todayDiaryForCurrentUserProvider);
     } else {
       listener.unsubscribe();
     }

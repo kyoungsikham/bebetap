@@ -85,6 +85,28 @@ class RealtimeListener {
           value: familyId,
         ),
         callback: (payload) => _handleTemperatureChange(payload),
+      )
+      ..onPostgresChanges(
+        event: PostgresChangeEvent.insert,
+        schema: 'public',
+        table: 'diary_entries',
+        filter: PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: 'family_id',
+          value: familyId,
+        ),
+        callback: (payload) => _handleDiaryChange(payload),
+      )
+      ..onPostgresChanges(
+        event: PostgresChangeEvent.update,
+        schema: 'public',
+        table: 'diary_entries',
+        filter: PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: 'family_id',
+          value: familyId,
+        ),
+        callback: (payload) => _handleDiaryChange(payload),
       );
 
     _channel!.subscribe();
@@ -195,6 +217,41 @@ class RealtimeListener {
               : null,
         ),
         quality: Value(r['quality'] as String?),
+        syncStatus: const Value('synced'),
+        remoteId: Value(r['id'] as String),
+      ),
+    );
+  }
+
+  void _handleDiaryChange(PostgresChangePayload payload) {
+    final record = payload.newRecord;
+    if (record.isEmpty) return;
+    _upsertDiary(record)
+        .then((_) => _onRemoteChange?.call())
+        .catchError((Object e) => debugPrint('Realtime diary error: $e'));
+  }
+
+  Future<void> _upsertDiary(Map<String, dynamic> r) async {
+    final localId = _resolveId(r);
+    final existing = await _db.diaryDao.getDiaryById(localId);
+    if (existing != null && existing.syncStatus != 'synced') return;
+    final dateStr = r['entry_date'] as String;
+    final parts = dateStr.split('-');
+    final entryDate = DateTime.utc(
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+      int.parse(parts[2]),
+    );
+    await _db.diaryDao.upsertDiary(
+      DiaryEntriesTableCompanion(
+        id: Value(localId),
+        babyId: Value(r['baby_id'] as String),
+        familyId: Value(r['family_id'] as String),
+        recordedBy: Value(r['recorded_by'] as String?),
+        title: Value(r['title'] as String),
+        content: Value(r['content'] as String),
+        entryDate: Value(entryDate),
+        authorNickname: Value(r['author_nickname'] as String?),
         syncStatus: const Value('synced'),
         remoteId: Value(r['id'] as String),
       ),

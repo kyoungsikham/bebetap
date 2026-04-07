@@ -24,7 +24,11 @@ class SettingsScreen extends ConsumerWidget {
               title: const Text('로그아웃', style: AppTypography.bodyLarge),
               onTap: () async {
                 final db = ref.read(appDatabaseProvider);
-                await db.clearAllData();
+                try {
+                  await db.clearAllData();
+                } catch (e) {
+                  debugPrint('clearAllData error (ignored): $e');
+                }
                 ref.invalidate(babiesProvider);
                 await Supabase.instance.client.auth.signOut();
               },

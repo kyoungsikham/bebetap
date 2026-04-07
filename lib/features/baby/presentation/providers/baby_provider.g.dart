@@ -23,11 +23,11 @@ final babyRepositoryProvider = AutoDisposeProvider<BabyRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef BabyRepositoryRef = AutoDisposeProviderRef<BabyRepository>;
-String _$babiesHash() => r'5fae22dceabf9a11f1d764644102355b68635c92';
+String _$babiesHash() => r'73e226c37fcb1a0d856bdc79a9dc08dd4bf58ad7';
 
 /// See also [babies].
 @ProviderFor(babies)
-final babiesProvider = AutoDisposeFutureProvider<List<Baby>>.internal(
+final babiesProvider = FutureProvider<List<Baby>>.internal(
   babies,
   name: r'babiesProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -39,7 +39,7 @@ final babiesProvider = AutoDisposeFutureProvider<List<Baby>>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef BabiesRef = AutoDisposeFutureProviderRef<List<Baby>>;
+typedef BabiesRef = FutureProviderRef<List<Baby>>;
 String _$selectedBabyHash() => r'599a4b4b6197229836b8d5a456b27561a9b66517';
 
 /// 선택된 아기 (없으면 목록 첫 번째).

@@ -58,13 +58,13 @@ class _BabyManageBody extends StatelessWidget {
           if (babies.isNotEmpty) ...[
             Text('등록된 아이', style: AppTypography.labelLarge),
             const SizedBox(height: AppSpacing.sm),
-            ...babies.map((baby) => _BabyListTile(baby: baby)),
+            ...babies.asMap().entries.map((e) => _BabyListTile(baby: e.value, colorIndex: e.key)),
             const SizedBox(height: AppSpacing.xl),
             const Divider(),
             const SizedBox(height: AppSpacing.xl),
           ],
           ElevatedButton.icon(
-            onPressed: () => _openForm(context, babies, null),
+            onPressed: () => _openForm(context, babies, null, colorIndex: babies.length),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
@@ -82,20 +82,21 @@ class _BabyManageBody extends StatelessWidget {
     );
   }
 
-  void _openForm(BuildContext context, List<Baby> babies, Baby? editBaby) {
+  void _openForm(BuildContext context, List<Baby> babies, Baby? editBaby, {int? colorIndex}) {
     final familyId = babies.isNotEmpty ? babies.first.familyId : null;
     showAppBottomSheet(
       context: context,
       title: editBaby != null ? '아이 수정' : '아이 추가',
-      child: _BabyFormSheet(editBaby: editBaby, familyId: familyId),
+      child: _BabyFormSheet(editBaby: editBaby, familyId: familyId, colorIndex: colorIndex),
     );
   }
 }
 
 class _BabyListTile extends ConsumerWidget {
-  const _BabyListTile({required this.baby});
+  const _BabyListTile({required this.baby, required this.colorIndex});
 
   final Baby baby;
+  final int colorIndex;
 
   static final _dateFormat = DateFormat('yyyy년 MM월 dd일');
 
@@ -125,6 +126,7 @@ class _BabyListTile extends ConsumerWidget {
           leading: BabyAvatarWidget(
             photoUrl: baby.photoUrl,
             gender: baby.gender,
+            colorIndex: colorIndex,
             size: 44,
           ),
           title: Text(baby.name, style: AppTypography.bodyLarge),
@@ -144,8 +146,7 @@ class _BabyListTile extends ConsumerWidget {
                 onPressed: () => showAppBottomSheet(
                   context: context,
                   title: '아이 수정',
-                  child:
-                      _BabyFormSheet(editBaby: baby, familyId: baby.familyId),
+                  child: _BabyFormSheet(editBaby: baby, familyId: baby.familyId, colorIndex: colorIndex),
                 ),
               ),
             ],
@@ -157,10 +158,11 @@ class _BabyListTile extends ConsumerWidget {
 }
 
 class _BabyFormSheet extends ConsumerStatefulWidget {
-  const _BabyFormSheet({this.editBaby, this.familyId});
+  const _BabyFormSheet({this.editBaby, this.familyId, this.colorIndex});
 
   final Baby? editBaby;
   final String? familyId;
+  final int? colorIndex;
 
   @override
   ConsumerState<_BabyFormSheet> createState() => _BabyFormSheetState();
@@ -329,6 +331,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
                 photoUrl: widget.editBaby?.photoUrl,
                 localFile: _imageFile,
                 gender: _gender,
+                colorIndex: widget.colorIndex,
                 size: 96,
                 showEditOverlay: true,
                 onTap: _pickImage,

@@ -3656,6 +3656,768 @@ class TemperatureEntriesTableCompanion
   }
 }
 
+class $DiaryEntriesTableTable extends DiaryEntriesTable
+    with TableInfo<$DiaryEntriesTableTable, DiaryEntriesTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DiaryEntriesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _babyIdMeta = const VerificationMeta('babyId');
+  @override
+  late final GeneratedColumn<String> babyId = GeneratedColumn<String>(
+    'baby_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _familyIdMeta = const VerificationMeta(
+    'familyId',
+  );
+  @override
+  late final GeneratedColumn<String> familyId = GeneratedColumn<String>(
+    'family_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordedByMeta = const VerificationMeta(
+    'recordedBy',
+  );
+  @override
+  late final GeneratedColumn<String> recordedBy = GeneratedColumn<String>(
+    'recorded_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentMeta = const VerificationMeta(
+    'content',
+  );
+  @override
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
+    'content',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entryDateMeta = const VerificationMeta(
+    'entryDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> entryDate = GeneratedColumn<DateTime>(
+    'entry_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _authorNicknameMeta = const VerificationMeta(
+    'authorNickname',
+  );
+  @override
+  late final GeneratedColumn<String> authorNickname = GeneratedColumn<String>(
+    'author_nickname',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _localIdMeta = const VerificationMeta(
+    'localId',
+  );
+  @override
+  late final GeneratedColumn<String> localId = GeneratedColumn<String>(
+    'local_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncStatusMeta = const VerificationMeta(
+    'syncStatus',
+  );
+  @override
+  late final GeneratedColumn<String> syncStatus = GeneratedColumn<String>(
+    'sync_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending_create'),
+  );
+  static const VerificationMeta _remoteIdMeta = const VerificationMeta(
+    'remoteId',
+  );
+  @override
+  late final GeneratedColumn<String> remoteId = GeneratedColumn<String>(
+    'remote_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    babyId,
+    familyId,
+    recordedBy,
+    title,
+    content,
+    entryDate,
+    authorNickname,
+    localId,
+    createdAt,
+    deletedAt,
+    syncStatus,
+    remoteId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'diary_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DiaryEntriesTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('baby_id')) {
+      context.handle(
+        _babyIdMeta,
+        babyId.isAcceptableOrUnknown(data['baby_id']!, _babyIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_babyIdMeta);
+    }
+    if (data.containsKey('family_id')) {
+      context.handle(
+        _familyIdMeta,
+        familyId.isAcceptableOrUnknown(data['family_id']!, _familyIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_familyIdMeta);
+    }
+    if (data.containsKey('recorded_by')) {
+      context.handle(
+        _recordedByMeta,
+        recordedBy.isAcceptableOrUnknown(data['recorded_by']!, _recordedByMeta),
+      );
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('content')) {
+      context.handle(
+        _contentMeta,
+        content.isAcceptableOrUnknown(data['content']!, _contentMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_contentMeta);
+    }
+    if (data.containsKey('entry_date')) {
+      context.handle(
+        _entryDateMeta,
+        entryDate.isAcceptableOrUnknown(data['entry_date']!, _entryDateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entryDateMeta);
+    }
+    if (data.containsKey('author_nickname')) {
+      context.handle(
+        _authorNicknameMeta,
+        authorNickname.isAcceptableOrUnknown(
+          data['author_nickname']!,
+          _authorNicknameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('local_id')) {
+      context.handle(
+        _localIdMeta,
+        localId.isAcceptableOrUnknown(data['local_id']!, _localIdMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('sync_status')) {
+      context.handle(
+        _syncStatusMeta,
+        syncStatus.isAcceptableOrUnknown(data['sync_status']!, _syncStatusMeta),
+      );
+    }
+    if (data.containsKey('remote_id')) {
+      context.handle(
+        _remoteIdMeta,
+        remoteId.isAcceptableOrUnknown(data['remote_id']!, _remoteIdMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DiaryEntriesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DiaryEntriesTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      babyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}baby_id'],
+      )!,
+      familyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}family_id'],
+      )!,
+      recordedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recorded_by'],
+      ),
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content'],
+      )!,
+      entryDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}entry_date'],
+      )!,
+      authorNickname: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}author_nickname'],
+      ),
+      localId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_id'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      syncStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_status'],
+      )!,
+      remoteId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_id'],
+      ),
+    );
+  }
+
+  @override
+  $DiaryEntriesTableTable createAlias(String alias) {
+    return $DiaryEntriesTableTable(attachedDatabase, alias);
+  }
+}
+
+class DiaryEntriesTableData extends DataClass
+    implements Insertable<DiaryEntriesTableData> {
+  final String id;
+  final String babyId;
+  final String familyId;
+  final String? recordedBy;
+  final String title;
+  final String content;
+  final DateTime entryDate;
+  final String? authorNickname;
+  final String? localId;
+  final DateTime createdAt;
+  final DateTime? deletedAt;
+  final String syncStatus;
+  final String? remoteId;
+  const DiaryEntriesTableData({
+    required this.id,
+    required this.babyId,
+    required this.familyId,
+    this.recordedBy,
+    required this.title,
+    required this.content,
+    required this.entryDate,
+    this.authorNickname,
+    this.localId,
+    required this.createdAt,
+    this.deletedAt,
+    required this.syncStatus,
+    this.remoteId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['baby_id'] = Variable<String>(babyId);
+    map['family_id'] = Variable<String>(familyId);
+    if (!nullToAbsent || recordedBy != null) {
+      map['recorded_by'] = Variable<String>(recordedBy);
+    }
+    map['title'] = Variable<String>(title);
+    map['content'] = Variable<String>(content);
+    map['entry_date'] = Variable<DateTime>(entryDate);
+    if (!nullToAbsent || authorNickname != null) {
+      map['author_nickname'] = Variable<String>(authorNickname);
+    }
+    if (!nullToAbsent || localId != null) {
+      map['local_id'] = Variable<String>(localId);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['sync_status'] = Variable<String>(syncStatus);
+    if (!nullToAbsent || remoteId != null) {
+      map['remote_id'] = Variable<String>(remoteId);
+    }
+    return map;
+  }
+
+  DiaryEntriesTableCompanion toCompanion(bool nullToAbsent) {
+    return DiaryEntriesTableCompanion(
+      id: Value(id),
+      babyId: Value(babyId),
+      familyId: Value(familyId),
+      recordedBy: recordedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recordedBy),
+      title: Value(title),
+      content: Value(content),
+      entryDate: Value(entryDate),
+      authorNickname: authorNickname == null && nullToAbsent
+          ? const Value.absent()
+          : Value(authorNickname),
+      localId: localId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(localId),
+      createdAt: Value(createdAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      syncStatus: Value(syncStatus),
+      remoteId: remoteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remoteId),
+    );
+  }
+
+  factory DiaryEntriesTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DiaryEntriesTableData(
+      id: serializer.fromJson<String>(json['id']),
+      babyId: serializer.fromJson<String>(json['babyId']),
+      familyId: serializer.fromJson<String>(json['familyId']),
+      recordedBy: serializer.fromJson<String?>(json['recordedBy']),
+      title: serializer.fromJson<String>(json['title']),
+      content: serializer.fromJson<String>(json['content']),
+      entryDate: serializer.fromJson<DateTime>(json['entryDate']),
+      authorNickname: serializer.fromJson<String?>(json['authorNickname']),
+      localId: serializer.fromJson<String?>(json['localId']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      syncStatus: serializer.fromJson<String>(json['syncStatus']),
+      remoteId: serializer.fromJson<String?>(json['remoteId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'babyId': serializer.toJson<String>(babyId),
+      'familyId': serializer.toJson<String>(familyId),
+      'recordedBy': serializer.toJson<String?>(recordedBy),
+      'title': serializer.toJson<String>(title),
+      'content': serializer.toJson<String>(content),
+      'entryDate': serializer.toJson<DateTime>(entryDate),
+      'authorNickname': serializer.toJson<String?>(authorNickname),
+      'localId': serializer.toJson<String?>(localId),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'syncStatus': serializer.toJson<String>(syncStatus),
+      'remoteId': serializer.toJson<String?>(remoteId),
+    };
+  }
+
+  DiaryEntriesTableData copyWith({
+    String? id,
+    String? babyId,
+    String? familyId,
+    Value<String?> recordedBy = const Value.absent(),
+    String? title,
+    String? content,
+    DateTime? entryDate,
+    Value<String?> authorNickname = const Value.absent(),
+    Value<String?> localId = const Value.absent(),
+    DateTime? createdAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
+    String? syncStatus,
+    Value<String?> remoteId = const Value.absent(),
+  }) => DiaryEntriesTableData(
+    id: id ?? this.id,
+    babyId: babyId ?? this.babyId,
+    familyId: familyId ?? this.familyId,
+    recordedBy: recordedBy.present ? recordedBy.value : this.recordedBy,
+    title: title ?? this.title,
+    content: content ?? this.content,
+    entryDate: entryDate ?? this.entryDate,
+    authorNickname: authorNickname.present
+        ? authorNickname.value
+        : this.authorNickname,
+    localId: localId.present ? localId.value : this.localId,
+    createdAt: createdAt ?? this.createdAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    syncStatus: syncStatus ?? this.syncStatus,
+    remoteId: remoteId.present ? remoteId.value : this.remoteId,
+  );
+  DiaryEntriesTableData copyWithCompanion(DiaryEntriesTableCompanion data) {
+    return DiaryEntriesTableData(
+      id: data.id.present ? data.id.value : this.id,
+      babyId: data.babyId.present ? data.babyId.value : this.babyId,
+      familyId: data.familyId.present ? data.familyId.value : this.familyId,
+      recordedBy: data.recordedBy.present
+          ? data.recordedBy.value
+          : this.recordedBy,
+      title: data.title.present ? data.title.value : this.title,
+      content: data.content.present ? data.content.value : this.content,
+      entryDate: data.entryDate.present ? data.entryDate.value : this.entryDate,
+      authorNickname: data.authorNickname.present
+          ? data.authorNickname.value
+          : this.authorNickname,
+      localId: data.localId.present ? data.localId.value : this.localId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      syncStatus: data.syncStatus.present
+          ? data.syncStatus.value
+          : this.syncStatus,
+      remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DiaryEntriesTableData(')
+          ..write('id: $id, ')
+          ..write('babyId: $babyId, ')
+          ..write('familyId: $familyId, ')
+          ..write('recordedBy: $recordedBy, ')
+          ..write('title: $title, ')
+          ..write('content: $content, ')
+          ..write('entryDate: $entryDate, ')
+          ..write('authorNickname: $authorNickname, ')
+          ..write('localId: $localId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncStatus: $syncStatus, ')
+          ..write('remoteId: $remoteId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    babyId,
+    familyId,
+    recordedBy,
+    title,
+    content,
+    entryDate,
+    authorNickname,
+    localId,
+    createdAt,
+    deletedAt,
+    syncStatus,
+    remoteId,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DiaryEntriesTableData &&
+          other.id == this.id &&
+          other.babyId == this.babyId &&
+          other.familyId == this.familyId &&
+          other.recordedBy == this.recordedBy &&
+          other.title == this.title &&
+          other.content == this.content &&
+          other.entryDate == this.entryDate &&
+          other.authorNickname == this.authorNickname &&
+          other.localId == this.localId &&
+          other.createdAt == this.createdAt &&
+          other.deletedAt == this.deletedAt &&
+          other.syncStatus == this.syncStatus &&
+          other.remoteId == this.remoteId);
+}
+
+class DiaryEntriesTableCompanion
+    extends UpdateCompanion<DiaryEntriesTableData> {
+  final Value<String> id;
+  final Value<String> babyId;
+  final Value<String> familyId;
+  final Value<String?> recordedBy;
+  final Value<String> title;
+  final Value<String> content;
+  final Value<DateTime> entryDate;
+  final Value<String?> authorNickname;
+  final Value<String?> localId;
+  final Value<DateTime> createdAt;
+  final Value<DateTime?> deletedAt;
+  final Value<String> syncStatus;
+  final Value<String?> remoteId;
+  final Value<int> rowid;
+  const DiaryEntriesTableCompanion({
+    this.id = const Value.absent(),
+    this.babyId = const Value.absent(),
+    this.familyId = const Value.absent(),
+    this.recordedBy = const Value.absent(),
+    this.title = const Value.absent(),
+    this.content = const Value.absent(),
+    this.entryDate = const Value.absent(),
+    this.authorNickname = const Value.absent(),
+    this.localId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncStatus = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DiaryEntriesTableCompanion.insert({
+    required String id,
+    required String babyId,
+    required String familyId,
+    this.recordedBy = const Value.absent(),
+    required String title,
+    required String content,
+    required DateTime entryDate,
+    this.authorNickname = const Value.absent(),
+    this.localId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.syncStatus = const Value.absent(),
+    this.remoteId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       babyId = Value(babyId),
+       familyId = Value(familyId),
+       title = Value(title),
+       content = Value(content),
+       entryDate = Value(entryDate);
+  static Insertable<DiaryEntriesTableData> custom({
+    Expression<String>? id,
+    Expression<String>? babyId,
+    Expression<String>? familyId,
+    Expression<String>? recordedBy,
+    Expression<String>? title,
+    Expression<String>? content,
+    Expression<DateTime>? entryDate,
+    Expression<String>? authorNickname,
+    Expression<String>? localId,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? deletedAt,
+    Expression<String>? syncStatus,
+    Expression<String>? remoteId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (babyId != null) 'baby_id': babyId,
+      if (familyId != null) 'family_id': familyId,
+      if (recordedBy != null) 'recorded_by': recordedBy,
+      if (title != null) 'title': title,
+      if (content != null) 'content': content,
+      if (entryDate != null) 'entry_date': entryDate,
+      if (authorNickname != null) 'author_nickname': authorNickname,
+      if (localId != null) 'local_id': localId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (syncStatus != null) 'sync_status': syncStatus,
+      if (remoteId != null) 'remote_id': remoteId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DiaryEntriesTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? babyId,
+    Value<String>? familyId,
+    Value<String?>? recordedBy,
+    Value<String>? title,
+    Value<String>? content,
+    Value<DateTime>? entryDate,
+    Value<String?>? authorNickname,
+    Value<String?>? localId,
+    Value<DateTime>? createdAt,
+    Value<DateTime?>? deletedAt,
+    Value<String>? syncStatus,
+    Value<String?>? remoteId,
+    Value<int>? rowid,
+  }) {
+    return DiaryEntriesTableCompanion(
+      id: id ?? this.id,
+      babyId: babyId ?? this.babyId,
+      familyId: familyId ?? this.familyId,
+      recordedBy: recordedBy ?? this.recordedBy,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      entryDate: entryDate ?? this.entryDate,
+      authorNickname: authorNickname ?? this.authorNickname,
+      localId: localId ?? this.localId,
+      createdAt: createdAt ?? this.createdAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      syncStatus: syncStatus ?? this.syncStatus,
+      remoteId: remoteId ?? this.remoteId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (babyId.present) {
+      map['baby_id'] = Variable<String>(babyId.value);
+    }
+    if (familyId.present) {
+      map['family_id'] = Variable<String>(familyId.value);
+    }
+    if (recordedBy.present) {
+      map['recorded_by'] = Variable<String>(recordedBy.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    if (entryDate.present) {
+      map['entry_date'] = Variable<DateTime>(entryDate.value);
+    }
+    if (authorNickname.present) {
+      map['author_nickname'] = Variable<String>(authorNickname.value);
+    }
+    if (localId.present) {
+      map['local_id'] = Variable<String>(localId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (syncStatus.present) {
+      map['sync_status'] = Variable<String>(syncStatus.value);
+    }
+    if (remoteId.present) {
+      map['remote_id'] = Variable<String>(remoteId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DiaryEntriesTableCompanion(')
+          ..write('id: $id, ')
+          ..write('babyId: $babyId, ')
+          ..write('familyId: $familyId, ')
+          ..write('recordedBy: $recordedBy, ')
+          ..write('title: $title, ')
+          ..write('content: $content, ')
+          ..write('entryDate: $entryDate, ')
+          ..write('authorNickname: $authorNickname, ')
+          ..write('localId: $localId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('syncStatus: $syncStatus, ')
+          ..write('remoteId: $remoteId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $SyncQueueTableTable extends SyncQueueTable
     with TableInfo<$SyncQueueTableTable, SyncQueueTableData> {
   @override
@@ -4123,6 +4885,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $SleepEntriesTableTable(this);
   late final $TemperatureEntriesTableTable temperatureEntriesTable =
       $TemperatureEntriesTableTable(this);
+  late final $DiaryEntriesTableTable diaryEntriesTable =
+      $DiaryEntriesTableTable(this);
   late final $SyncQueueTableTable syncQueueTable = $SyncQueueTableTable(this);
   late final BabyDao babyDao = BabyDao(this as AppDatabase);
   late final FeedingDao feedingDao = FeedingDao(this as AppDatabase);
@@ -4131,6 +4895,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final TemperatureDao temperatureDao = TemperatureDao(
     this as AppDatabase,
   );
+  late final DiaryDao diaryDao = DiaryDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4141,6 +4906,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     diaperEntriesTable,
     sleepEntriesTable,
     temperatureEntriesTable,
+    diaryEntriesTable,
     syncQueueTable,
   ];
 }
@@ -5935,6 +6701,377 @@ typedef $$TemperatureEntriesTableTableProcessedTableManager =
       TemperatureEntriesTableData,
       PrefetchHooks Function()
     >;
+typedef $$DiaryEntriesTableTableCreateCompanionBuilder =
+    DiaryEntriesTableCompanion Function({
+      required String id,
+      required String babyId,
+      required String familyId,
+      Value<String?> recordedBy,
+      required String title,
+      required String content,
+      required DateTime entryDate,
+      Value<String?> authorNickname,
+      Value<String?> localId,
+      Value<DateTime> createdAt,
+      Value<DateTime?> deletedAt,
+      Value<String> syncStatus,
+      Value<String?> remoteId,
+      Value<int> rowid,
+    });
+typedef $$DiaryEntriesTableTableUpdateCompanionBuilder =
+    DiaryEntriesTableCompanion Function({
+      Value<String> id,
+      Value<String> babyId,
+      Value<String> familyId,
+      Value<String?> recordedBy,
+      Value<String> title,
+      Value<String> content,
+      Value<DateTime> entryDate,
+      Value<String?> authorNickname,
+      Value<String?> localId,
+      Value<DateTime> createdAt,
+      Value<DateTime?> deletedAt,
+      Value<String> syncStatus,
+      Value<String?> remoteId,
+      Value<int> rowid,
+    });
+
+class $$DiaryEntriesTableTableFilterComposer
+    extends Composer<_$AppDatabase, $DiaryEntriesTableTable> {
+  $$DiaryEntriesTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get babyId => $composableBuilder(
+    column: $table.babyId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get familyId => $composableBuilder(
+    column: $table.familyId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recordedBy => $composableBuilder(
+    column: $table.recordedBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get entryDate => $composableBuilder(
+    column: $table.entryDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get authorNickname => $composableBuilder(
+    column: $table.authorNickname,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localId => $composableBuilder(
+    column: $table.localId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DiaryEntriesTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $DiaryEntriesTableTable> {
+  $$DiaryEntriesTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get babyId => $composableBuilder(
+    column: $table.babyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get familyId => $composableBuilder(
+    column: $table.familyId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recordedBy => $composableBuilder(
+    column: $table.recordedBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get entryDate => $composableBuilder(
+    column: $table.entryDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get authorNickname => $composableBuilder(
+    column: $table.authorNickname,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get localId => $composableBuilder(
+    column: $table.localId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get remoteId => $composableBuilder(
+    column: $table.remoteId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DiaryEntriesTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DiaryEntriesTableTable> {
+  $$DiaryEntriesTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get babyId =>
+      $composableBuilder(column: $table.babyId, builder: (column) => column);
+
+  GeneratedColumn<String> get familyId =>
+      $composableBuilder(column: $table.familyId, builder: (column) => column);
+
+  GeneratedColumn<String> get recordedBy => $composableBuilder(
+    column: $table.recordedBy,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get entryDate =>
+      $composableBuilder(column: $table.entryDate, builder: (column) => column);
+
+  GeneratedColumn<String> get authorNickname => $composableBuilder(
+    column: $table.authorNickname,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get localId =>
+      $composableBuilder(column: $table.localId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get remoteId =>
+      $composableBuilder(column: $table.remoteId, builder: (column) => column);
+}
+
+class $$DiaryEntriesTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DiaryEntriesTableTable,
+          DiaryEntriesTableData,
+          $$DiaryEntriesTableTableFilterComposer,
+          $$DiaryEntriesTableTableOrderingComposer,
+          $$DiaryEntriesTableTableAnnotationComposer,
+          $$DiaryEntriesTableTableCreateCompanionBuilder,
+          $$DiaryEntriesTableTableUpdateCompanionBuilder,
+          (
+            DiaryEntriesTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $DiaryEntriesTableTable,
+              DiaryEntriesTableData
+            >,
+          ),
+          DiaryEntriesTableData,
+          PrefetchHooks Function()
+        > {
+  $$DiaryEntriesTableTableTableManager(
+    _$AppDatabase db,
+    $DiaryEntriesTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DiaryEntriesTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DiaryEntriesTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DiaryEntriesTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> babyId = const Value.absent(),
+                Value<String> familyId = const Value.absent(),
+                Value<String?> recordedBy = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> content = const Value.absent(),
+                Value<DateTime> entryDate = const Value.absent(),
+                Value<String?> authorNickname = const Value.absent(),
+                Value<String?> localId = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> syncStatus = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DiaryEntriesTableCompanion(
+                id: id,
+                babyId: babyId,
+                familyId: familyId,
+                recordedBy: recordedBy,
+                title: title,
+                content: content,
+                entryDate: entryDate,
+                authorNickname: authorNickname,
+                localId: localId,
+                createdAt: createdAt,
+                deletedAt: deletedAt,
+                syncStatus: syncStatus,
+                remoteId: remoteId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String babyId,
+                required String familyId,
+                Value<String?> recordedBy = const Value.absent(),
+                required String title,
+                required String content,
+                required DateTime entryDate,
+                Value<String?> authorNickname = const Value.absent(),
+                Value<String?> localId = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<String> syncStatus = const Value.absent(),
+                Value<String?> remoteId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DiaryEntriesTableCompanion.insert(
+                id: id,
+                babyId: babyId,
+                familyId: familyId,
+                recordedBy: recordedBy,
+                title: title,
+                content: content,
+                entryDate: entryDate,
+                authorNickname: authorNickname,
+                localId: localId,
+                createdAt: createdAt,
+                deletedAt: deletedAt,
+                syncStatus: syncStatus,
+                remoteId: remoteId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DiaryEntriesTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DiaryEntriesTableTable,
+      DiaryEntriesTableData,
+      $$DiaryEntriesTableTableFilterComposer,
+      $$DiaryEntriesTableTableOrderingComposer,
+      $$DiaryEntriesTableTableAnnotationComposer,
+      $$DiaryEntriesTableTableCreateCompanionBuilder,
+      $$DiaryEntriesTableTableUpdateCompanionBuilder,
+      (
+        DiaryEntriesTableData,
+        BaseReferences<
+          _$AppDatabase,
+          $DiaryEntriesTableTable,
+          DiaryEntriesTableData
+        >,
+      ),
+      DiaryEntriesTableData,
+      PrefetchHooks Function()
+    >;
 typedef $$SyncQueueTableTableCreateCompanionBuilder =
     SyncQueueTableCompanion Function({
       Value<int> id,
@@ -6194,6 +7331,8 @@ class $AppDatabaseManager {
         _db,
         _db.temperatureEntriesTable,
       );
+  $$DiaryEntriesTableTableTableManager get diaryEntriesTable =>
+      $$DiaryEntriesTableTableTableManager(_db, _db.diaryEntriesTable);
   $$SyncQueueTableTableTableManager get syncQueueTable =>
       $$SyncQueueTableTableTableManager(_db, _db.syncQueueTable);
 }

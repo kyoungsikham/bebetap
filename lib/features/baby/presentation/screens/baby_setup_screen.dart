@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -9,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/widgets/baby_avatar_widget.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../family/presentation/widgets/join_family_bottom_sheet.dart';
 import '../../../family/presentation/widgets/relationship_selector.dart';
 import '../providers/baby_provider.dart';
@@ -311,7 +313,10 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                 TextButton.icon(
                   onPressed: () => showJoinFamilyBottomSheet(
                     context,
-                    onJoined: () => ref.invalidate(babiesProvider),
+                    onJoined: () {
+                      ref.invalidate(babiesProvider);
+                      if (mounted) context.go(AppRoutes.home);
+                    },
                   ),
                   icon: const Icon(Icons.login, color: AppColors.primary),
                   label: Text(

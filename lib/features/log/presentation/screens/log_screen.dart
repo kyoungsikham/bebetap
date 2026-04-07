@@ -11,6 +11,8 @@ import '../../../feeding/presentation/widgets/breast_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/formula_bottom_sheet.dart' show FormulaBottomSheet, MlFeedingType;
 import '../../../sleep/presentation/widgets/sleep_bottom_sheet.dart';
 import '../../../temperature/presentation/widgets/temperature_bottom_sheet.dart';
+import '../../../diary/presentation/providers/diary_provider.dart';
+import '../../../diary/presentation/widgets/diary_bottom_sheet.dart';
 import '../../domain/models/timeline_entry.dart';
 import '../providers/log_provider.dart';
 import '../widgets/date_navigator.dart';
@@ -148,11 +150,14 @@ class LogScreen extends ConsumerWidget {
       case TimelineEntryType.temperature:
         sheet = TemperatureBottomSheet(editEntry: entry);
         title = '체온 수정';
+      case TimelineEntryType.diary:
+        sheet = DiaryBottomSheet(editEntry: entry);
+        title = '일기';
     }
     showAppBottomSheet(context: context, child: sheet, title: title);
   }
 
-  void _openAddSheet(BuildContext context, WidgetRef ref) {
+  Future<void> _openAddSheet(BuildContext context, WidgetRef ref) async {
     final filter = ref.read(selectedTimelineFilterProvider);
     late Widget sheet;
     late String title;
@@ -178,7 +183,16 @@ class LogScreen extends ConsumerWidget {
       case TimelineEntryType.temperature:
         sheet = const TemperatureBottomSheet();
         title = '체온 기록';
+      case TimelineEntryType.diary:
+        final existing =
+            await ref.read(todayDiaryForCurrentUserProvider.future);
+        if (!context.mounted) return;
+        sheet = existing != null
+            ? DiaryBottomSheet(editEntry: existing.toTimelineEntry())
+            : const DiaryBottomSheet();
+        title = existing != null ? '일기 수정' : '일기 쓰기';
     }
+    if (!context.mounted) return;
     showAppBottomSheet(context: context, child: sheet, title: title);
   }
 }

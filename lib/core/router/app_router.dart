@@ -14,6 +14,7 @@ import '../../features/log/presentation/screens/log_screen.dart';
 import '../../features/statistics/presentation/screens/statistics_screen.dart';
 import '../../features/family/presentation/screens/family_screen.dart';
 import '../../features/baby/presentation/screens/baby_manage_screen.dart';
+import '../../features/settings/presentation/screens/icon_settings_screen.dart';
 import '../../shared/widgets/bottom_nav_bar.dart';
 import '../providers/auth_provider.dart';
 import 'app_routes.dart';
@@ -74,19 +75,20 @@ GoRouter appRouter(Ref ref) {
         return publicRoutes.contains(loc) ? null : AppRoutes.login;
       }
 
-      // 3. 로그인/이메일인증 화면에서 인증됨 → 즉시 이동 (babies 로딩 기다리지 않음)
-      //    babies 로딩 완료 전이면 일단 home으로, 완료 후 baby 없으면 babySetup으로 재리디렉트
+      // 3. 로그인/이메일인증 화면에서 인증됨 → 홈으로 이동
       if (loc == AppRoutes.login || loc == AppRoutes.emailAuth) {
-        if (!babiesLoaded) return AppRoutes.home;
-        return hasBaby ? AppRoutes.home : AppRoutes.babySetup;
+        return AppRoutes.home;
       }
 
-      // 4. babies 로딩 완료 후 아기 미등록 → 아기 설정 화면으로
-      if (babiesLoaded && !hasBaby && loc != AppRoutes.babySetup) {
+      // 4. babies 로딩 중이면 현재 위치 유지 (섣부른 리다이렉트 방지)
+      if (!babiesLoaded) return null;
+
+      // 5. babies 로딩 완료 후 아기 미등록 → 아기 설정 화면으로
+      if (!hasBaby && loc != AppRoutes.babySetup) {
         return AppRoutes.babySetup;
       }
 
-      // 5. 이미 아기가 있는데 설정 화면 접근 → 홈으로
+      // 6. 이미 아기가 있는데 설정 화면 접근 → 홈으로
       if (hasBaby && loc == AppRoutes.babySetup) {
         return AppRoutes.home;
       }
@@ -121,6 +123,13 @@ GoRouter appRouter(Ref ref) {
         pageBuilder: (_, s) => _fadePage(
           key: s.pageKey,
           child: const BabyManageScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.iconSettings,
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const IconSettingsScreen(),
         ),
       ),
       GoRoute(

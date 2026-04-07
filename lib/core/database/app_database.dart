@@ -5,6 +5,7 @@ import 'daos/feeding_dao.dart';
 import 'daos/diaper_dao.dart';
 import 'daos/sleep_dao.dart';
 import 'daos/temperature_dao.dart';
+import 'daos/diary_dao.dart';
 
 part 'app_database.g.dart';
 
@@ -129,6 +130,30 @@ class TemperatureEntriesTable extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class DiaryEntriesTable extends Table {
+  @override
+  String get tableName => 'diary_entries';
+
+  TextColumn get id             => text()();
+  TextColumn get babyId         => text()();
+  TextColumn get familyId       => text()();
+  TextColumn get recordedBy     => text().nullable()();
+  TextColumn get title          => text()();
+  TextColumn get content        => text()();
+  DateTimeColumn get entryDate  => dateTime()(); // 자정 UTC로 저장
+  TextColumn get authorNickname => text().nullable()();
+  TextColumn get localId        => text().nullable()();
+  DateTimeColumn get createdAt  => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get deletedAt  => dateTime().nullable()();
+
+  // 동기화
+  TextColumn get syncStatus => text().withDefault(const Constant('pending_create'))();
+  TextColumn get remoteId   => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class SyncQueueTable extends Table {
   @override
   String get tableName => 'sync_queue';
@@ -153,6 +178,7 @@ class SyncQueueTable extends Table {
     DiaperEntriesTable,
     SleepEntriesTable,
     TemperatureEntriesTable,
+    DiaryEntriesTable,
     SyncQueueTable,
   ],
   daos: [
@@ -161,13 +187,23 @@ class SyncQueueTable extends Table {
     DiaperDao,
     SleepDao,
     TemperatureDao,
+    DiaryDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        await migrator.createTable(diaryEntriesTable);
+      }
+    },
+  );
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'bebetap_local');
@@ -176,6 +212,7 @@ class AppDatabase extends _$AppDatabase {
   Future<void> clearAllData() async {
     await transaction(() async {
       await delete(syncQueueTable).go();
+      await delete(diaryEntriesTable).go();
       await delete(temperatureEntriesTable).go();
       await delete(sleepEntriesTable).go();
       await delete(diaperEntriesTable).go();

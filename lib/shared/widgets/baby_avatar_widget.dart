@@ -8,6 +8,7 @@ class BabyAvatarWidget extends StatelessWidget {
     this.photoUrl,
     this.localFile,
     this.gender,
+    this.colorIndex,
     this.size = 72,
     this.showEditOverlay = false,
     this.onTap,
@@ -16,21 +17,37 @@ class BabyAvatarWidget extends StatelessWidget {
   final String? photoUrl;
   final File? localFile;
   final String? gender;
+  final int? colorIndex;
   final double size;
   final bool showEditOverlay;
   final VoidCallback? onTap;
 
+  // 아기별 고유 색상 팔레트 (bg, icon, shadow)
+  static const _palette = [
+    (Color(0xFFD6E4FF), Color(0xFF6B8AFF), Color(0xFF6B8AFF)), // Blue
+    (Color(0xFFFFD6DA), Color(0xFFFF6B8A), Color(0xFFFFB3BC)), // Pink
+    (Color(0xFFD6F5E0), Color(0xFF4DBF6A), Color(0xFF4DBF6A)), // Green
+    (Color(0xFFE8D6FF), Color(0xFF9B6BFF), Color(0xFF9B6BFF)), // Purple
+    (Color(0xFFFFE4D6), Color(0xFFFF8A6B), Color(0xFFFF8A6B)), // Orange
+    (Color(0xFFD6F5F0), Color(0xFF4DBFB5), Color(0xFF4DBFB5)), // Teal
+    (Color(0xFFFFF3D6), Color(0xFFE8A020), Color(0xFFE8A020)), // Yellow
+    (Color(0xFFFFD6F5), Color(0xFFFF6BD0), Color(0xFFFF6BD0)), // Magenta
+  ];
+
   Color get _bgColor {
+    if (colorIndex != null) return _palette[colorIndex! % _palette.length].$1;
     if (gender == 'male') return const Color(0xFFD6E4FF);
     return const Color(0xFFFFD6DA);
   }
 
   Color get _iconColor {
+    if (colorIndex != null) return _palette[colorIndex! % _palette.length].$2;
     if (gender == 'male') return const Color(0xFF6B8AFF);
     return const Color(0xFFFF6B8A);
   }
 
   Color get _shadowColor {
+    if (colorIndex != null) return _palette[colorIndex! % _palette.length].$3;
     if (gender == 'male') return const Color(0xFF6B8AFF);
     return const Color(0xFFFFB3BC);
   }

@@ -4,7 +4,7 @@ import '../../../../core/database/app_database.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 
-enum TimelineEntryType { formula, breast, pumped, babyFood, sleep, diaper, temperature }
+enum TimelineEntryType { formula, breast, pumped, babyFood, sleep, diaper, temperature, diary }
 
 @immutable
 class TimelineEntry {
@@ -23,6 +23,10 @@ class TimelineEntry {
     this.rawCelsius,
     this.rawMethod,
     this.rawEndedAt,
+    this.rawTitle,
+    this.rawContent,
+    this.rawRecordedBy,
+    this.rawAuthorNickname,
   });
 
   final String id;
@@ -41,6 +45,11 @@ class TimelineEntry {
   final double? rawCelsius;
   final String? rawMethod;
   final DateTime? rawEndedAt;
+  // Diary fields
+  final String? rawTitle;
+  final String? rawContent;
+  final String? rawRecordedBy;
+  final String? rawAuthorNickname;
 
   factory TimelineEntry.fromFeedingRow(FeedingEntriesTableData row) {
     switch (row.type) {
@@ -151,6 +160,22 @@ class TimelineEntry {
       rawMethod: row.method,
     );
   }
+
+  factory TimelineEntry.fromDiaryRow(DiaryEntriesTableData row) {
+    return TimelineEntry(
+      id: row.id,
+      type: TimelineEntryType.diary,
+      occurredAt: row.entryDate,
+      title: row.title,
+      subtitle: row.authorNickname ?? '작성자',
+      icon: Icons.auto_stories,
+      color: const Color(0xFF42A5F5),
+      rawTitle: row.title,
+      rawContent: row.content,
+      rawRecordedBy: row.recordedBy,
+      rawAuthorNickname: row.authorNickname,
+    );
+  }
 }
 
 @immutable
@@ -162,6 +187,8 @@ class LogDaySummary {
     required this.babyFoodTotalMl,
     required this.diaperCount,
     required this.sleepTotal,
+    required this.temperatureCount,
+    required this.diaryCount,
   });
 
   final int formulaTotalMl;
@@ -170,6 +197,8 @@ class LogDaySummary {
   final int babyFoodTotalMl;
   final int diaperCount;
   final Duration sleepTotal;
+  final int temperatureCount;
+  final int diaryCount;
 
   factory LogDaySummary.empty() => const LogDaySummary(
         formulaTotalMl: 0,
@@ -178,5 +207,7 @@ class LogDaySummary {
         babyFoodTotalMl: 0,
         diaperCount: 0,
         sleepTotal: Duration.zero,
+        temperatureCount: 0,
+        diaryCount: 0,
       );
 }
