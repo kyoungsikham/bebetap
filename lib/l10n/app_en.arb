@@ -1,22 +1,468 @@
 {
   "@@locale": "en",
+
   "appName": "BebeTap",
+
+  "tabHome": "Home",
+  "tabStatistics": "Stats",
+  "tabLog": "Log",
+  "tabFamily": "Family",
+
+  "menuBabyManage": "Baby Management",
+  "menuWidgetAdd": "Add Widget",
+  "menuIconSettings": "Icon Settings",
+  "menuLanguage": "Language",
+  "menuLogout": "Logout",
+  "logoutConfirmTitle": "Logout",
+  "logoutConfirmMessage": "Are you sure you want to log out?",
+  "cancel": "Cancel",
+  "comingSoon": "Coming soon",
+
+  "homeGreeting": "Hello, {name}!",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "homeEncouragement": "Parenting is hard, but you're doing amazing! 💛",
+  "sectionRecord": "Record",
+
   "formula": "Formula",
   "breast": "Breastfeed",
+  "pumped": "Pumped",
+  "babyFood": "Baby Food",
   "diaper": "Diaper",
   "sleep": "Sleep",
   "temperature": "Temperature",
   "growth": "Growth",
+  "diary": "Diary",
+
+  "statsFormulaLabel": "Formula",
+  "statsSleepLabel": "Sleep",
+  "statsDiaperLabel": "Diaper",
+
   "tapToRecord": "Tap to record",
-  "today": "Today",
-  "statistics": "Statistics",
-  "family": "Family",
-  "settings": "Settings",
+  "formulaBottomSheetTitle": "Formula Feeding",
+  "breastBottomSheetTitle": "Breastfeeding",
+  "pumpedBottomSheetTitle": "Pumped Feeding",
+  "babyFoodBottomSheetTitle": "Baby Food Record",
+  "temperatureRecordTitle": "Temperature Record",
+  "diaryWriteTitle": "Write Diary",
+  "diaryEditTitle": "Edit Diary",
+  "diaryDoneToday": "Written today",
+
   "sleepActive": "Sleeping",
   "lastFeeding": "Last feeding",
   "formulaTotal": "Formula total",
   "noRecord": "No records yet",
-  "createFamily": "Create family group",
+  "startRecordingHint": "Tap the feeding tile to start",
+  "typeBreastFeeding": "Breastfeeding",
+  "typePumpedFeeding": "Pumped",
+  "typeBabyFood": "Baby Food",
+  "typeFormulaFeeding": "Formula",
+
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "am": "AM",
+  "pm": "PM",
+  "weekdayMon": "Mon",
+  "weekdayTue": "Tue",
+  "weekdayWed": "Wed",
+  "weekdayThu": "Thu",
+  "weekdayFri": "Fri",
+  "weekdaySat": "Sat",
+  "weekdaySun": "Sun",
+  "dateFormatMonthDay": "{month}/{day}",
+  "@dateFormatMonthDay": {
+    "placeholders": {
+      "month": { "type": "int" },
+      "day": { "type": "int" }
+    }
+  },
+  "dateFormatFull": "{month}/{day} ({weekday})",
+  "@dateFormatFull": {
+    "placeholders": {
+      "month": { "type": "int" },
+      "day": { "type": "int" },
+      "weekday": { "type": "String" }
+    }
+  },
+  "dateFormatTodayNav": "{month}/{day} ({weekday})  Today",
+  "@dateFormatTodayNav": {
+    "placeholders": {
+      "month": { "type": "int" },
+      "day": { "type": "int" },
+      "weekday": { "type": "String" }
+    }
+  },
+
+  "save": "Save",
+  "edit": "Edit",
+  "confirm": "Confirm",
+  "saveAmountMl": "Save {amount}ml",
+  "@saveAmountMl": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "editAmountMl": "Edit {amount}ml",
+  "@editAmountMl": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "formulaRecommendation": "{weight}kg → recommended {ml}ml/day",
+  "@formulaRecommendation": {
+    "placeholders": {
+      "weight": { "type": "String" },
+      "ml": { "type": "int" }
+    }
+  },
+  "formulaWeightHint": "Enter baby weight to see recommendation",
+  "todayAmount": "Today {amount}ml",
+  "@todayAmount": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "todayCount": "Today {count} times",
+  "@todayCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "todayDuration": "Today {duration}",
+  "@todayDuration": {
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "left": "Left",
+  "right": "Right",
+  "minuteUnit": "{min}min",
+  "@minuteUnit": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+
+  "diaperSelectType": "Select diaper type",
+  "diaperWet": "Wet",
+  "diaperSoiled": "Soiled",
+  "diaperBoth": "Wet+Soiled",
+  "diaperChange": "Change",
+
+  "sleepEdit": "Edit Sleep",
+  "sleepRecord": "Record Sleep",
+  "sleepStart": "Start Sleep",
+  "sleepEnd": "End Sleep",
+  "sleepHint": "Timer starts when sleep begins.\nRecords are kept even when app is closed.",
+  "sleepEndTimeError": "End time cannot be before start time",
+  "startTime": "Start",
+  "endTime": "End",
+  "startHourMinute": "{hour}:{minute}",
+  "@startHourMinute": {
+    "placeholders": {
+      "hour": { "type": "int" },
+      "minute": { "type": "String" }
+    }
+  },
+
+  "measureMethod": "Measurement method",
+  "methodAxillary": "Axillary",
+  "methodEar": "Ear",
+  "methodForehead": "Forehead",
+  "methodRectal": "Rectal",
+  "highFeverWarning": "High fever. Consult a doctor immediately.",
+  "lowFeverWarning": "Low fever. Monitor closely.",
+
+  "diaryTitleHint": "Enter title",
+  "diaryContentHint": "Write about your day with baby...",
+  "diaryAuthorLabel": "Author",
+  "diaryReadOnly": "This diary belongs to another author and cannot be edited.",
+
+  "loginSubtitle": "Parenting record app for new parents",
+  "email": "Email",
+  "password": "Password",
+  "forgotPassword": "Forgot password?",
+  "signupWithEmail": "Sign up with email",
+  "login": "Login",
+  "orSocialLogin": "Or social login",
+  "continueWithGoogle": "Continue with Google",
+  "continueWithKakao": "Continue with Kakao",
+  "continueWithFacebook": "Continue with Facebook",
+  "continueWithLine": "Continue with Line",
+  "invalidEmailPassword": "Incorrect email or password",
+  "networkError": "Network error. Please try again.",
+  "loginFailed": "Login failed: {error}",
+  "@loginFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "passwordReset": "Password Reset",
+  "emailAddressLabel": "Email address",
+  "send": "Send",
+  "resetEmailSent": "Password reset email has been sent.",
+  "sendFailed": "Send failed: {error}",
+  "@sendFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailSignupTitle": "Email Sign Up",
+  "enterEmailPrompt": "Enter your email address to sign up",
+  "sendVerification": "Send Verification Email",
+  "alreadyHaveAccount": "Already have an account? Login",
+  "setPasswordTitle": "Set Password",
+  "setPasswordHint": "You will use this email and password for future logins",
+  "passwordInput": "Password (6+ characters)",
+  "passwordConfirm": "Confirm Password",
+  "enterOtpTitle": "Enter Verification Code",
+  "enterOtpHint": "Enter the 6-digit code sent to your email",
+  "completeSignup": "Complete Sign Up",
+  "resendEmail": "Resend Email",
+  "invalidEmail": "Please enter a valid email address",
+  "emailAlreadyExists": "Email already registered. Redirecting to login.",
+  "sendOtpFailed": "Send failed: {error}",
+  "@sendOtpFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "passwordTooShort": "Password must be at least 6 characters",
+  "passwordMismatch": "Passwords do not match",
+  "enterSixDigitCode": "Please enter the 6-digit code",
+  "signupFailed": "Sign up failed: {error}",
+  "@signupFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "resendSuccess": "Verification code resent.",
+  "resendFailed": "Resend failed: {error}",
+  "@resendFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "next": "Next",
+
+  "babyManageTitle": "Baby Management",
+  "registeredBabies": "Registered babies",
+  "addNewBaby": "Add new baby",
+  "babyName": "Baby Name *",
+  "birthDate": "Birth Date *",
+  "genderOptional": "Gender (optional)",
+  "boy": "Boy",
+  "girl": "Girl",
+  "currentWeight": "Current Weight kg (optional)",
+  "photoSelect": "Select photo (optional)",
+  "selectBirthDate": "Select a date",
+  "birthDatePrompt": "Please select a birth date",
+  "babyNameHint": "e.g. John",
+  "babyNameRequired": "Please enter a name",
+  "invalidWeight": "Please enter a valid weight (0~30 kg)",
+  "weightHint": "e.g. 4.5",
+  "weightFormulaHint": "Entering weight calculates daily formula recommendation",
+  "babyRelationship": "Relationship with baby *",
+  "or": "Or",
+  "joinWithInviteCode": "Join with invite code",
+  "selectBaby": "Select Baby",
+  "babySetupTitle": "Baby Information",
+  "babyEditTitle": "Edit Baby",
+  "babyAddTitle": "Add Baby",
+  "addButton": "Add",
+  "editButton": "Edit",
+  "noFamilyFound": "Family information not found",
+  "saveFailed": "Save failed: {error}",
+  "@saveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "loadFailed": "Load failed: {error}",
+  "@loadFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "babyRelationshipPrompt": "Please select your relationship with baby",
+  "startButton": "Start",
+  "dateFormat": "yyyy/MM/dd",
+
+  "relationMom": "Mom",
+  "relationDad": "Dad",
+  "relationGrandma": "Grandma",
+  "relationGrandpa": "Grandpa",
+  "relationAunt": "Aunt",
+  "relationUncle": "Uncle",
+  "relationPaternalAunt": "Paternal Aunt",
+  "relationMaternalUncle": "Maternal Uncle",
+  "relationCustom": "Custom",
+  "relationCustomHint": "e.g. Stepmother, Nanny",
+
+  "familyTitle": "Family Sharing",
+  "familyGroupName": "Family name",
+  "familyNameHint": "e.g. Smith family",
+  "createFamilyDialog": "Create Family Group",
+  "makeFamily": "Create",
+  "createFamily": "Create new family group",
+  "noFamily": "No family group",
+  "noFamilyHint": "Create a family or join with invite code",
+  "inviteCode": "Invite code",
+  "inviteCodeCopied": "Invite code copied",
+  "copy": "Copy",
+  "share": "Share",
+  "inviteCodeShareHint": "Share this code with family to record together",
+  "familyMembers": "Family members",
+  "familyError": "An error occurred",
   "joinFamily": "Join with invite code",
-  "inviteCode": "Invite code"
+  "enterInviteCode": "Enter invite code",
+  "relationshipLabel": "Relationship with baby",
+  "joinButton": "Join Family",
+  "enterInviteCodeError": "Please enter an invite code",
+  "selectRelationshipError": "Please select your relationship with baby",
+  "me": "Me",
+  "userLabel": "User",
+  "caregiverRole": "Caregiver",
+  "familyRole": "Family",
+  "familyLoadFailed": "Load failed",
+  "familyShareMessage": "Join {familyName} on BebeTap!\nInvite code: {code}",
+  "@familyShareMessage": {
+    "placeholders": {
+      "familyName": { "type": "String" },
+      "code": { "type": "String" }
+    }
+  },
+  "familyShareSubject": "BebeTap Family Invite",
+
+  "statistics": "Statistics",
+  "sleepSection": "Sleep",
+  "totalSleep": "Total sleep",
+  "feedingSection": "Feeding",
+  "noFeedingRecord": "No records",
+  "diaperSection": "Diaper",
+  "diaperChangeLabel": "Diaper change",
+  "timesCount": "{count} times",
+  "@timesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "diaryCountUnit": "{count} entries",
+  "@diaryCountUnit": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "dataLoadFailed": "Cannot load data",
+  "periodDay": "Today",
+  "periodWeek": "Week",
+  "periodMonth": "Month",
+
+  "logTitle": "Parenting Log",
+  "logLoadFailed": "Could not load records",
+  "noLogForDay": "No records for this day",
+  "addLogHint": "Tap + to add a record",
+  "editFormula": "Edit Formula",
+  "editPumped": "Edit Pumped",
+  "editBabyFood": "Edit Baby Food",
+  "editBreast": "Edit Breastfeeding",
+  "editDiaper": "Edit Diaper",
+  "editSleep": "Edit Sleep",
+  "editTemperature": "Edit Temperature",
+  "diaryLog": "Diary",
+  "addFormula": "Formula Feeding",
+  "addPumped": "Pumped Feeding",
+  "addBabyFood": "Baby Food",
+  "addBreast": "Breastfeeding",
+  "addDiaper": "Diaper",
+  "addSleep": "Sleep",
+  "addTemperature": "Temperature",
+  "editDiary": "Edit Diary",
+  "writeDiary": "Write Diary",
+
+  "entryFormula": "Formula",
+  "entryBreast": "Breastfeed",
+  "entryPumped": "Pumped",
+  "entryBabyFood": "Baby Food",
+  "entrySleep": "Sleep",
+  "entrySleeping": "Sleeping",
+  "entryDiaper": "Diaper",
+  "entryTemperature": "Temperature",
+
+  "durationSeconds": "{s}s",
+  "@durationSeconds": {
+    "placeholders": {
+      "s": { "type": "int" }
+    }
+  },
+  "durationMinutesOnly": "{m}m",
+  "@durationMinutesOnly": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "durationHoursOnly": "{h}h",
+  "@durationHoursOnly": {
+    "placeholders": {
+      "h": { "type": "int" }
+    }
+  },
+  "durationHoursMinutes": "{h}h {m}m",
+  "@durationHoursMinutes": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "m": { "type": "int" }
+    }
+  },
+  "elapsedJustNow": "Just now",
+  "elapsedMinutes": "{m}min ago",
+  "@elapsedMinutes": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "elapsedHoursOnly": "{h}h ago",
+  "@elapsedHoursOnly": {
+    "placeholders": {
+      "h": { "type": "int" }
+    }
+  },
+  "elapsedHoursMinutes": "{h}h {m}m ago",
+  "@elapsedHoursMinutes": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "m": { "type": "int" }
+    }
+  },
+
+  "settings": "Settings",
+  "iconSettingsTitle": "Icon Settings",
+  "iconSettingsHint": "Drag to reorder, toggle to show/hide.",
+  "logout": "Logout",
+
+  "pickerToday": "Today",
+  "pickerHour": "h",
+  "pickerMinute": "m",
+  "pickerConfirm": "Confirm",
+
+  "displayTime": "{h}:{minute} {period}",
+  "@displayTime": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "minute": { "type": "String" },
+      "period": { "type": "String" }
+    }
+  },
+  "dateFormatLong": "{month}/{day}/{year} ({weekday})",
+  "@dateFormatLong": {
+    "placeholders": {
+      "year": { "type": "int" },
+      "month": { "type": "int" },
+      "day": { "type": "int" },
+      "weekday": { "type": "String" }
+    }
+  }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/models/tracking_category.dart';
 import '../../../../shared/providers/icon_settings_provider.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
@@ -32,39 +33,43 @@ class TrackingGrid extends ConsumerWidget {
     final summary = summaryAsync.valueOrNull;
     final visibleTypes = ref.watch(visibleCategoriesProvider);
 
+    final l10n = context.l10n;
+
     // 수유 타입별 경과 레이블 (lastFeedingType 기준으로 해당 타일에만 표시)
     String feedingElapsedLabel() {
-      if (summary?.lastFeedingAt == null) return '탭해서 기록';
-      return DateTime.now().difference(summary!.lastFeedingAt!).formatElapsedKorean();
+      if (summary?.lastFeedingAt == null) return l10n.tapToRecord;
+      return DateTime.now()
+          .difference(summary!.lastFeedingAt!)
+          .formatElapsedLocalized(l10n);
     }
 
     String formulaSublabel = summary?.lastFeedingType == 'formula'
         ? feedingElapsedLabel()
         : (summary != null && summary.todayFormulaTotalMl > 0
-            ? '오늘 ${summary.todayFormulaTotalMl}ml'
-            : '탭해서 기록');
+            ? l10n.todayAmount(summary.todayFormulaTotalMl)
+            : l10n.tapToRecord);
 
     String breastSublabel = summary?.lastFeedingType == 'breast'
         ? feedingElapsedLabel()
-        : '탭해서 기록';
+        : l10n.tapToRecord;
 
     String pumpedSublabel = summary?.lastFeedingType == 'pumped'
         ? feedingElapsedLabel()
         : (summary != null && summary.todayPumpedTotalMl > 0
-            ? '오늘 ${summary.todayPumpedTotalMl}ml'
-            : '탭해서 기록');
+            ? l10n.todayAmount(summary.todayPumpedTotalMl)
+            : l10n.tapToRecord);
 
-    String sleepLabel = '탭해서 기록';
+    String sleepLabel = l10n.tapToRecord;
     if (activeSleep != null) {
-      sleepLabel = activeSleep.duration.formatKorean();
+      sleepLabel = activeSleep.duration.formatLocalized(l10n);
     } else if (summary?.todaySleepTotal != null &&
         summary!.todaySleepTotal > Duration.zero) {
-      sleepLabel = '오늘 ${summary.todaySleepTotal.formatHhMm()}';
+      sleepLabel = l10n.todayDuration(summary.todaySleepTotal.formatHhMm());
     }
 
     final diaperLabel = summary != null && summary.todayDiaperCount > 0
-        ? '오늘 ${summary.todayDiaperCount}회'
-        : '탭해서 기록';
+        ? l10n.todayCount(summary.todayDiaperCount)
+        : l10n.tapToRecord;
 
     Widget buildTile(TimelineEntryType type) {
       final info = TrackingCategoryInfo.all[type]!;
@@ -73,43 +78,43 @@ class TrackingGrid extends ConsumerWidget {
         case TimelineEntryType.formula:
           return TrackingTile(
             icon: info.icon,
-            label: info.label,
+            label: info.localizedLabel(l10n),
             sublabel: formulaSublabel,
             color: AppColors.primary,
             onTap: () => showAppBottomSheet(
               context: context,
               child: const FormulaBottomSheet(),
-              title: '분유 수유',
+              title: l10n.formulaBottomSheetTitle,
             ),
           );
         case TimelineEntryType.breast:
           return TrackingTile(
             icon: info.icon,
-            label: info.label,
+            label: info.localizedLabel(l10n),
             sublabel: breastSublabel,
             color: info.color,
             onTap: () => showAppBottomSheet(
               context: context,
               child: const BreastBottomSheet(),
-              title: '모유 수유',
+              title: l10n.breastBottomSheetTitle,
             ),
           );
         case TimelineEntryType.pumped:
           return TrackingTile(
             icon: info.icon,
-            label: info.label,
+            label: info.localizedLabel(l10n),
             sublabel: pumpedSublabel,
             color: info.color,
             onTap: () => showAppBottomSheet(
               context: context,
               child: const FormulaBottomSheet(feedingType: MlFeedingType.pumped),
-              title: '유축 수유',
+              title: l10n.pumpedBottomSheetTitle,
             ),
           );
         case TimelineEntryType.diaper:
           return TrackingTile(
             icon: info.icon,
-            label: info.label,
+            label: info.localizedLabel(l10n),
             sublabel: diaperLabel,
             color: info.color,
             onTap: () => showAppBottomSheet(
@@ -120,40 +125,40 @@ class TrackingGrid extends ConsumerWidget {
         case TimelineEntryType.sleep:
           return TrackingTile(
             icon: info.icon,
-            label: info.label,
+            label: info.localizedLabel(l10n),
             sublabel: sleepLabel,
             color: info.color,
             isActive: activeSleep != null,
             onTap: () => showAppBottomSheet(
               context: context,
               child: const SleepBottomSheet(),
-              title: '수면',
+              title: l10n.sleep,
             ),
           );
         case TimelineEntryType.temperature:
           return TrackingTile(
             icon: info.icon,
-            label: info.label,
-            sublabel: '탭해서 기록',
+            label: info.localizedLabel(l10n),
+            sublabel: l10n.tapToRecord,
             color: info.color,
             onTap: () => showAppBottomSheet(
               context: context,
               child: const TemperatureBottomSheet(),
-              title: '체온 기록',
+              title: l10n.temperatureRecordTitle,
             ),
           );
         case TimelineEntryType.babyFood:
           return TrackingTile(
             icon: info.icon,
-            label: info.label,
+            label: info.localizedLabel(l10n),
             sublabel: summary != null && summary.todayBabyFoodTotalMl > 0
-                ? '오늘 ${summary.todayBabyFoodTotalMl}ml'
-                : '탭해서 기록',
+                ? l10n.todayAmount(summary.todayBabyFoodTotalMl)
+                : l10n.tapToRecord,
             color: info.color,
             onTap: () => showAppBottomSheet(
               context: context,
               child: const BabyFoodBottomSheet(),
-              title: '이유식 기록',
+              title: l10n.babyFoodBottomSheetTitle,
             ),
           );
         case TimelineEntryType.diary:
@@ -161,10 +166,11 @@ class TrackingGrid extends ConsumerWidget {
             builder: (context, ref, _) {
               final diaryAsync = ref.watch(todayDiaryForCurrentUserProvider);
               final hasDiary = diaryAsync.valueOrNull != null;
+              final innerL10n = context.l10n;
               return TrackingTile(
                 icon: info.icon,
-                label: info.label,
-                sublabel: hasDiary ? '오늘 작성 완료' : '탭해서 기록',
+                label: info.localizedLabel(innerL10n),
+                sublabel: hasDiary ? innerL10n.diaryDoneToday : innerL10n.tapToRecord,
                 color: info.color,
                 onTap: () async {
                   final existing =
@@ -175,7 +181,9 @@ class TrackingGrid extends ConsumerWidget {
                     child: existing != null
                         ? DiaryBottomSheet(editEntry: existing.toTimelineEntry())
                         : const DiaryBottomSheet(),
-                    title: existing != null ? '일기 수정' : '일기 쓰기',
+                    title: existing != null
+                        ? context.l10n.diaryEditTitle
+                        : context.l10n.diaryWriteTitle,
                   );
                 },
               );

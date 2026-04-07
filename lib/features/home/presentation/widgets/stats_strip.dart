@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../providers/home_provider.dart';
 
 /// 오늘 요약 수치 띠 — 분유 총량 | 수면 합계 | 기저귀 횟수
@@ -41,7 +42,7 @@ class StatsStrip extends ConsumerWidget {
                 child: _StatItem(
                   icon: Icons.local_drink_outlined,
                   value: formulaLabel,
-                  label: '분유',
+                  label: context.l10n.statsFormulaLabel,
                   color: AppColors.primary,
                 ),
               ),
@@ -50,7 +51,7 @@ class StatsStrip extends ConsumerWidget {
                 child: _StatItem(
                   icon: Icons.bedtime_outlined,
                   value: summary.todaySleepTotal.formatHhMm(),
-                  label: '수면',
+                  label: context.l10n.statsSleepLabel,
                   color: const Color(0xFF7B68EE),
                 ),
               ),
@@ -59,7 +60,7 @@ class StatsStrip extends ConsumerWidget {
                 child: _StatItem(
                   icon: Icons.baby_changing_station,
                   value: '${summary.todayDiaperCount}회',
-                  label: '기저귀',
+                  label: context.l10n.statsDiaperLabel,
                   color: const Color(0xFF52B788),
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../shared/extensions/l10n_ext.dart';
 
 /// 날짜·시·분을 3열 휠로 선택하는 통합 피커를 모달 바텀시트로 표시합니다.
 ///
@@ -82,13 +83,22 @@ class _DateTimeWheelPickerContentState
     super.dispose();
   }
 
-  String _formatDate(DateTime d) {
+  String _formatDate(DateTime d, BuildContext context) {
+    final l10n = context.l10n;
     final today = DateTime.now();
     if (d.year == today.year && d.month == today.month && d.day == today.day) {
-      return '오늘';
+      return l10n.pickerToday;
     }
-    const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-    return '${d.month}월 ${d.day}일 ${weekdays[d.weekday - 1]}';
+    final weekdays = [
+      l10n.weekdayMon,
+      l10n.weekdayTue,
+      l10n.weekdayWed,
+      l10n.weekdayThu,
+      l10n.weekdayFri,
+      l10n.weekdaySat,
+      l10n.weekdaySun,
+    ];
+    return l10n.dateFormatFull(d.month, d.day, weekdays[d.weekday - 1]);
   }
 
   Widget _buildWheelColumn({
@@ -187,7 +197,7 @@ class _DateTimeWheelPickerContentState
                 _buildWheelColumn(
                   controller: _dateCtrl,
                   itemCount: _dates.length,
-                  labelOf: (i) => _formatDate(_dates[i]),
+                  labelOf: (i) => _formatDate(_dates[i], context),
                   unit: null,
                   selectedIdx: _dateIdx,
                   onChanged: (i) => _dateIdx = i,
@@ -199,7 +209,7 @@ class _DateTimeWheelPickerContentState
                   controller: _hourCtrl,
                   itemCount: 24,
                   labelOf: (i) => i.toString().padLeft(2, '0'),
-                  unit: '시',
+                  unit: context.l10n.pickerHour,
                   selectedIdx: _hour,
                   onChanged: (i) => _hour = i,
                 ),
@@ -209,7 +219,7 @@ class _DateTimeWheelPickerContentState
                   controller: _minCtrl,
                   itemCount: 60,
                   labelOf: (i) => i.toString().padLeft(2, '0'),
-                  unit: '분',
+                  unit: context.l10n.pickerMinute,
                   selectedIdx: _minute,
                   onChanged: (i) => _minute = i,
                 ),
@@ -238,7 +248,7 @@ class _DateTimeWheelPickerContentState
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('확인'),
+              child: Text(context.l10n.pickerConfirm),
             ),
           ),
         ],

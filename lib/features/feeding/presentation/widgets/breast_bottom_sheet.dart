@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/date_time_wheel_picker.dart';
 import '../../../log/domain/models/timeline_entry.dart';
 import '../providers/feeding_provider.dart';
@@ -51,25 +52,8 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
     super.dispose();
   }
 
-  String _formatDisplayDateTime(DateTime dt) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final dtDay = DateTime(dt.year, dt.month, dt.day);
-    String datePart;
-    if (dtDay == today) {
-      datePart = '오늘';
-    } else if (dtDay == yesterday) {
-      datePart = '어제';
-    } else {
-      const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-      datePart = '${dt.month}월 ${dt.day}일 (${weekdays[dt.weekday - 1]})';
-    }
-    final period = dt.hour < 12 ? '오전' : '오후';
-    final h = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
-    final timePart = '$period $h:${dt.minute.toString().padLeft(2, '0')}';
-    return '$datePart  $timePart';
-  }
+  String _formatDisplayDateTime(DateTime dt) =>
+      dt.formatDisplayLocalized(context.l10n);
 
   Future<void> _pickDateTime() async {
     final result = await showDateTimeWheelPicker(
@@ -133,7 +117,7 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
                 child: Column(
                   children: [
                     Text(
-                      '왼쪽',
+                      context.l10n.left,
                       style: AppTypography.labelLarge
                           .copyWith(color: AppColors.onSurfaceMuted),
                     ),
@@ -152,7 +136,7 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
                 child: Column(
                   children: [
                     Text(
-                      '오른쪽',
+                      context.l10n.right,
                       style: AppTypography.labelLarge
                           .copyWith(color: AppColors.onSurfaceMuted),
                     ),
@@ -205,7 +189,7 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text('수정'),
+                  : Text(context.l10n.edit),
             ),
           ),
         ],
@@ -268,7 +252,7 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
             children: [
               Expanded(
                 child: _SideButton(
-                  label: '왼쪽',
+                  label: context.l10n.left,
                   duration: sw.leftDuration,
                   isActive: sw.activeSide == 'left',
                   onTap: () {
@@ -286,7 +270,7 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: _SideButton(
-                  label: '오른쪽',
+                  label: context.l10n.right,
                   duration: sw.rightDuration,
                   isActive: sw.activeSide == 'right',
                   onTap: () {
@@ -325,7 +309,7 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
                     ),
                     minimumSize: const Size(0, 52),
                   ),
-                  child: const Text('취소'),
+                  child: Text(context.l10n.cancel),
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -373,7 +357,7 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text('저장'),
+                      : Text(context.l10n.save),
                 ),
               ),
             ],
@@ -425,7 +409,7 @@ class _MinuteWheelPicker extends StatelessWidget {
                 final isSelected = val == selectedValue;
                 return Center(
                   child: Text(
-                    '$val분',
+                    context.l10n.minuteUnit(val),
                     style: AppTypography.bodyMedium.copyWith(
                       color: isSelected
                           ? AppColors.primary

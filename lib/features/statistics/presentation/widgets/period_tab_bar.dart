@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../domain/models/period.dart';
 
 class PeriodTabBar extends StatelessWidget {
@@ -45,7 +46,7 @@ class PeriodTabBar extends StatelessWidget {
                     : null,
               ),
               child: Text(
-                p.label,
+                p.localizedLabel(context.l10n),
                 style: AppTypography.bodySmall.copyWith(
                   color: isSelected
                       ? AppColors.onSurface

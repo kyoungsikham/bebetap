@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/date_time_wheel_picker.dart';
 import '../../../log/domain/models/timeline_entry.dart';
 import '../providers/diaper_provider.dart';
@@ -30,25 +32,8 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
     _selectedType = widget.editEntry?.rawDiaperType;
   }
 
-  String _formatDisplayDateTime(DateTime dt) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final dtDay = DateTime(dt.year, dt.month, dt.day);
-    String datePart;
-    if (dtDay == today) {
-      datePart = '오늘';
-    } else if (dtDay == yesterday) {
-      datePart = '어제';
-    } else {
-      const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-      datePart = '${dt.month}월 ${dt.day}일 (${weekdays[dt.weekday - 1]})';
-    }
-    final period = dt.hour < 12 ? '오전' : '오후';
-    final h = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
-    final timePart = '$period $h:${dt.minute.toString().padLeft(2, '0')}';
-    return '$datePart  $timePart';
-  }
+  String _formatDisplayDateTime(DateTime dt) =>
+      dt.formatDisplayLocalized(context.l10n);
 
   Future<void> _pickDateTime() async {
     final result = await showDateTimeWheelPicker(
@@ -74,7 +59,7 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '기저귀 종류를 선택하세요',
+            context.l10n.diaperSelectType,
             style: AppTypography.titleMedium,
             textAlign: TextAlign.center,
           ),
@@ -109,7 +94,7 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
             children: [
               Expanded(
                 child: _DiaperTypeButton(
-                  label: '소변',
+                  label: context.l10n.diaperWet,
                   emoji: '💧',
                   type: 'wet',
                   color: const Color(0xFFE3F0FF),
@@ -125,7 +110,7 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: _DiaperTypeButton(
-                  label: '대변',
+                  label: context.l10n.diaperSoiled,
                   emoji: '🟤',
                   type: 'soiled',
                   color: const Color(0xFFFFF3E0),
@@ -142,7 +127,7 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
           ),
           const SizedBox(height: AppSpacing.sm),
           _DiaperTypeButton(
-            label: '소변+대변',
+            label: context.l10n.diaperBoth,
             emoji: '🔄',
             type: 'both',
             color: const Color(0xFFE8F5E9),
@@ -190,7 +175,7 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text('수정'),
+                    : Text(context.l10n.edit),
               ),
             ),
           ],

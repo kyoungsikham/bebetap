@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
+import '../../../../l10n/app_localizations.dart';
 
 const kRelationshipPresets = [
   '엄마',
@@ -14,6 +16,20 @@ const kRelationshipPresets = [
   '고모',
   '외삼촌',
 ];
+
+String _localizedPreset(String preset, AppLocalizations l10n) {
+  return switch (preset) {
+    '엄마' => l10n.relationMom,
+    '아빠' => l10n.relationDad,
+    '할머니' => l10n.relationGrandma,
+    '할아버지' => l10n.relationGrandpa,
+    '이모' => l10n.relationAunt,
+    '삼촌' => l10n.relationUncle,
+    '고모' => l10n.relationPaternalAunt,
+    '외삼촌' => l10n.relationMaternalUncle,
+    _ => preset,
+  };
+}
 
 class RelationshipSelector extends StatefulWidget {
   const RelationshipSelector({
@@ -70,6 +86,7 @@ class _RelationshipSelectorState extends State<RelationshipSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -78,12 +95,12 @@ class _RelationshipSelectorState extends State<RelationshipSelector> {
           runSpacing: AppSpacing.sm,
           children: [
             ...kRelationshipPresets.map((preset) => _Chip(
-                  label: preset,
+                  label: _localizedPreset(preset, l10n),
                   selected: _isSelected(preset),
                   onTap: () => _selectPreset(preset),
                 )),
             _Chip(
-              label: '직접입력',
+              label: l10n.relationCustom,
               selected: _isCustom,
               onTap: _toggleCustom,
             ),
@@ -95,7 +112,7 @@ class _RelationshipSelectorState extends State<RelationshipSelector> {
             controller: _customController,
             onChanged: (v) => widget.onChanged(v.trim().isEmpty ? null : v.trim()),
             decoration: InputDecoration(
-              hintText: '예: 외할머니, 큰이모',
+              hintText: l10n.relationCustomHint,
               hintStyle: AppTypography.bodyMedium.copyWith(
                 color: AppColors.onSurfaceMuted,
               ),

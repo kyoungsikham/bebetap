@@ -6,6 +6,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/constants/medical_constants.dart';
+import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/date_time_wheel_picker.dart';
 import '../../../log/domain/models/timeline_entry.dart';
 import '../providers/temperature_provider.dart';
@@ -28,12 +30,7 @@ class _TemperatureBottomSheetState
 
   bool get _isEditMode => widget.editEntry != null;
 
-  static const _methods = [
-    ('axillary', '겨드랑이'),
-    ('ear', '귀'),
-    ('forehead', '이마'),
-    ('rectal', '항문'),
-  ];
+  static const _methodKeys = ['axillary', 'ear', 'forehead', 'rectal'];
 
   @override
   void initState() {
@@ -52,25 +49,16 @@ class _TemperatureBottomSheetState
     super.dispose();
   }
 
-  String _formatDisplayDateTime(DateTime dt) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final dtDay = DateTime(dt.year, dt.month, dt.day);
-    String datePart;
-    if (dtDay == today) {
-      datePart = '오늘';
-    } else if (dtDay == yesterday) {
-      datePart = '어제';
-    } else {
-      const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-      datePart = '${dt.month}월 ${dt.day}일 (${weekdays[dt.weekday - 1]})';
-    }
-    final period = dt.hour < 12 ? '오전' : '오후';
-    final h = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
-    final timePart = '$period $h:${dt.minute.toString().padLeft(2, '0')}';
-    return '$datePart  $timePart';
-  }
+  String _formatDisplayDateTime(DateTime dt) =>
+      dt.formatDisplayLocalized(context.l10n);
+
+  String _methodLabel(String key) => switch (key) {
+        'axillary' => context.l10n.methodAxillary,
+        'ear' => context.l10n.methodEar,
+        'forehead' => context.l10n.methodForehead,
+        'rectal' => context.l10n.methodRectal,
+        _ => key,
+      };
 
   Future<void> _pickDateTime() async {
     final result = await showDateTimeWheelPicker(
@@ -189,7 +177,7 @@ class _TemperatureBottomSheetState
           if (isFever) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
-              isHighFever ? '고열입니다. 즉시 의사에게 상담하세요.' : '미열입니다. 경과를 주의깊게 관찰하세요.',
+              isHighFever ? context.l10n.highFeverWarning : context.l10n.lowFeverWarning,
               style: AppTypography.bodySmall.copyWith(
                 color: tempColor,
                 fontWeight: FontWeight.w600,
@@ -202,17 +190,17 @@ class _TemperatureBottomSheetState
 
           // 측정 방법
           Text(
-            '측정 방법',
+            context.l10n.measureMethod,
             style:
                 AppTypography.labelLarge.copyWith(color: AppColors.onSurface),
           ),
           const SizedBox(height: AppSpacing.sm),
           Wrap(
             spacing: AppSpacing.sm,
-            children: _methods.map((m) {
-              final isSelected = m.$1 == _method;
+            children: _methodKeys.map((key) {
+              final isSelected = key == _method;
               return GestureDetector(
-                onTap: () => setState(() => _method = m.$1),
+                onTap: () => setState(() => _method = key),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 120),
                   padding: const EdgeInsets.symmetric(
@@ -231,7 +219,7 @@ class _TemperatureBottomSheetState
                     ),
                   ),
                   child: Text(
-                    m.$2,
+                    _methodLabel(key),
                     style: AppTypography.labelLarge.copyWith(
                       color: isSelected
                           ? AppColors.primary
@@ -286,7 +274,7 @@ class _TemperatureBottomSheetState
                         color: Colors.white,
                       ),
                     )
-                  : Text(_isEditMode ? '수정' : '저장'),
+                  : Text(_isEditMode ? context.l10n.edit : context.l10n.save),
             ),
           ),
         ],

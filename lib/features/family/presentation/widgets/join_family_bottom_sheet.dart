@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
 import '../providers/family_provider.dart';
 import 'relationship_selector.dart';
@@ -14,7 +15,7 @@ Future<void> showJoinFamilyBottomSheet(
 }) {
   return showAppBottomSheet(
     context: context,
-    title: '초대 코드로 합류하기',
+    title: context.l10n.joinFamily,
     child: _JoinFamilyBottomSheet(onJoined: onJoined),
   );
 }
@@ -43,11 +44,11 @@ class _JoinFamilyBottomSheetState
   Future<void> _join() async {
     final code = _codeController.text.trim();
     if (code.isEmpty) {
-      setState(() => _errorText = '초대 코드를 입력해주세요');
+      setState(() => _errorText = context.l10n.enterInviteCodeError);
       return;
     }
     if (_nickname == null || _nickname!.isEmpty) {
-      setState(() => _errorText = '아기와의 관계를 선택해주세요');
+      setState(() => _errorText = context.l10n.selectRelationshipError);
       return;
     }
     setState(() => _errorText = null);
@@ -87,7 +88,7 @@ class _JoinFamilyBottomSheetState
           mainAxisSize: MainAxisSize.min,
           children: [
             // 초대 코드 입력
-            Text('초대 코드', style: AppTypography.labelLarge),
+            Text(context.l10n.enterInviteCode, style: AppTypography.labelLarge),
             const SizedBox(height: AppSpacing.sm),
             TextField(
               controller: _codeController,
@@ -121,7 +122,7 @@ class _JoinFamilyBottomSheetState
             const SizedBox(height: AppSpacing.xl),
 
             // 관계 선택
-            Text('아기와의 관계', style: AppTypography.labelLarge),
+            Text(context.l10n.relationshipLabel, style: AppTypography.labelLarge),
             const SizedBox(height: AppSpacing.sm),
             RelationshipSelector(
               selected: _nickname,
@@ -159,7 +160,7 @@ class _JoinFamilyBottomSheetState
                       ),
                     )
                   : Text(
-                      '가족 합류하기',
+                      context.l10n.joinButton,
                       style: AppTypography.labelLarge.copyWith(
                         color: Colors.white,
                       ),

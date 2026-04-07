@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../features/log/domain/models/timeline_entry.dart';
+import '../../l10n/app_localizations.dart';
 
 class TrackingCategoryInfo {
   const TrackingCategoryInfo({
@@ -86,4 +87,27 @@ class TrackingCategoryInfo {
       bgColor: Color(0xFFE3F2FD),
     ),
   };
+}
+
+extension TrackingCategoryInfoL10n on TrackingCategoryInfo {
+  String localizedLabel(AppLocalizations l10n) {
+    switch (type) {
+      case TimelineEntryType.formula:
+        return l10n.formula;
+      case TimelineEntryType.breast:
+        return l10n.breast;
+      case TimelineEntryType.pumped:
+        return l10n.pumped;
+      case TimelineEntryType.diaper:
+        return l10n.diaper;
+      case TimelineEntryType.sleep:
+        return l10n.sleep;
+      case TimelineEntryType.temperature:
+        return l10n.temperature;
+      case TimelineEntryType.babyFood:
+        return l10n.babyFood;
+      case TimelineEntryType.diary:
+        return l10n.diary;
+    }
+  }
 }

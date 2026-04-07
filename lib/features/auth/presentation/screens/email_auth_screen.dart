@@ -6,6 +6,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import 'package:go_router/go_router.dart';
 
 class EmailAuthScreen extends ConsumerStatefulWidget {
@@ -43,20 +44,19 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
     final email = _emailCtrl.text.trim();
     if (!email.contains('@') || !email.contains('.')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('올바른 이메일 형식을 입력해주세요')),
+        SnackBar(content: Text(context.l10n.invalidEmail)),
       );
       return;
     }
 
     setState(() => _loading = true);
     try {
-      // 이미 가입된 이메일인지 확인
       final exists =
           await ref.read(authRepositoryProvider).checkEmailExists(email);
       if (exists) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('이미 가입된 이메일입니다. 로그인 페이지로 이동합니다.')),
+            SnackBar(content: Text(context.l10n.emailAlreadyExists)),
           );
           context.go(AppRoutes.login);
         }
@@ -69,7 +69,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('발송 실패: $e')),
+          SnackBar(content: Text(context.l10n.sendOtpFailed(e.toString()))),
         );
       }
     } finally {
@@ -82,13 +82,13 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
     final pw = _pwCtrl.text.trim();
     if (pw.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('비밀번호는 6자 이상이어야 합니다')),
+        SnackBar(content: Text(context.l10n.passwordTooShort)),
       );
       return;
     }
     if (pw != _pwConfirmCtrl.text.trim()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('비밀번호가 일치하지 않습니다')),
+        SnackBar(content: Text(context.l10n.passwordMismatch)),
       );
       return;
     }
@@ -100,25 +100,22 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
     final token = _otpCtrl.text.trim();
     if (token.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('6자리 인증 코드를 입력해주세요')),
+        SnackBar(content: Text(context.l10n.enterSixDigitCode)),
       );
       return;
     }
 
     setState(() => _loading = true);
     try {
-      // 1. OTP 인증 → 세션 생성
       await ref
           .read(authRepositoryProvider)
           .verifyEmailOtp(_submittedEmail, token);
-      // 2. 비밀번호 즉시 설정 (같은 async 체인 — GoRouter redirect보다 먼저 실행)
       await ref.read(authRepositoryProvider).setPassword(_pwCtrl.text.trim());
-      // 3. 아기 등록 화면으로 이동
       if (mounted) context.go(AppRoutes.babySetup);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('가입 실패: $e')),
+          SnackBar(content: Text(context.l10n.signupFailed(e.toString()))),
         );
       }
     } finally {
@@ -132,13 +129,13 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
       await ref.read(authRepositoryProvider).sendEmailOtp(_submittedEmail);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('인증 코드를 재발송했습니다.')),
+          SnackBar(content: Text(context.l10n.resendSuccess)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('재발송 실패: $e')),
+          SnackBar(content: Text(context.l10n.resendFailed(e.toString()))),
         );
       }
     } finally {
@@ -154,7 +151,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: const BackButton(),
-        title: Text('이메일 회원가입', style: AppTypography.titleLarge),
+        title: Text(context.l10n.emailSignupTitle, style: AppTypography.titleLarge),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -178,7 +175,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
         const SizedBox(height: AppSpacing.xl),
 
         Text(
-          '가입할 이메일 주소를 입력해주세요',
+          context.l10n.enterEmailPrompt,
           style: AppTypography.bodyMedium
               .copyWith(color: AppColors.onSurfaceMuted),
         ),
@@ -195,7 +192,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
         const SizedBox(height: AppSpacing.xl),
 
         _primaryButton(
-          label: '인증 메일 발송',
+          label: context.l10n.sendVerification,
           onPressed: _loading ? null : _sendOtp,
         ),
 
@@ -205,7 +202,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
           child: TextButton(
             onPressed: () => context.go(AppRoutes.login),
             child: Text(
-              '이미 계정이 있으신가요? 로그인',
+              context.l10n.alreadyHaveAccount,
               style: AppTypography.bodySmall
                   .copyWith(color: AppColors.primary),
             ),
@@ -227,13 +224,13 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
         const SizedBox(height: AppSpacing.lg),
 
         Text(
-          '비밀번호를 설정해주세요',
+          context.l10n.setPasswordTitle,
           style: AppTypography.titleMedium,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          '다음 로그인부터 이메일과 비밀번호로 로그인합니다',
+          context.l10n.setPasswordHint,
           style: AppTypography.bodySmall
               .copyWith(color: AppColors.onSurfaceMuted),
           textAlign: TextAlign.center,
@@ -246,7 +243,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
           obscureText: true,
           autofocus: true,
           style: AppTypography.bodyMedium,
-          decoration: _inputDecoration(hintText: '비밀번호 (6자 이상)'),
+          decoration: _inputDecoration(hintText: context.l10n.passwordInput),
         ),
 
         const SizedBox(height: AppSpacing.md),
@@ -255,13 +252,13 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
           controller: _pwConfirmCtrl,
           obscureText: true,
           style: AppTypography.bodyMedium,
-          decoration: _inputDecoration(hintText: '비밀번호 확인'),
+          decoration: _inputDecoration(hintText: context.l10n.passwordConfirm),
         ),
 
         const SizedBox(height: AppSpacing.xl),
 
         _primaryButton(
-          label: '다음',
+          label: context.l10n.next,
           onPressed: _confirmPassword,
         ),
       ],
@@ -281,7 +278,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
         const SizedBox(height: AppSpacing.lg),
 
         Text(
-          '인증 코드를 입력해주세요',
+          context.l10n.enterOtpTitle,
           style: AppTypography.titleMedium,
           textAlign: TextAlign.center,
         ),
@@ -294,7 +291,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          '이메일로 발송된 6자리 코드를 입력해주세요',
+          context.l10n.enterOtpHint,
           style: AppTypography.bodySmall
               .copyWith(color: AppColors.onSurfaceMuted),
           textAlign: TextAlign.center,
@@ -320,7 +317,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
         const SizedBox(height: AppSpacing.xl),
 
         _primaryButton(
-          label: '가입 완료',
+          label: context.l10n.completeSignup,
           onPressed: _loading ? null : _completeSignup,
         ),
 
@@ -330,7 +327,7 @@ class _EmailAuthScreenState extends ConsumerState<EmailAuthScreen> {
           child: TextButton(
             onPressed: _loading ? null : _resendOtp,
             child: Text(
-              '이메일 재발송',
+              context.l10n.resendEmail,
               style: AppTypography.bodySmall
                   .copyWith(color: AppColors.onSurfaceMuted),
             ),

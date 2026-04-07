@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/models/tracking_category.dart';
 import '../../../../shared/providers/icon_settings_provider.dart';
 import '../../domain/models/timeline_entry.dart';
@@ -29,6 +30,7 @@ class LogStatsStrip extends ConsumerWidget {
       loading: () => _StripSkeleton(count: visibleTypes.length),
       error: (_, _) => const SizedBox.shrink(),
       data: (summary) {
+        final l10n = context.l10n;
         final breastDur = Duration(seconds: summary.breastTotalSec);
 
         String valueFor(TimelineEntryType type) {
@@ -36,21 +38,19 @@ class LogStatsStrip extends ConsumerWidget {
             case TimelineEntryType.formula:
               return '${summary.formulaTotalMl}ml';
             case TimelineEntryType.breast:
-              return breastDur == Duration.zero ? '0분' : breastDur.formatKorean();
+              return breastDur.formatLocalized(l10n);
             case TimelineEntryType.pumped:
               return '${summary.pumpedTotalMl}ml';
             case TimelineEntryType.babyFood:
               return '${summary.babyFoodTotalMl}ml';
             case TimelineEntryType.diaper:
-              return '${summary.diaperCount}회';
+              return l10n.timesCount(summary.diaperCount);
             case TimelineEntryType.sleep:
-              return summary.sleepTotal == Duration.zero
-                  ? '0분'
-                  : summary.sleepTotal.formatKorean();
+              return summary.sleepTotal.formatLocalized(l10n);
             case TimelineEntryType.temperature:
-              return '${summary.temperatureCount}회';
+              return l10n.timesCount(summary.temperatureCount);
             case TimelineEntryType.diary:
-              return '${summary.diaryCount}편';
+              return l10n.diaryCountUnit(summary.diaryCount);
           }
         }
 
@@ -74,7 +74,7 @@ class LogStatsStrip extends ConsumerWidget {
                     color: info.color,
                     bgColor: info.bgColor,
                     value: valueFor(type),
-                    label: info.label,
+                    label: info.localizedLabel(context.l10n),
                   );
                 }),
               ],

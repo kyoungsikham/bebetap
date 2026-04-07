@@ -5,6 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../family/presentation/providers/family_provider.dart';
 import '../../../log/domain/models/timeline_entry.dart';
 import '../providers/diary_provider.dart';
@@ -53,16 +55,13 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
               .where((m) => m.userId == userId)
               .firstOrNull
               ?.nickname ??
-          '작성자';
+          context.l10n.diaryAuthorLabel;
     } catch (_) {
-      return '작성자';
+      return context.l10n.diaryAuthorLabel;
     }
   }
 
-  String _formatDate(DateTime dt) {
-    const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-    return '${dt.year}년 ${dt.month}월 ${dt.day}일 (${weekdays[dt.weekday - 1]})';
-  }
+  String _formatDate(DateTime dt) => dt.formatLongLocalized(context.l10n);
 
   /// 다른 사람 일기인지 확인
   bool get _isOtherAuthor {
@@ -103,7 +102,7 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
               membersAsync.when(
                 data: (members) {
                   final nick = _isEditMode
-                      ? (widget.editEntry?.rawAuthorNickname ?? '작성자')
+                      ? (widget.editEntry?.rawAuthorNickname ?? context.l10n.diaryAuthorLabel)
                       : _resolveNickname(members);
                   return Container(
                     padding: const EdgeInsets.symmetric(
@@ -136,7 +135,7 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                '다른 작성자의 일기는 수정할 수 없어요.',
+                context.l10n.diaryReadOnly,
                 style: AppTypography.bodySmall
                     .copyWith(color: AppColors.onSurfaceMuted),
                 textAlign: TextAlign.center,
@@ -165,7 +164,7 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
               autofocus: !_isEditMode,
               style: AppTypography.titleMedium,
               decoration: InputDecoration(
-                hintText: '제목을 입력하세요',
+                hintText: context.l10n.diaryTitleHint,
                 hintStyle: AppTypography.titleMedium
                     .copyWith(color: AppColors.divider),
                 filled: true,
@@ -193,7 +192,7 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
               textInputAction: TextInputAction.newline,
               style: AppTypography.bodyMedium,
               decoration: InputDecoration(
-                hintText: '오늘 아기와 함께한 이야기를 적어보세요...',
+                hintText: context.l10n.diaryContentHint,
                 hintStyle: AppTypography.bodyMedium
                     .copyWith(color: AppColors.divider),
                 filled: true,
@@ -250,7 +249,7 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
                           color: Colors.white,
                         ),
                       )
-                    : Text(_isEditMode ? '수정' : '저장'),
+                    : Text(_isEditMode ? context.l10n.edit : context.l10n.save),
               ),
             ),
           ],

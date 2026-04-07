@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/models/tracking_category.dart';
 import '../../../../shared/providers/icon_settings_provider.dart';
 
@@ -17,7 +18,7 @@ class IconSettingsScreen extends ConsumerWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        title: const Text('아이콘 설정', style: AppTypography.titleMedium),
+        title: Text(context.l10n.iconSettingsTitle, style: AppTypography.titleMedium),
         centerTitle: true,
         elevation: 0,
       ),
@@ -26,7 +27,7 @@ class IconSettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
             child: Text(
-              '드래그로 순서를 변경하고, 스위치로 표시 여부를 설정하세요.',
+              context.l10n.iconSettingsHint,
               style: AppTypography.bodySmall.copyWith(
                 color: AppColors.onSurfaceMuted,
               ),
@@ -97,7 +98,7 @@ class _CategoryTile extends StatelessWidget {
         ),
       ),
       title: Text(
-        info.label,
+        info.localizedLabel(context.l10n),
         style: AppTypography.bodyLarge.copyWith(
           color: visible ? AppColors.onSurface : AppColors.onSurfaceMuted,
         ),

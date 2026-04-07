@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/database/app_database.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 
 enum TimelineEntryType { formula, breast, pumped, babyFood, sleep, diaper, temperature, diary }
@@ -210,4 +211,44 @@ class LogDaySummary {
         temperatureCount: 0,
         diaryCount: 0,
       );
+}
+
+extension TimelineEntryL10n on TimelineEntry {
+  String localizedTitle(AppLocalizations l10n) {
+    return switch (type) {
+      TimelineEntryType.formula => l10n.entryFormula,
+      TimelineEntryType.breast => l10n.entryBreast,
+      TimelineEntryType.pumped => l10n.entryPumped,
+      TimelineEntryType.babyFood => l10n.entryBabyFood,
+      TimelineEntryType.sleep => l10n.entrySleep,
+      TimelineEntryType.diaper => l10n.entryDiaper,
+      TimelineEntryType.temperature => l10n.entryTemperature,
+      TimelineEntryType.diary => rawTitle ?? title,
+    };
+  }
+
+  String localizedSubtitle(AppLocalizations l10n) {
+    switch (type) {
+      case TimelineEntryType.breast:
+        final sec = (rawDurationLeftSec ?? 0) + (rawDurationRightSec ?? 0);
+        return Duration(seconds: sec).formatLocalized(l10n);
+      case TimelineEntryType.sleep:
+        final isActive = rawEndedAt == null;
+        if (isActive) return l10n.entrySleeping;
+        final dur = rawEndedAt!.difference(occurredAt);
+        return dur.formatLocalized(l10n);
+      case TimelineEntryType.diaper:
+        return switch (rawDiaperType) {
+          'wet' => l10n.diaperWet,
+          'soiled' => l10n.diaperSoiled,
+          'both' => l10n.diaperBoth,
+          'dry' => l10n.diaperChange,
+          _ => rawDiaperType ?? subtitle,
+        };
+      case TimelineEntryType.diary:
+        return rawAuthorNickname ?? l10n.diaryAuthorLabel;
+      default:
+        return subtitle;
+    }
+  }
 }

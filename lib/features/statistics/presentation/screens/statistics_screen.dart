@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../domain/models/period.dart';
 import '../providers/statistics_provider.dart';
 import '../widgets/period_tab_bar.dart';
@@ -33,7 +34,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text('통계', style: AppTypography.titleLarge),
+        title: Text(context.l10n.statistics, style: AppTypography.titleLarge),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
@@ -53,7 +54,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
 
           // 수면
           Text(
-            '수면',
+            context.l10n.sleepSection,
             style: AppTypography.titleMedium.copyWith(
               color: AppColors.onSurface,
             ),
@@ -64,7 +65,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             error: (_, _) => const _ErrorCard(),
             data: (stats) => StatCard(
               icon: Icons.bedtime,
-              label: '총 수면',
+              label: context.l10n.totalSleep,
               value: stats.totalDuration.formatHhMm(),
               deltaPercent: stats.deltaPercent,
               color: const Color(0xFF7B68EE),
@@ -77,7 +78,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
 
           // 수유
           Text(
-            '수유',
+            context.l10n.feedingSection,
             style: AppTypography.titleMedium.copyWith(
               color: AppColors.onSurface,
             ),
@@ -90,8 +91,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
               if (stats.totalFormulaMl == 0 && stats.totalBreastSec == 0) {
                 return StatCard(
                   icon: Icons.local_drink,
-                  label: '수유',
-                  value: '기록 없음',
+                  label: context.l10n.feedingSection,
+                  value: context.l10n.noFeedingRecord,
                   color: AppColors.primary,
                 );
               }
@@ -100,9 +101,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                   if (stats.totalFormulaMl > 0)
                     StatCard(
                       icon: Icons.local_drink,
-                      label: '분유',
+                      label: context.l10n.formula,
                       value: '${stats.totalFormulaMl}ml',
-                      subtitle: '${stats.feedingCount}회',
+                      subtitle: context.l10n.timesCount(stats.feedingCount),
                       deltaPercent: stats.formulaDeltaPercent,
                       color: AppColors.primary,
                     ),
@@ -111,9 +112,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                   if (stats.totalBreastSec > 0)
                     StatCard(
                       icon: Icons.favorite_outline,
-                      label: '모유',
+                      label: context.l10n.breast,
                       value: stats.totalBreastDuration.formatHhMm(),
-                      subtitle: '${stats.feedingCount}회',
+                      subtitle: context.l10n.timesCount(stats.feedingCount),
                       color: const Color(0xFFE91E8C),
                     ),
                 ],
@@ -124,7 +125,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
 
           // 기저귀
           Text(
-            '기저귀',
+            context.l10n.diaperSection,
             style: AppTypography.titleMedium.copyWith(
               color: AppColors.onSurface,
             ),
@@ -135,8 +136,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             error: (_, _) => const _ErrorCard(),
             data: (count) => StatCard(
               icon: Icons.baby_changing_station,
-              label: '기저귀 교체',
-              value: '$count회',
+              label: context.l10n.diaperChangeLabel,
+              value: context.l10n.timesCount(count),
               color: const Color(0xFF52B788),
             ),
           ),
@@ -171,7 +172,7 @@ class _ErrorCard extends StatelessWidget {
       height: 60,
       alignment: Alignment.center,
       child: Text(
-        '데이터를 불러올 수 없습니다',
+        context.l10n.dataLoadFailed,
         style: AppTypography.bodySmall,
       ),
     );

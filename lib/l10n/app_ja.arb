@@ -1,0 +1,458 @@
+{
+  "@@locale": "ja",
+
+  "appName": "BebeTap",
+
+  "tabHome": "ホーム",
+  "tabStatistics": "統計",
+  "tabLog": "記録",
+  "tabFamily": "家族",
+
+  "menuBabyManage": "赤ちゃん管理",
+  "menuWidgetAdd": "ウィジェット追加",
+  "menuIconSettings": "アイコン設定",
+  "menuLanguage": "言語設定",
+  "menuLogout": "ログアウト",
+  "logoutConfirmTitle": "ログアウト",
+  "logoutConfirmMessage": "ログアウトしますか？",
+  "cancel": "キャンセル",
+  "comingSoon": "準備中です",
+
+  "homeGreeting": "こんにちは、{name}！",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "homeEncouragement": "育児は大変ですが、本当によく頑張っています！ 💛",
+  "sectionRecord": "記録する",
+
+  "formula": "ミルク",
+  "breast": "母乳",
+  "pumped": "搾乳",
+  "babyFood": "離乳食",
+  "diaper": "おむつ",
+  "sleep": "睡眠",
+  "temperature": "体温",
+  "growth": "成長",
+  "diary": "日記",
+
+  "statsFormulaLabel": "ミルク",
+  "statsSleepLabel": "睡眠",
+  "statsDiaperLabel": "おむつ",
+
+  "tapToRecord": "タップして記録",
+  "formulaBottomSheetTitle": "ミルク授乳",
+  "breastBottomSheetTitle": "母乳授乳",
+  "pumpedBottomSheetTitle": "搾乳授乳",
+  "babyFoodBottomSheetTitle": "離乳食記録",
+  "temperatureRecordTitle": "体温記録",
+  "diaryWriteTitle": "日記を書く",
+  "diaryEditTitle": "日記を修正",
+  "diaryDoneToday": "今日完成",
+
+  "sleepActive": "眠り中",
+  "lastFeeding": "最後の授乳",
+  "formulaTotal": "ミルク合計",
+  "noRecord": "まだ記録がありません",
+  "startRecordingHint": "授乳タイルをタップして開始",
+  "typeBreastFeeding": "母乳授乳",
+  "typePumpedFeeding": "搾乳授乳",
+  "typeBabyFood": "離乳食",
+  "typeFormulaFeeding": "ミルク授乳",
+
+  "today": "今日",
+  "yesterday": "昨日",
+  "am": "午前",
+  "pm": "午後",
+  "weekdayMon": "月",
+  "weekdayTue": "火",
+  "weekdayWed": "水",
+  "weekdayThu": "木",
+  "weekdayFri": "金",
+  "weekdaySat": "土",
+  "weekdaySun": "日",
+  "dateFormatMonthDay": "{month}月{day}日",
+  "@dateFormatMonthDay": {
+    "placeholders": {
+      "month": { "type": "int" },
+      "day": { "type": "int" }
+    }
+  },
+  "dateFormatFull": "{month}月{day}日({weekday})",
+  "@dateFormatFull": {
+    "placeholders": {
+      "month": { "type": "int" },
+      "day": { "type": "int" },
+      "weekday": { "type": "String" }
+    }
+  },
+  "dateFormatTodayNav": "{month}月{day}日({weekday})  今日",
+  "@dateFormatTodayNav": {
+    "placeholders": {
+      "month": { "type": "int" },
+      "day": { "type": "int" },
+      "weekday": { "type": "String" }
+    }
+  },
+
+  "save": "保存",
+  "edit": "修正",
+  "confirm": "確認",
+  "saveAmountMl": "{amount}mlを保存",
+  "@saveAmountMl": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "editAmountMl": "{amount}mlを修正",
+  "@editAmountMl": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "formulaRecommendation": "{weight}kg基準 推奨量 {ml}ml/日",
+  "@formulaRecommendation": {
+    "placeholders": {
+      "weight": { "type": "String" },
+      "ml": { "type": "int" }
+    }
+  },
+  "formulaWeightHint": "体重を入力すると推奨量が確認できます",
+  "todayAmount": "今日 {amount}ml",
+  "@todayAmount": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "todayCount": "今日 {count}回",
+  "@todayCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "todayDuration": "今日 {duration}",
+  "@todayDuration": {
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "left": "左",
+  "right": "右",
+  "minuteUnit": "{min}分",
+  "@minuteUnit": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+
+  "diaperSelectType": "おむつの種類を選んでください",
+  "diaperWet": "おしっこ",
+  "diaperSoiled": "うんち",
+  "diaperBoth": "両方",
+  "diaperChange": "交換",
+
+  "sleepEdit": "睡眠を修正",
+  "sleepRecord": "睡眠記録",
+  "sleepStart": "睡眠開始",
+  "sleepEnd": "睡眠終了",
+  "sleepHint": "睡眠を開始するとタイマーが動作します。\nアプリを終了しても記録は保持されます。",
+  "sleepEndTimeError": "終了時刻は開始時刻より前にできません",
+  "startTime": "開始",
+  "endTime": "終了",
+  "startHourMinute": "{hour}時{minute}分",
+  "@startHourMinute": {
+    "placeholders": {
+      "hour": { "type": "int" },
+      "minute": { "type": "String" }
+    }
+  },
+
+  "measureMethod": "測定方法",
+  "methodAxillary": "脇",
+  "methodEar": "耳",
+  "methodForehead": "額",
+  "methodRectal": "肛門",
+  "highFeverWarning": "高熱です。すぐに医師に相談してください。",
+  "lowFeverWarning": "微熱です。経過を注意深く観察してください。",
+
+  "diaryTitleHint": "タイトルを入力してください",
+  "diaryContentHint": "今日の赤ちゃんとの出来事を書いてください...",
+  "diaryAuthorLabel": "作成者",
+  "diaryReadOnly": "他の作成者の日記は修正できません。",
+
+  "loginSubtitle": "新米パパ・ママのための育児記録アプリ",
+  "email": "メール",
+  "password": "パスワード",
+  "forgotPassword": "パスワードをお忘れですか？",
+  "signupWithEmail": "メールで会員登録",
+  "login": "ログイン",
+  "orSocialLogin": "またはソーシャルログイン",
+  "continueWithGoogle": "Googleで続ける",
+  "continueWithKakao": "カカオで続ける",
+  "continueWithFacebook": "Facebookで続ける",
+  "continueWithLine": "Lineで続ける",
+  "invalidEmailPassword": "メールまたはパスワードが正しくありません",
+  "networkError": "ネットワークエラーが発生しました。再試行してください。",
+  "loginFailed": "ログイン失敗: {error}",
+  "@loginFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "passwordReset": "パスワード再設定",
+  "emailAddressLabel": "メールアドレス",
+  "send": "送信",
+  "resetEmailSent": "パスワード再設定メールを送信しました。",
+  "sendFailed": "送信失敗: {error}",
+  "@sendFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailSignupTitle": "メール会員登録",
+  "enterEmailPrompt": "登録するメールアドレスを入力してください",
+  "sendVerification": "認証メールを送信",
+  "alreadyHaveAccount": "すでにアカウントをお持ちですか？ログイン",
+  "setPasswordTitle": "パスワードを設定してください",
+  "setPasswordHint": "次回のログインからメールとパスワードでログインします",
+  "passwordInput": "パスワード（6文字以上）",
+  "passwordConfirm": "パスワード確認",
+  "enterOtpTitle": "認証コードを入力してください",
+  "enterOtpHint": "メールに送信された6桁のコードを入力してください",
+  "completeSignup": "登録完了",
+  "resendEmail": "メールを再送信",
+  "invalidEmail": "正しいメール形式を入力してください",
+  "emailAlreadyExists": "既に登録済みのメールです。ログインページへ移動します。",
+  "sendOtpFailed": "送信失敗: {error}",
+  "@sendOtpFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "passwordTooShort": "パスワードは6文字以上にしてください",
+  "passwordMismatch": "パスワードが一致しません",
+  "enterSixDigitCode": "6桁の認証コードを入力してください",
+  "signupFailed": "登録失敗: {error}",
+  "@signupFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "resendSuccess": "認証コードを再送信しました。",
+  "resendFailed": "再送信失敗: {error}",
+  "@resendFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "next": "次へ",
+
+  "babyManageTitle": "赤ちゃん管理",
+  "registeredBabies": "登録された赤ちゃん",
+  "addNewBaby": "新しい赤ちゃんを追加",
+  "babyName": "赤ちゃんの名前 *",
+  "birthDate": "生年月日 *",
+  "genderOptional": "性別（任意）",
+  "boy": "男の子",
+  "girl": "女の子",
+  "currentWeight": "現在の体重 kg（任意）",
+  "photoSelect": "写真を選択（任意）",
+  "selectBirthDate": "日付を選択してください",
+  "birthDatePrompt": "生年月日を選択してください",
+  "babyNameHint": "例: たろう",
+  "babyNameRequired": "名前を入力してください",
+  "invalidWeight": "正しい体重を入力してください（0~30 kg）",
+  "weightHint": "例: 4.5",
+  "weightFormulaHint": "体重を入力するとミルクの1日推奨量が計算されます",
+  "babyRelationship": "赤ちゃんとの関係 *",
+  "or": "または",
+  "joinWithInviteCode": "招待コードで参加する",
+  "selectBaby": "お子さまを選択",
+  "babySetupTitle": "赤ちゃん情報入力",
+  "babyEditTitle": "赤ちゃんを修正",
+  "babyAddTitle": "赤ちゃんを追加",
+  "addButton": "追加する",
+  "editButton": "修正する",
+  "noFamilyFound": "家族情報が見つかりません",
+  "saveFailed": "保存失敗: {error}",
+  "@saveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "loadFailed": "読み込み失敗: {error}",
+  "@loadFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "babyRelationshipPrompt": "赤ちゃんとの関係を選択してください",
+  "startButton": "開始する",
+  "dateFormat": "yyyy年MM月dd日",
+
+  "relationMom": "ママ",
+  "relationDad": "パパ",
+  "relationGrandma": "おばあちゃん",
+  "relationGrandpa": "おじいちゃん",
+  "relationAunt": "叔母",
+  "relationUncle": "叔父",
+  "relationPaternalAunt": "叔母（父方）",
+  "relationMaternalUncle": "叔父（母方）",
+  "relationCustom": "直接入力",
+  "relationCustomHint": "例: 祖母、叔母",
+
+  "familyTitle": "家族共有",
+  "familyGroupName": "家族名",
+  "familyNameHint": "例: 田中家",
+  "createFamilyDialog": "家族グループを作成",
+  "makeFamily": "作成",
+  "createFamily": "新しい家族グループを作成",
+  "noFamily": "家族グループがありません",
+  "noFamilyHint": "家族を作るか、招待コードで参加してください",
+  "inviteCode": "招待コード",
+  "inviteCodeCopied": "招待コードをコピーしました",
+  "copy": "コピー",
+  "share": "共有",
+  "inviteCodeShareHint": "このコードを家族に共有して一緒に記録してください",
+  "familyMembers": "家族メンバー",
+  "familyError": "エラーが発生しました",
+  "joinFamily": "招待コードで参加する",
+  "enterInviteCode": "招待コードを入力してください",
+  "relationshipLabel": "赤ちゃんとの関係",
+  "joinButton": "家族に参加する",
+  "enterInviteCodeError": "招待コードを入力してください",
+  "selectRelationshipError": "赤ちゃんとの関係を選択してください",
+  "me": "私",
+  "userLabel": "ユーザー",
+  "caregiverRole": "養育者",
+  "familyRole": "家族",
+  "familyLoadFailed": "読み込み失敗",
+  "familyShareMessage": "BebeTapアプリで{familyName}に参加しましょう！\n招待コード: {code}",
+  "@familyShareMessage": {
+    "placeholders": {
+      "familyName": { "type": "String" },
+      "code": { "type": "String" }
+    }
+  },
+  "familyShareSubject": "BebeTap 家族招待",
+
+  "statistics": "統計",
+  "sleepSection": "睡眠",
+  "totalSleep": "合計睡眠",
+  "feedingSection": "授乳",
+  "noFeedingRecord": "記録なし",
+  "diaperSection": "おむつ",
+  "diaperChangeLabel": "おむつ交換",
+  "timesCount": "{count}回",
+  "diaryCountUnit": "{count}件",
+  "dataLoadFailed": "データを読み込めません",
+  "periodDay": "今日",
+  "periodWeek": "週間",
+  "periodMonth": "月間",
+
+  "logTitle": "育児記録",
+  "logLoadFailed": "記録を読み込めませんでした",
+  "noLogForDay": "この日の記録がありません",
+  "addLogHint": "＋ボタンをタップして記録を追加してください",
+  "editFormula": "ミルクを修正",
+  "editPumped": "搾乳を修正",
+  "editBabyFood": "離乳食を修正",
+  "editBreast": "母乳を修正",
+  "editDiaper": "おむつを修正",
+  "editSleep": "睡眠を修正",
+  "editTemperature": "体温を修正",
+  "diaryLog": "日記",
+  "addFormula": "ミルク授乳",
+  "addPumped": "搾乳",
+  "addBabyFood": "離乳食",
+  "addBreast": "母乳授乳",
+  "addDiaper": "おむつ",
+  "addSleep": "睡眠",
+  "addTemperature": "体温記録",
+  "editDiary": "日記を修正",
+  "writeDiary": "日記を書く",
+
+  "entryFormula": "ミルク",
+  "entryBreast": "母乳",
+  "entryPumped": "搾乳",
+  "entryBabyFood": "離乳食",
+  "entrySleep": "睡眠",
+  "entrySleeping": "眠り中",
+  "entryDiaper": "おむつ",
+  "entryTemperature": "体温",
+
+  "durationSeconds": "{s}秒",
+  "@durationSeconds": {
+    "placeholders": {
+      "s": { "type": "int" }
+    }
+  },
+  "durationMinutesOnly": "{m}分",
+  "@durationMinutesOnly": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "durationHoursOnly": "{h}時間",
+  "@durationHoursOnly": {
+    "placeholders": {
+      "h": { "type": "int" }
+    }
+  },
+  "durationHoursMinutes": "{h}時間{m}分",
+  "@durationHoursMinutes": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "m": { "type": "int" }
+    }
+  },
+  "elapsedJustNow": "たった今",
+  "elapsedMinutes": "{m}分経過",
+  "@elapsedMinutes": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "elapsedHoursOnly": "{h}時間経過",
+  "@elapsedHoursOnly": {
+    "placeholders": {
+      "h": { "type": "int" }
+    }
+  },
+  "elapsedHoursMinutes": "{h}時間{m}分経過",
+  "@elapsedHoursMinutes": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "m": { "type": "int" }
+    }
+  },
+
+  "settings": "設定",
+  "iconSettingsTitle": "アイコン設定",
+  "iconSettingsHint": "ドラッグで順序を変更し、スイッチで表示/非表示を設定してください。",
+  "logout": "ログアウト",
+
+  "pickerToday": "今日",
+  "pickerHour": "時",
+  "pickerMinute": "分",
+  "pickerConfirm": "確認",
+
+  "displayTime": "{period}{h}:{minute}",
+  "@displayTime": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "minute": { "type": "String" },
+      "period": { "type": "String" }
+    }
+  },
+  "dateFormatLong": "{year}年{month}月{day}日（{weekday}）",
+  "@dateFormatLong": {
+    "placeholders": {
+      "year": { "type": "int" },
+      "month": { "type": "int" },
+      "day": { "type": "int" },
+      "weekday": { "type": "String" }
+    }
+  }
+}

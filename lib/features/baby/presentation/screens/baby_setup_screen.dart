@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/baby_avatar_widget.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../family/presentation/widgets/join_family_bottom_sheet.dart';
@@ -32,7 +33,6 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
   String? _nickname;
   File? _imageFile;
 
-  static final _dateFormat = DateFormat('yyyy년 MM월 dd일');
 
   @override
   void dispose() {
@@ -58,7 +58,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
       initialDate: _birthDate ?? now,
       firstDate: DateTime(now.year - 3),
       lastDate: now,
-      helpText: '생년월일 선택',
+      helpText: context.l10n.birthDate,
     );
     if (picked != null) setState(() => _birthDate = picked);
   }
@@ -67,13 +67,13 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_birthDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('생년월일을 선택해주세요')),
+        SnackBar(content: Text(context.l10n.birthDatePrompt)),
       );
       return;
     }
     if (_nickname == null || _nickname!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('아기와의 관계를 선택해주세요')),
+        SnackBar(content: Text(context.l10n.babyRelationshipPrompt)),
       );
       return;
     }
@@ -83,8 +83,6 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
         weightText.isNotEmpty ? double.tryParse(weightText) : null;
     final repo = ref.read(babyRepositoryProvider);
 
-    // 사진 먼저 업로드 (임시 ID 사용, 실제 babyId는 생성 후 알 수 있음)
-    // 온보딩에서는 이름 기반 임시 key로 업로드 후 DB에 저장
     String? photoUrl;
     if (_imageFile != null) {
       final tempKey = 'setup_${DateTime.now().millisecondsSinceEpoch}';
@@ -104,10 +102,9 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
     if (baby == null) {
       final error = ref.read(babySetupNotifierProvider).error;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('저장 실패: $error')),
+        SnackBar(content: Text(context.l10n.saveFailed(error.toString()))),
       );
     }
-    // 성공 시 router가 자동으로 홈으로 리디렉션
   }
 
   @override
@@ -120,7 +117,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
-        title: const Text('아기 정보 입력', style: AppTypography.titleLarge),
+        title: Text(context.l10n.babySetupTitle, style: AppTypography.titleLarge),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -145,7 +142,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                 const SizedBox(height: AppSpacing.sm),
                 Center(
                   child: Text(
-                    '사진 선택 (선택)',
+                    context.l10n.photoSelect,
                     style: AppTypography.bodySmall
                         .copyWith(color: AppColors.onSurfaceMuted),
                   ),
@@ -154,20 +151,20 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                 const SizedBox(height: AppSpacing.xl),
 
                 // 아기 이름
-                const _SectionLabel('아기 이름 *'),
+                _SectionLabel(context.l10n.babyName),
                 const SizedBox(height: AppSpacing.sm),
                 TextFormField(
                   controller: _nameController,
-                  decoration: _inputDecoration('예: 김하늘'),
+                  decoration: _inputDecoration(context.l10n.babyNameHint),
                   textInputAction: TextInputAction.next,
                   validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? '이름을 입력해주세요' : null,
+                      (v == null || v.trim().isEmpty) ? context.l10n.babyNameRequired : null,
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
 
                 // 생년월일
-                const _SectionLabel('생년월일 *'),
+                _SectionLabel(context.l10n.birthDate),
                 const SizedBox(height: AppSpacing.sm),
                 GestureDetector(
                   onTap: _pickBirthDate,
@@ -183,8 +180,8 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       _birthDate != null
-                          ? _dateFormat.format(_birthDate!)
-                          : '날짜를 선택하세요',
+                          ? DateFormat(context.l10n.dateFormat).format(_birthDate!)
+                          : context.l10n.selectBirthDate,
                       style: AppTypography.bodyMedium.copyWith(
                         color: _birthDate != null
                             ? AppColors.onSurface
@@ -197,13 +194,13 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                 const SizedBox(height: AppSpacing.xl),
 
                 // 성별 (선택)
-                const _SectionLabel('성별 (선택)'),
+                _SectionLabel(context.l10n.genderOptional),
                 const SizedBox(height: AppSpacing.sm),
                 Row(
                   children: [
                     Expanded(
                       child: _GenderButton(
-                        label: '남자아이',
+                        label: context.l10n.boy,
                         icon: Icons.boy,
                         selected: _gender == 'male',
                         onTap: () => setState(
@@ -213,7 +210,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: _GenderButton(
-                        label: '여자아이',
+                        label: context.l10n.girl,
                         icon: Icons.girl,
                         selected: _gender == 'female',
                         onTap: () => setState(() =>
@@ -226,18 +223,18 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                 const SizedBox(height: AppSpacing.xl),
 
                 // 체중 (선택)
-                const _SectionLabel('현재 체중 kg (선택)'),
+                _SectionLabel(context.l10n.currentWeight),
                 const SizedBox(height: AppSpacing.sm),
                 TextFormField(
                   controller: _weightController,
-                  decoration: _inputDecoration('예: 4.5'),
+                  decoration: _inputDecoration(context.l10n.weightHint),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) return null;
                     final parsed = double.tryParse(v.trim());
                     if (parsed == null || parsed <= 0 || parsed > 30) {
-                      return '올바른 체중을 입력해주세요 (0~30 kg)';
+                      return context.l10n.invalidWeight;
                     }
                     return null;
                   },
@@ -245,7 +242,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
 
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  '체중을 입력하면 분유 일일 권장량을 자동으로 계산해드립니다',
+                  context.l10n.weightFormulaHint,
                   style: AppTypography.bodySmall
                       .copyWith(color: AppColors.onSurfaceMuted),
                 ),
@@ -253,7 +250,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                 const SizedBox(height: AppSpacing.xl),
 
                 // 아기와의 관계
-                const _SectionLabel('아기와의 관계 *'),
+                _SectionLabel(context.l10n.babyRelationship),
                 const SizedBox(height: AppSpacing.sm),
                 RelationshipSelector(
                   selected: _nickname,
@@ -284,7 +281,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                               color: Colors.white,
                             ),
                           )
-                        : const Text('시작하기'),
+                        : Text(context.l10n.startButton),
                   ),
                 ),
 
@@ -298,7 +295,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.md),
                       child: Text(
-                        '또는',
+                        context.l10n.or,
                         style: AppTypography.bodySmall
                             .copyWith(color: AppColors.onSurfaceMuted),
                       ),
@@ -320,7 +317,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                   ),
                   icon: const Icon(Icons.login, color: AppColors.primary),
                   label: Text(
-                    '초대 코드로 합류하기',
+                    context.l10n.joinWithInviteCode,
                     style: AppTypography.labelLarge
                         .copyWith(color: AppColors.primary),
                   ),

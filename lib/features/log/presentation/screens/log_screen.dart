@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../diaper/presentation/widgets/diaper_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/baby_food_bottom_sheet.dart';
@@ -32,7 +33,7 @@ class LogScreen extends ConsumerWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text('육아 기록', style: AppTypography.titleLarge),
+        title: Text(context.l10n.logTitle, style: AppTypography.titleLarge),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +64,7 @@ class LogScreen extends ConsumerWidget {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(
                 child: Text(
-                  '기록을 불러오지 못했어요',
+                  context.l10n.logLoadFailed,
                   style: AppTypography.bodyMedium
                       .copyWith(color: AppColors.onSurfaceMuted),
                 ),
@@ -81,13 +82,13 @@ class LogScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: AppSpacing.md),
                         Text(
-                          '이 날은 기록이 없어요',
+                          context.l10n.noLogForDay,
                           style: AppTypography.bodyMedium
                               .copyWith(color: AppColors.onSurfaceMuted),
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
-                          '+ 버튼을 눌러 기록을 추가해보세요',
+                          context.l10n.addLogHint,
                           style: AppTypography.bodySmall
                               .copyWith(color: AppColors.onSurfaceMuted),
                         ),
@@ -131,28 +132,28 @@ class LogScreen extends ConsumerWidget {
     switch (entry.type) {
       case TimelineEntryType.formula:
         sheet = FormulaBottomSheet(editEntry: entry);
-        title = '분유 수정';
+        title = context.l10n.editFormula;
       case TimelineEntryType.pumped:
         sheet = FormulaBottomSheet(editEntry: entry, feedingType: MlFeedingType.pumped);
-        title = '유축 수정';
+        title = context.l10n.editPumped;
       case TimelineEntryType.babyFood:
         sheet = BabyFoodBottomSheet(editEntry: entry);
-        title = '이유식 수정';
+        title = context.l10n.editBabyFood;
       case TimelineEntryType.breast:
         sheet = BreastBottomSheet(editEntry: entry);
-        title = '모유 수정';
+        title = context.l10n.editBreast;
       case TimelineEntryType.diaper:
         sheet = DiaperBottomSheet(editEntry: entry);
-        title = '기저귀 수정';
+        title = context.l10n.editDiaper;
       case TimelineEntryType.sleep:
         sheet = SleepBottomSheet(editEntry: entry);
-        title = '수면 수정';
+        title = context.l10n.editSleep;
       case TimelineEntryType.temperature:
         sheet = TemperatureBottomSheet(editEntry: entry);
-        title = '체온 수정';
+        title = context.l10n.editTemperature;
       case TimelineEntryType.diary:
         sheet = DiaryBottomSheet(editEntry: entry);
-        title = '일기';
+        title = context.l10n.diaryLog;
     }
     showAppBottomSheet(context: context, child: sheet, title: title);
   }
@@ -164,25 +165,25 @@ class LogScreen extends ConsumerWidget {
     switch (filter) {
       case TimelineEntryType.formula:
         sheet = const FormulaBottomSheet();
-        title = '분유 수유';
+        title = context.l10n.addFormula;
       case TimelineEntryType.pumped:
         sheet = const FormulaBottomSheet(feedingType: MlFeedingType.pumped);
-        title = '유축 수유';
+        title = context.l10n.addPumped;
       case TimelineEntryType.babyFood:
         sheet = const BabyFoodBottomSheet();
-        title = '이유식 기록';
+        title = context.l10n.addBabyFood;
       case TimelineEntryType.breast:
         sheet = const BreastBottomSheet();
-        title = '모유 수유';
+        title = context.l10n.addBreast;
       case TimelineEntryType.diaper:
         sheet = const DiaperBottomSheet();
-        title = '기저귀';
+        title = context.l10n.addDiaper;
       case TimelineEntryType.sleep:
         sheet = const SleepBottomSheet();
-        title = '수면';
+        title = context.l10n.addSleep;
       case TimelineEntryType.temperature:
         sheet = const TemperatureBottomSheet();
-        title = '체온 기록';
+        title = context.l10n.addTemperature;
       case TimelineEntryType.diary:
         final existing =
             await ref.read(todayDiaryForCurrentUserProvider.future);
@@ -190,10 +191,9 @@ class LogScreen extends ConsumerWidget {
         sheet = existing != null
             ? DiaryBottomSheet(editEntry: existing.toTimelineEntry())
             : const DiaryBottomSheet();
-        title = existing != null ? '일기 수정' : '일기 쓰기';
+        title = existing != null ? context.l10n.editDiary : context.l10n.writeDiary;
     }
     if (!context.mounted) return;
     showAppBottomSheet(context: context, child: sheet, title: title);
   }
 }
-

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/providers/database_provider.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -14,14 +15,14 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('설정')),
+      appBar: AppBar(title: Text(context.l10n.settings)),
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.pagePadding),
         child: Column(
           children: [
             ListTile(
               leading: const Icon(Icons.logout, color: AppColors.error),
-              title: const Text('로그아웃', style: AppTypography.bodyLarge),
+              title: Text(context.l10n.logout, style: AppTypography.bodyLarge),
               onTap: () async {
                 final db = ref.read(appDatabaseProvider);
                 try {

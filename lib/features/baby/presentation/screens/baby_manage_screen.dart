@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../../shared/widgets/baby_avatar_widget.dart';
 import '../../domain/models/baby.dart';
@@ -26,13 +27,13 @@ class BabyManageScreen extends ConsumerWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text('아이 관리', style: AppTypography.titleLarge),
+        title: Text(context.l10n.babyManageTitle, style: AppTypography.titleLarge),
       ),
       body: babiesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Text(
-            '불러오기 실패: $e',
+            context.l10n.loadFailed(e.toString()),
             style: AppTypography.bodyMedium
                 .copyWith(color: AppColors.onSurfaceMuted),
           ),
@@ -56,7 +57,7 @@ class _BabyManageBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (babies.isNotEmpty) ...[
-            Text('등록된 아이', style: AppTypography.labelLarge),
+            Text(context.l10n.registeredBabies, style: AppTypography.labelLarge),
             const SizedBox(height: AppSpacing.sm),
             ...babies.asMap().entries.map((e) => _BabyListTile(baby: e.value, colorIndex: e.key)),
             const SizedBox(height: AppSpacing.xl),
@@ -75,7 +76,7 @@ class _BabyManageBody extends StatelessWidget {
               ),
             ),
             icon: const Icon(Icons.add),
-            label: const Text('새 아이 추가'),
+            label: Text(context.l10n.addNewBaby),
           ),
         ],
       ),
@@ -86,7 +87,7 @@ class _BabyManageBody extends StatelessWidget {
     final familyId = babies.isNotEmpty ? babies.first.familyId : null;
     showAppBottomSheet(
       context: context,
-      title: editBaby != null ? '아이 수정' : '아이 추가',
+      title: editBaby != null ? context.l10n.babyEditTitle : context.l10n.babyAddTitle,
       child: _BabyFormSheet(editBaby: editBaby, familyId: familyId, colorIndex: colorIndex),
     );
   }
@@ -97,8 +98,6 @@ class _BabyListTile extends ConsumerWidget {
 
   final Baby baby;
   final int colorIndex;
-
-  static final _dateFormat = DateFormat('yyyy년 MM월 dd일');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -131,7 +130,7 @@ class _BabyListTile extends ConsumerWidget {
           ),
           title: Text(baby.name, style: AppTypography.bodyLarge),
           subtitle: Text(
-            _dateFormat.format(baby.birthDate),
+            DateFormat(context.l10n.dateFormat).format(baby.birthDate),
             style: AppTypography.bodySmall
                 .copyWith(color: AppColors.onSurfaceMuted),
           ),
@@ -145,7 +144,7 @@ class _BabyListTile extends ConsumerWidget {
                 color: AppColors.onSurfaceMuted,
                 onPressed: () => showAppBottomSheet(
                   context: context,
-                  title: '아이 수정',
+                  title: context.l10n.babyEditTitle,
                   child: _BabyFormSheet(editBaby: baby, familyId: baby.familyId, colorIndex: colorIndex),
                 ),
               ),
@@ -175,8 +174,6 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
   DateTime? _birthDate;
   String? _gender;
   File? _imageFile;
-
-  static final _dateFormat = DateFormat('yyyy년 MM월 dd일');
 
   @override
   void initState() {
@@ -214,7 +211,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
       initialDate: _birthDate ?? now,
       firstDate: DateTime(now.year - 5),
       lastDate: now,
-      helpText: '생년월일 선택',
+      helpText: context.l10n.birthDate,
     );
     if (picked != null) setState(() => _birthDate = picked);
   }
@@ -223,7 +220,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
     if (!_formKey.currentState!.validate()) return;
     if (_birthDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('생년월일을 선택해주세요')),
+        SnackBar(content: Text(context.l10n.birthDatePrompt)),
       );
       return;
     }
@@ -234,6 +231,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
     final notifier = ref.read(babyManageNotifierProvider.notifier);
     final repo = ref.read(babyRepositoryProvider);
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
 
     String? photoUrl = widget.editBaby?.photoUrl;
     if (_imageFile != null) {
@@ -253,7 +251,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
     } else {
       if (widget.familyId == null) {
         messenger.showSnackBar(
-          const SnackBar(content: Text('가족 정보를 찾을 수 없습니다')),
+          SnackBar(content: Text(l10n.noFamilyFound)),
         );
         return;
       }
@@ -271,7 +269,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
     final state = ref.read(babyManageNotifierProvider);
     if (state.hasError) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('저장 실패: ${state.error}')),
+        SnackBar(content: Text(context.l10n.saveFailed(state.error.toString()))),
       );
     } else {
       Navigator.of(context).pop();
@@ -340,7 +338,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
             const SizedBox(height: AppSpacing.sm),
             Center(
               child: Text(
-                '사진 선택 (선택)',
+                context.l10n.photoSelect,
                 style: AppTypography.bodySmall
                     .copyWith(color: AppColors.onSurfaceMuted),
               ),
@@ -348,21 +346,21 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
             const SizedBox(height: AppSpacing.xl),
 
             // 이름
-            Text('아기 이름 *',
+            Text(context.l10n.babyName,
                 style: AppTypography.labelLarge
                     .copyWith(color: AppColors.onSurface)),
             const SizedBox(height: AppSpacing.sm),
             TextFormField(
               controller: _nameController,
-              decoration: _inputDecoration('예: 김하늘'),
+              decoration: _inputDecoration(context.l10n.babyNameHint),
               textInputAction: TextInputAction.next,
               validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? '이름을 입력해주세요' : null,
+                  (v == null || v.trim().isEmpty) ? context.l10n.babyNameRequired : null,
             ),
             const SizedBox(height: AppSpacing.xl),
 
             // 생년월일
-            Text('생년월일 *',
+            Text(context.l10n.birthDate,
                 style: AppTypography.labelLarge
                     .copyWith(color: AppColors.onSurface)),
             const SizedBox(height: AppSpacing.sm),
@@ -380,8 +378,8 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   _birthDate != null
-                      ? _dateFormat.format(_birthDate!)
-                      : '날짜를 선택하세요',
+                      ? DateFormat(context.l10n.dateFormat).format(_birthDate!)
+                      : context.l10n.selectBirthDate,
                   style: AppTypography.bodyMedium.copyWith(
                     color: _birthDate != null
                         ? AppColors.onSurface
@@ -393,7 +391,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
             const SizedBox(height: AppSpacing.xl),
 
             // 성별
-            Text('성별 (선택)',
+            Text(context.l10n.genderOptional,
                 style: AppTypography.labelLarge
                     .copyWith(color: AppColors.onSurface)),
             const SizedBox(height: AppSpacing.sm),
@@ -401,7 +399,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
               children: [
                 Expanded(
                   child: _GenderButton(
-                    label: '남자아이',
+                    label: context.l10n.boy,
                     icon: Icons.boy,
                     selected: _gender == 'male',
                     onTap: () => setState(
@@ -411,7 +409,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: _GenderButton(
-                    label: '여자아이',
+                    label: context.l10n.girl,
                     icon: Icons.girl,
                     selected: _gender == 'female',
                     onTap: () => setState(() =>
@@ -423,20 +421,20 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
             const SizedBox(height: AppSpacing.xl),
 
             // 체중
-            Text('현재 체중 kg (선택)',
+            Text(context.l10n.currentWeight,
                 style: AppTypography.labelLarge
                     .copyWith(color: AppColors.onSurface)),
             const SizedBox(height: AppSpacing.sm),
             TextFormField(
               controller: _weightController,
-              decoration: _inputDecoration('예: 4.5'),
+              decoration: _inputDecoration(context.l10n.weightHint),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return null;
                 final parsed = double.tryParse(v.trim());
                 if (parsed == null || parsed <= 0 || parsed > 30) {
-                  return '올바른 체중을 입력해주세요 (0~30 kg)';
+                  return context.l10n.invalidWeight;
                 }
                 return null;
               },
@@ -465,7 +463,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
                           color: Colors.white,
                         ),
                       )
-                    : Text(widget.editBaby != null ? '수정하기' : '추가하기'),
+                    : Text(widget.editBaby != null ? context.l10n.editButton : context.l10n.addButton),
               ),
             ),
           ],

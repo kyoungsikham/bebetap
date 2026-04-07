@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -44,13 +45,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } on AuthException {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('이메일 또는 비밀번호가 올바르지 않습니다')),
+          SnackBar(content: Text(context.l10n.invalidEmailPassword)),
         );
       }
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('네트워크 오류가 발생했습니다. 다시 시도해주세요')),
+          SnackBar(content: Text(context.l10n.networkError)),
         );
       }
     } finally {
@@ -63,21 +64,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('비밀번호 재설정'),
+        title: Text(context.l10n.passwordReset),
         content: TextField(
           controller: ctrl,
           keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(hintText: '이메일 주소'),
+          decoration: InputDecoration(hintText: context.l10n.emailAddressLabel),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('취소'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('전송'),
+            child: Text(context.l10n.send),
           ),
         ],
       ),
@@ -89,13 +90,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await ref.read(authRepositoryProvider).sendPasswordResetEmail(ctrl.text.trim());
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('비밀번호 재설정 메일을 발송했습니다.')),
+          SnackBar(content: Text(context.l10n.resetEmailSent)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('전송 실패: $e')),
+          SnackBar(content: Text(context.l10n.sendFailed(e.toString()))),
         );
       }
     }
@@ -109,7 +110,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('로그인 실패: $e')),
+          SnackBar(content: Text(context.l10n.loginFailed(e.toString()))),
         );
       }
     } finally {
@@ -133,7 +134,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('로그인 실패: $e')),
+          SnackBar(content: Text(context.l10n.loginFailed(e.toString()))),
         );
       }
     } finally {
@@ -180,7 +181,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const Text('BebeTap', style: AppTypography.displayLarge),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      '초보 부모를 위한 육아 기록 앱',
+                      context.l10n.loginSubtitle,
                       style: AppTypography.bodyMedium
                           .copyWith(color: AppColors.onSurfaceMuted),
                     ),
@@ -193,7 +194,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               // 이메일 입력
               _buildTextField(
                 controller: _emailCtrl,
-                hint: '이메일',
+                hint: context.l10n.email,
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -201,7 +202,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               // 비밀번호 입력
               _buildTextField(
                 controller: _passwordCtrl,
-                hint: '비밀번호',
+                hint: context.l10n.password,
                 obscureText: _obscurePassword,
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -221,7 +222,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   TextButton(
                     onPressed: _showResetDialog,
                     child: Text(
-                      '비밀번호를 잊으셨나요?',
+                      context.l10n.forgotPassword,
                       style: AppTypography.bodySmall
                           .copyWith(color: AppColors.onSurfaceMuted),
                     ),
@@ -229,7 +230,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   TextButton(
                     onPressed: () => context.push(AppRoutes.emailAuth),
                     child: Text(
-                      '이메일로 회원가입',
+                      context.l10n.signupWithEmail,
                       style: AppTypography.bodySmall
                           .copyWith(color: AppColors.primary),
                     ),
@@ -260,7 +261,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                         )
                       : Text(
-                          '로그인',
+                          context.l10n.login,
                           style: AppTypography.labelLarge
                               .copyWith(color: Colors.white),
                         ),
@@ -276,7 +277,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                     child: Text(
-                      '또는 소셜 로그인',
+                      context.l10n.orSocialLogin,
                       style: AppTypography.bodySmall
                           .copyWith(color: AppColors.onSurfaceMuted),
                     ),
@@ -290,7 +291,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               if (!isLoading) ...[
                 _SocialLoginButton(
                   icon: Icons.g_mobiledata,
-                  label: 'Google로 계속하기',
+                  label: context.l10n.continueWithGoogle,
                   onTap: () => _socialSignInWithCheck(
                     getCredential: repo.getGoogleCredential,
                     completeSignIn: repo.completeGoogleSignIn,
@@ -300,7 +301,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: AppSpacing.sm),
                 _SocialLoginButton(
                   icon: Icons.chat_bubble,
-                  label: '카카오로 계속하기',
+                  label: context.l10n.continueWithKakao,
                   color: const Color(0xFFFEE500),
                   textColor: AppColors.onSurface,
                   onTap: () => _socialSignInWithCheck(
@@ -318,14 +319,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: AppSpacing.sm),
                 _SocialLoginButton(
                   icon: Icons.facebook,
-                  label: 'Facebook으로 계속하기',
+                  label: context.l10n.continueWithFacebook,
                   color: const Color(0xFF1877F2),
                   onTap: () => _runSocial(repo.signInWithFacebook),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 _SocialLoginButton(
                   icon: Icons.chat,
-                  label: 'Line으로 계속하기',
+                  label: context.l10n.continueWithLine,
                   color: const Color(0xFF06C755),
                   onTap: () => _runSocial(repo.signInWithLine),
                 ),

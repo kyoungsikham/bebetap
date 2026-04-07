@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../domain/models/family.dart';
 import '../../domain/models/family_member.dart';
 import '../providers/family_provider.dart';
@@ -46,12 +47,12 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('가족 그룹 만들기'),
+        title: Text(context.l10n.createFamilyDialog),
         content: TextField(
           controller: _familyNameController,
-          decoration: const InputDecoration(
-            hintText: '예: 김씨 가족',
-            labelText: '가족 이름',
+          decoration: InputDecoration(
+            hintText: context.l10n.familyNameHint,
+            labelText: context.l10n.familyGroupName,
           ),
           autofocus: true,
           textInputAction: TextInputAction.done,
@@ -60,11 +61,11 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('취소'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () => _createFamily(ctx),
-            child: const Text('만들기'),
+            child: Text(context.l10n.makeFamily),
           ),
         ],
       ),
@@ -82,13 +83,13 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text('가족 공유', style: AppTypography.titleLarge),
+        title: Text(context.l10n.familyTitle, style: AppTypography.titleLarge),
       ),
       body: familyAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => Center(
           child: Text(
-            '오류가 발생했습니다',
+            context.l10n.familyError,
             style: AppTypography.bodyLarge,
           ),
         ),
@@ -127,13 +128,13 @@ class _NoFamilyView extends StatelessWidget {
         const Icon(Icons.group_outlined, size: 64, color: AppColors.onSurfaceMuted),
         const SizedBox(height: AppSpacing.lg),
         Text(
-          '가족 그룹이 없습니다',
+          context.l10n.noFamily,
           textAlign: TextAlign.center,
           style: AppTypography.titleMedium,
         ),
         const SizedBox(height: AppSpacing.sm),
         Text(
-          '가족을 만들거나 초대 코드로 합류하세요',
+          context.l10n.noFamilyHint,
           textAlign: TextAlign.center,
           style: AppTypography.bodySmall,
         ),
@@ -141,7 +142,7 @@ class _NoFamilyView extends StatelessWidget {
         FilledButton.icon(
           onPressed: onCreateTap,
           icon: const Icon(Icons.add),
-          label: const Text('새 가족 그룹 만들기'),
+          label: Text(context.l10n.createFamily),
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primary,
             padding: const EdgeInsets.symmetric(vertical: 14),
@@ -154,7 +155,7 @@ class _NoFamilyView extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: onShowJoin,
           icon: const Icon(Icons.login),
-          label: const Text('초대 코드로 합류하기'),
+          label: Text(context.l10n.joinWithInviteCode),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(
@@ -186,7 +187,7 @@ class _FamilyView extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
         InviteCodeCard(family: family),
         const SizedBox(height: AppSpacing.xxl),
-        Text('가족 구성원', style: AppTypography.titleMedium),
+        Text(context.l10n.familyMembers, style: AppTypography.titleMedium),
         const SizedBox(height: AppSpacing.sm),
         membersAsync.when(
           loading: () => const Center(
@@ -196,7 +197,7 @@ class _FamilyView extends StatelessWidget {
             ),
           ),
           error: (_, _) => Text(
-            '불러오기 실패',
+            context.l10n.familyLoadFailed,
             style: AppTypography.bodySmall,
           ),
           data: (members) {
@@ -262,7 +263,7 @@ class _MemberTile extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              member.name ?? '사용자',
+              member.name ?? context.l10n.userLabel,
               style: AppTypography.bodyMedium.copyWith(
                 fontWeight: isMe ? FontWeight.w600 : FontWeight.normal,
               ),
@@ -272,7 +273,7 @@ class _MemberTile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 6),
               child: Text(
-                '나',
+                context.l10n.me,
                 style: AppTypography.labelSmall.copyWith(
                   color: AppColors.success,
                   fontWeight: FontWeight.w600,
@@ -286,7 +287,7 @@ class _MemberTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
-              member.roleLabel,
+              member.nickname ?? (member.isOwner ? context.l10n.caregiverRole : context.l10n.familyRole),
               style: AppTypography.labelSmall.copyWith(color: badgeColor),
             ),
           ),

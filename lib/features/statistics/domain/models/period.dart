@@ -1,3 +1,5 @@
+import '../../../../l10n/app_localizations.dart';
+
 enum Period { day, week, month }
 
 extension PeriodExt on Period {
@@ -10,6 +12,14 @@ extension PeriodExt on Period {
       case Period.month:
         return '월간';
     }
+  }
+
+  String localizedLabel(AppLocalizations l10n) {
+    return switch (this) {
+      Period.day => l10n.periodDay,
+      Period.week => l10n.periodWeek,
+      Period.month => l10n.periodMonth,
+    };
   }
 
   /// (from, to) — from: inclusive, to: exclusive

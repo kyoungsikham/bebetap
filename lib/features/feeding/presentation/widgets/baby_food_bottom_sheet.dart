@@ -5,6 +5,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/constants/medical_constants.dart';
+import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/date_time_wheel_picker.dart';
 import '../../../log/domain/models/timeline_entry.dart';
 import '../providers/feeding_provider.dart';
@@ -53,27 +55,8 @@ class _BabyFoodBottomSheetState extends ConsumerState<BabyFoodBottomSheet> {
     super.dispose();
   }
 
-  String _formatDisplayDateTime(DateTime dt) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final dtDay = DateTime(dt.year, dt.month, dt.day);
-
-    String datePart;
-    if (dtDay == today) {
-      datePart = '오늘';
-    } else if (dtDay == yesterday) {
-      datePart = '어제';
-    } else {
-      const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-      datePart = '${dt.month}월 ${dt.day}일 (${weekdays[dt.weekday - 1]})';
-    }
-
-    final period = dt.hour < 12 ? '오전' : '오후';
-    final h = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
-    final timePart = '$period $h:${dt.minute.toString().padLeft(2, '0')}';
-    return '$datePart  $timePart';
-  }
+  String _formatDisplayDateTime(DateTime dt) =>
+      dt.formatDisplayLocalized(context.l10n);
 
   Future<void> _pickDateTime() async {
     final result = await showDateTimeWheelPicker(
@@ -219,7 +202,7 @@ class _BabyFoodBottomSheetState extends ConsumerState<BabyFoodBottomSheet> {
                         color: Colors.white,
                       ),
                     )
-                  : Text(_isEditMode ? '$_selectedMl ml 수정' : '$_selectedMl ml 저장'),
+                  : Text(_isEditMode ? context.l10n.editAmountMl(_selectedMl) : context.l10n.saveAmountMl(_selectedMl)),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),

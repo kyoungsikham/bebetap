@@ -3,21 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../providers/log_provider.dart';
 
 class DateNavigator extends ConsumerWidget {
   const DateNavigator({super.key});
-
-  static const _weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final selected = DateTime(date.year, date.month, date.day);
-    final weekday = _weekdays[date.weekday - 1];
-    final base = '${date.month}월 ${date.day}일 ($weekday)';
-    return selected == today ? '$base  오늘' : base;
-  }
 
   bool _isToday(DateTime date) {
     final now = DateTime.now();
@@ -30,6 +20,21 @@ class DateNavigator extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final date = ref.watch(selectedLogDateProvider);
     final isToday = _isToday(date);
+    final l10n = context.l10n;
+
+    final weekdays = [
+      l10n.weekdayMon,
+      l10n.weekdayTue,
+      l10n.weekdayWed,
+      l10n.weekdayThu,
+      l10n.weekdayFri,
+      l10n.weekdaySat,
+      l10n.weekdaySun,
+    ];
+    final weekday = weekdays[date.weekday - 1];
+    final dateLabel = isToday
+        ? l10n.dateFormatTodayNav(date.month, date.day, weekday)
+        : l10n.dateFormatFull(date.month, date.day, weekday);
 
     return Row(
       children: [
@@ -48,7 +53,6 @@ class DateNavigator extends ConsumerWidget {
                 initialDate: date,
                 firstDate: DateTime(now.year - 1),
                 lastDate: now,
-                locale: const Locale('ko'),
               );
               if (picked != null) {
                 ref.read(selectedLogDateProvider.notifier).setDate(picked);
@@ -64,7 +68,7 @@ class DateNavigator extends ConsumerWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  _formatDate(date),
+                  dateLabel,
                   style: AppTypography.titleMedium,
                 ),
               ],

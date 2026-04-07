@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../providers/home_provider.dart';
 import '../../../sleep/presentation/providers/sleep_provider.dart';
 
@@ -31,8 +32,8 @@ class StatusCard extends ConsumerWidget {
           return _StatusCardContent(
             icon: Icons.bedtime,
             iconColor: AppColors.primary,
-            label: '수면 중',
-            elapsed: elapsed.formatKorean(),
+            label: context.l10n.sleepActive,
+            elapsed: elapsed.formatLocalized(context.l10n),
             bgColor: AppColors.primary.withValues(alpha: 0.06),
             borderColor: AppColors.primary.withValues(alpha: 0.2),
           );
@@ -63,11 +64,12 @@ class StatusCard extends ConsumerWidget {
             iconColor = AppColors.success;
           }
 
+          final l10n = context.l10n;
           final typeLabel = switch (summary.lastFeedingType) {
-            'breast' => '모유 수유',
-            'pumped' => '유축 수유',
-            'baby_food' => '이유식',
-            _ => '분유 수유',
+            'breast' => l10n.typeBreastFeeding,
+            'pumped' => l10n.typePumpedFeeding,
+            'baby_food' => l10n.typeBabyFood,
+            _ => l10n.typeFormulaFeeding,
           };
           final amountLabel = summary.lastFeedingType != 'breast' &&
                   summary.lastFeedingAmountMl != null
@@ -84,7 +86,7 @@ class StatusCard extends ConsumerWidget {
             icon: statusIcon,
             iconColor: iconColor,
             label: '$typeLabel$amountLabel',
-            elapsed: elapsed.formatElapsedKorean(),
+            elapsed: elapsed.formatElapsedLocalized(context.l10n),
             bgColor: bgColor,
             borderColor: borderColor,
           );
@@ -94,8 +96,8 @@ class StatusCard extends ConsumerWidget {
         return _StatusCardContent(
           icon: Icons.child_care,
           iconColor: AppColors.onSurfaceMuted,
-          label: '아직 기록이 없어요',
-          elapsed: '수유 타일을 눌러 시작하세요',
+          label: context.l10n.noRecord,
+          elapsed: context.l10n.startRecordingHint,
           bgColor: AppColors.surfaceVariant,
           borderColor: AppColors.divider,
         );

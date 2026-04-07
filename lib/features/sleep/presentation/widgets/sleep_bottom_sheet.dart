@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/date_time_wheel_picker.dart';
 import '../../../home/presentation/providers/home_provider.dart';
 import '../../../log/domain/models/timeline_entry.dart';
@@ -33,24 +34,8 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
     _endDateTime = edit?.rawEndedAt ?? DateTime.now();
   }
 
-  String _formatDisplayDateTime(DateTime dt) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final dtDay = DateTime(dt.year, dt.month, dt.day);
-    String datePart;
-    if (dtDay == today) {
-      datePart = '오늘';
-    } else if (dtDay == yesterday) {
-      datePart = '어제';
-    } else {
-      const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-      datePart = '${dt.month}월 ${dt.day}일 (${weekdays[dt.weekday - 1]})';
-    }
-    final h = dt.hour;
-    final m = dt.minute.toString().padLeft(2, '0');
-    return '$datePart  $h:$m';
-  }
+  String _formatDisplayDateTime(DateTime dt) =>
+      dt.formatDisplayLocalized(context.l10n);
 
   Future<void> _pickStartDateTime() async {
     final result = await showDateTimeWheelPicker(
@@ -96,14 +81,14 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
           const Icon(Icons.bedtime, size: 48, color: AppColors.primary),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            isActive ? '수면 중' : '수면 수정',
+            isActive ? context.l10n.sleepActive : context.l10n.sleepEdit,
             style: AppTypography.titleMedium,
             textAlign: TextAlign.center,
           ),
           if (isActive) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
-              DateTime.now().difference(_startDateTime).formatKorean(),
+              DateTime.now().difference(_startDateTime).formatLocalized(context.l10n),
               style: AppTypography.headlineMedium.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w700,
@@ -117,18 +102,20 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
             children: [
               Expanded(
                 child: _TimeChip(
-                  label: '시작',
-                  displayText:
-                      '${_startDateTime.hour}시 ${_startDateTime.minute.toString().padLeft(2, '0')}분',
+                  label: context.l10n.startTime,
+                  displayText: context.l10n.startHourMinute(
+                      _startDateTime.hour,
+                      _startDateTime.minute.toString().padLeft(2, '0')),
                   onTap: _pickStartDateTime,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: _TimeChip(
-                  label: '종료',
-                  displayText:
-                      '${_endDateTime.hour}시 ${_endDateTime.minute.toString().padLeft(2, '0')}분',
+                  label: context.l10n.endTime,
+                  displayText: context.l10n.startHourMinute(
+                      _endDateTime.hour,
+                      _endDateTime.minute.toString().padLeft(2, '0')),
                   onTap: _pickEndDateTime,
                 ),
               ),
@@ -144,8 +131,8 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
                   : () async {
                       if (_endDateTime.isBefore(_startDateTime)) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('종료 시간이 시작 시간보다 이전일 수 없어요'),
+                          SnackBar(
+                            content: Text(context.l10n.sleepEndTimeError),
                           ),
                         );
                         return;
@@ -176,7 +163,7 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
                         color: Colors.white,
                       ),
                     )
-                  : Text(isActive ? '수면 종료' : '수정'),
+                  : Text(isActive ? context.l10n.sleepEnd : context.l10n.edit),
             ),
           ),
         ],
@@ -206,13 +193,13 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
             const Icon(Icons.bedtime, size: 48, color: AppColors.primary),
             const SizedBox(height: AppSpacing.md),
             Text(
-              '수면 중',
+              context.l10n.sleepActive,
               style: AppTypography.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              activeSleep.duration.formatKorean(),
+              activeSleep.duration.formatLocalized(context.l10n),
               style: AppTypography.headlineMedium.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w700,
@@ -224,18 +211,20 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
               children: [
                 Expanded(
                   child: _TimeChip(
-                    label: '시작',
-                    displayText:
-                        '${activeSleep.startedAt.hour}시 ${activeSleep.startedAt.minute.toString().padLeft(2, '0')}분',
+                    label: context.l10n.startTime,
+                    displayText: context.l10n.startHourMinute(
+                        activeSleep.startedAt.hour,
+                        activeSleep.startedAt.minute.toString().padLeft(2, '0')),
                     onTap: null,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: _TimeChip(
-                    label: '종료',
-                    displayText:
-                        '${_endDateTime.hour}시 ${_endDateTime.minute.toString().padLeft(2, '0')}분',
+                    label: context.l10n.endTime,
+                    displayText: context.l10n.startHourMinute(
+                        _endDateTime.hour,
+                        _endDateTime.minute.toString().padLeft(2, '0')),
                     onTap: _pickEndDateTime,
                   ),
                 ),
@@ -250,8 +239,8 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
                     : () async {
                         if (_endDateTime.isBefore(activeSleep.startedAt)) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('종료 시간이 시작 시간보다 이전일 수 없어요'),
+                            SnackBar(
+                              content: Text(context.l10n.sleepEndTimeError),
                             ),
                           );
                           return;
@@ -278,7 +267,7 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text('수면 종료'),
+                    : Text(context.l10n.sleepEnd),
               ),
             ),
           ] else ...[
@@ -289,13 +278,13 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
             ),
             const SizedBox(height: AppSpacing.md),
             Text(
-              '수면 기록',
+              context.l10n.sleepRecord,
               style: AppTypography.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              '수면을 시작하면 타이머가 작동합니다.\n앱을 종료해도 기록이 유지됩니다.',
+              context.l10n.sleepHint,
               style: AppTypography.bodySmall
                   .copyWith(color: AppColors.onSurfaceMuted),
               textAlign: TextAlign.center,
@@ -352,7 +341,7 @@ class _SleepBottomSheetState extends ConsumerState<SleepBottomSheet> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text('수면 시작'),
+                    : Text(context.l10n.sleepStart),
               ),
             ),
           ],

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../../shared/widgets/baby_avatar_widget.dart';
 import '../../../baby/domain/models/baby.dart';
@@ -13,7 +14,7 @@ import '../../../baby/presentation/providers/baby_provider.dart';
 void showBabySelectorSheet(BuildContext context, WidgetRef ref) {
   showAppBottomSheet(
     context: context,
-    title: '아이 선택',
+    title: context.l10n.selectBaby,
     child: _BabySelectorSheetContent(ref: ref),
   );
 }
@@ -23,13 +24,12 @@ class _BabySelectorSheetContent extends ConsumerWidget {
 
   final WidgetRef ref;
 
-  static final _dateFormat = DateFormat('yyyy년 MM월 dd일');
-
   @override
   Widget build(BuildContext context, WidgetRef widgetRef) {
     final babies = widgetRef.watch(babiesProvider).valueOrNull ?? [];
     final selectedId = widgetRef.watch(selectedBabyIdProvider);
     final effectiveId = selectedId ?? (babies.isNotEmpty ? babies.first.id : null);
+    final dateFormat = DateFormat(context.l10n.dateFormat);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -48,7 +48,7 @@ class _BabySelectorSheetContent extends ConsumerWidget {
             baby: baby,
             colorIndex: index,
             isSelected: isSelected,
-            dateFormat: _dateFormat,
+            dateFormat: dateFormat,
             onTap: () {
               widgetRef.read(selectedBabyIdProvider.notifier).select(baby.id);
               Navigator.of(context).pop();

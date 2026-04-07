@@ -1,22 +1,458 @@
 {
   "@@locale": "ko",
+
   "appName": "BebeTap",
+
+  "tabHome": "홈",
+  "tabStatistics": "통계",
+  "tabLog": "기록",
+  "tabFamily": "가족",
+
+  "menuBabyManage": "아이 관리",
+  "menuWidgetAdd": "위젯 추가",
+  "menuIconSettings": "아이콘 설정",
+  "menuLanguage": "언어 설정",
+  "menuLogout": "로그아웃",
+  "logoutConfirmTitle": "로그아웃",
+  "logoutConfirmMessage": "로그아웃 하시겠어요?",
+  "cancel": "취소",
+  "comingSoon": "준비 중입니다",
+
+  "homeGreeting": "안녕, {name}!",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "homeEncouragement": "아기도 힘들지만 엄마 아빠도\n정말 수고하고 있을 거예요 💛",
+  "sectionRecord": "기록하기",
+
   "formula": "분유",
   "breast": "모유",
+  "pumped": "유축수유",
+  "babyFood": "이유식",
   "diaper": "기저귀",
   "sleep": "수면",
   "temperature": "체온",
   "growth": "성장",
+  "diary": "일기",
+
+  "statsFormulaLabel": "분유",
+  "statsSleepLabel": "수면",
+  "statsDiaperLabel": "기저귀",
+
   "tapToRecord": "탭해서 기록",
-  "today": "오늘",
-  "statistics": "통계",
-  "family": "가족 공유",
-  "settings": "설정",
+  "formulaBottomSheetTitle": "분유 수유",
+  "breastBottomSheetTitle": "모유 수유",
+  "pumpedBottomSheetTitle": "유축 수유",
+  "babyFoodBottomSheetTitle": "이유식 기록",
+  "temperatureRecordTitle": "체온 기록",
+  "diaryWriteTitle": "일기 쓰기",
+  "diaryEditTitle": "일기 수정",
+  "diaryDoneToday": "오늘 작성 완료",
+
   "sleepActive": "수면 중",
   "lastFeeding": "마지막 수유",
   "formulaTotal": "분유 총량",
   "noRecord": "아직 기록이 없어요",
+  "startRecordingHint": "수유 타일을 눌러 시작하세요",
+  "typeBreastFeeding": "모유 수유",
+  "typePumpedFeeding": "유축 수유",
+  "typeBabyFood": "이유식",
+  "typeFormulaFeeding": "분유 수유",
+
+  "today": "오늘",
+  "yesterday": "어제",
+  "am": "오전",
+  "pm": "오후",
+  "weekdayMon": "월",
+  "weekdayTue": "화",
+  "weekdayWed": "수",
+  "weekdayThu": "목",
+  "weekdayFri": "금",
+  "weekdaySat": "토",
+  "weekdaySun": "일",
+  "dateFormatMonthDay": "{month}월 {day}일",
+  "@dateFormatMonthDay": {
+    "placeholders": {
+      "month": { "type": "int" },
+      "day": { "type": "int" }
+    }
+  },
+  "dateFormatFull": "{month}월 {day}일 ({weekday})",
+  "@dateFormatFull": {
+    "placeholders": {
+      "month": { "type": "int" },
+      "day": { "type": "int" },
+      "weekday": { "type": "String" }
+    }
+  },
+  "dateFormatTodayNav": "{month}월 {day}일 ({weekday})  오늘",
+  "@dateFormatTodayNav": {
+    "placeholders": {
+      "month": { "type": "int" },
+      "day": { "type": "int" },
+      "weekday": { "type": "String" }
+    }
+  },
+
+  "save": "저장",
+  "edit": "수정",
+  "confirm": "확인",
+  "saveAmountMl": "{amount}ml 저장",
+  "@saveAmountMl": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "editAmountMl": "{amount}ml 수정",
+  "@editAmountMl": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "formulaRecommendation": "{weight}kg 기준 권장량 {ml}ml/일",
+  "@formulaRecommendation": {
+    "placeholders": {
+      "weight": { "type": "String" },
+      "ml": { "type": "int" }
+    }
+  },
+  "formulaWeightHint": "아기 몸무게를 등록하면 권장량을 알 수 있어요",
+  "todayAmount": "오늘 {amount}ml",
+  "@todayAmount": {
+    "placeholders": {
+      "amount": { "type": "int" }
+    }
+  },
+  "todayCount": "오늘 {count}회",
+  "@todayCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "todayDuration": "오늘 {duration}",
+  "@todayDuration": {
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "left": "왼쪽",
+  "right": "오른쪽",
+  "minuteUnit": "{min}분",
+  "@minuteUnit": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+
+  "diaperSelectType": "기저귀 종류를 선택하세요",
+  "diaperWet": "소변",
+  "diaperSoiled": "대변",
+  "diaperBoth": "소변+대변",
+  "diaperChange": "교체",
+
+  "sleepEdit": "수면 수정",
+  "sleepRecord": "수면 기록",
+  "sleepStart": "수면 시작",
+  "sleepEnd": "수면 종료",
+  "sleepHint": "수면을 시작하면 타이머가 작동합니다.\n앱을 종료해도 기록이 유지됩니다.",
+  "sleepEndTimeError": "종료 시간이 시작 시간보다 이전일 수 없어요",
+  "startTime": "시작",
+  "endTime": "종료",
+  "startHourMinute": "{hour}시 {minute}분",
+  "@startHourMinute": {
+    "placeholders": {
+      "hour": { "type": "int" },
+      "minute": { "type": "String" }
+    }
+  },
+
+  "measureMethod": "측정 방법",
+  "methodAxillary": "겨드랑이",
+  "methodEar": "귀",
+  "methodForehead": "이마",
+  "methodRectal": "항문",
+  "highFeverWarning": "고열입니다. 즉시 의사에게 상담하세요.",
+  "lowFeverWarning": "미열입니다. 경과를 주의깊게 관찰하세요.",
+
+  "diaryTitleHint": "제목을 입력하세요",
+  "diaryContentHint": "오늘 아기와 함께한 이야기를 적어보세요...",
+  "diaryAuthorLabel": "작성자",
+  "diaryReadOnly": "다른 작성자의 일기는 수정할 수 없어요.",
+
+  "loginSubtitle": "초보 부모를 위한 육아 기록 앱",
+  "email": "이메일",
+  "password": "비밀번호",
+  "forgotPassword": "비밀번호를 잊으셨나요?",
+  "signupWithEmail": "이메일로 회원가입",
+  "login": "로그인",
+  "orSocialLogin": "또는 소셜 로그인",
+  "continueWithGoogle": "Google로 계속하기",
+  "continueWithKakao": "카카오로 계속하기",
+  "continueWithFacebook": "Facebook으로 계속하기",
+  "continueWithLine": "Line으로 계속하기",
+  "invalidEmailPassword": "이메일 또는 비밀번호가 올바르지 않습니다",
+  "networkError": "네트워크 오류가 발생했습니다. 다시 시도해주세요",
+  "loginFailed": "로그인 실패: {error}",
+  "@loginFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "passwordReset": "비밀번호 재설정",
+  "emailAddressLabel": "이메일 주소",
+  "send": "전송",
+  "resetEmailSent": "비밀번호 재설정 메일을 발송했습니다.",
+  "sendFailed": "전송 실패: {error}",
+  "@sendFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailSignupTitle": "이메일 회원가입",
+  "enterEmailPrompt": "가입할 이메일 주소를 입력해주세요",
+  "sendVerification": "인증 메일 발송",
+  "alreadyHaveAccount": "이미 계정이 있으신가요? 로그인",
+  "setPasswordTitle": "비밀번호를 설정해주세요",
+  "setPasswordHint": "다음 로그인부터 이메일과 비밀번호로 로그인합니다",
+  "passwordInput": "비밀번호 (6자 이상)",
+  "passwordConfirm": "비밀번호 확인",
+  "enterOtpTitle": "인증 코드를 입력해주세요",
+  "enterOtpHint": "이메일로 발송된 6자리 코드를 입력해주세요",
+  "completeSignup": "가입 완료",
+  "resendEmail": "이메일 재발송",
+  "invalidEmail": "올바른 이메일 형식을 입력해주세요",
+  "emailAlreadyExists": "이미 가입된 이메일입니다. 로그인 페이지로 이동합니다.",
+  "sendOtpFailed": "발송 실패: {error}",
+  "@sendOtpFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "passwordTooShort": "비밀번호는 6자 이상이어야 합니다",
+  "passwordMismatch": "비밀번호가 일치하지 않습니다",
+  "enterSixDigitCode": "6자리 인증 코드를 입력해주세요",
+  "signupFailed": "가입 실패: {error}",
+  "@signupFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "resendSuccess": "인증 코드를 재발송했습니다.",
+  "resendFailed": "재발송 실패: {error}",
+  "@resendFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "next": "다음",
+
+  "babyManageTitle": "아이 관리",
+  "registeredBabies": "등록된 아이",
+  "addNewBaby": "새 아이 추가",
+  "babyName": "아기 이름 *",
+  "birthDate": "생년월일 *",
+  "genderOptional": "성별 (선택)",
+  "boy": "남자아이",
+  "girl": "여자아이",
+  "currentWeight": "현재 체중 kg (선택)",
+  "photoSelect": "사진 선택 (선택)",
+  "selectBirthDate": "날짜를 선택하세요",
+  "birthDatePrompt": "생년월일을 선택해주세요",
+  "babyNameHint": "예: 김하늘",
+  "babyNameRequired": "이름을 입력해주세요",
+  "invalidWeight": "올바른 체중을 입력해주세요 (0~30 kg)",
+  "weightHint": "예: 4.5",
+  "weightFormulaHint": "체중을 입력하면 분유 일일 권장량을 자동으로 계산해드립니다",
+  "babyRelationship": "아기와의 관계 *",
+  "or": "또는",
+  "joinWithInviteCode": "초대 코드로 합류하기",
+  "selectBaby": "아이 선택",
+  "babySetupTitle": "아기 정보 입력",
+  "babyEditTitle": "아이 수정",
+  "babyAddTitle": "아이 추가",
+  "addButton": "추가하기",
+  "editButton": "수정하기",
+  "noFamilyFound": "가족 정보를 찾을 수 없습니다",
+  "saveFailed": "저장 실패: {error}",
+  "@saveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "loadFailed": "불러오기 실패: {error}",
+  "@loadFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "babyRelationshipPrompt": "아기와의 관계를 선택해주세요",
+  "startButton": "시작하기",
+  "dateFormat": "yyyy년 MM월 dd일",
+
+  "relationMom": "엄마",
+  "relationDad": "아빠",
+  "relationGrandma": "할머니",
+  "relationGrandpa": "할아버지",
+  "relationAunt": "이모",
+  "relationUncle": "삼촌",
+  "relationPaternalAunt": "고모",
+  "relationMaternalUncle": "외삼촌",
+  "relationCustom": "직접입력",
+  "relationCustomHint": "예: 외할머니, 큰이모",
+
+  "familyTitle": "가족 공유",
+  "familyGroupName": "가족 이름",
+  "familyNameHint": "예: 김씨 가족",
+  "createFamilyDialog": "가족 그룹 만들기",
+  "makeFamily": "만들기",
   "createFamily": "새 가족 그룹 만들기",
+  "noFamily": "가족 그룹이 없습니다",
+  "noFamilyHint": "가족을 만들거나 초대 코드로 합류하세요",
+  "inviteCode": "초대 코드",
+  "inviteCodeCopied": "초대 코드가 복사되었습니다",
+  "copy": "복사",
+  "share": "공유",
+  "inviteCodeShareHint": "이 코드를 가족에게 공유하여 함께 기록하세요",
+  "familyMembers": "가족 구성원",
+  "familyError": "오류가 발생했습니다",
   "joinFamily": "초대 코드로 합류하기",
-  "inviteCode": "초대 코드"
+  "enterInviteCode": "초대 코드를 입력해주세요",
+  "relationshipLabel": "아기와의 관계",
+  "joinButton": "가족 합류하기",
+  "enterInviteCodeError": "초대 코드를 입력해주세요",
+  "selectRelationshipError": "아기와의 관계를 선택해주세요",
+  "me": "나",
+  "userLabel": "사용자",
+  "caregiverRole": "양육자",
+  "familyRole": "가족",
+  "familyLoadFailed": "불러오기 실패",
+  "familyShareMessage": "BebeTap 앱에서 {familyName}에 합류하세요!\n초대 코드: {code}",
+  "@familyShareMessage": {
+    "placeholders": {
+      "familyName": { "type": "String" },
+      "code": { "type": "String" }
+    }
+  },
+  "familyShareSubject": "BebeTap 가족 초대",
+
+  "statistics": "통계",
+  "sleepSection": "수면",
+  "totalSleep": "총 수면",
+  "feedingSection": "수유",
+  "noFeedingRecord": "기록 없음",
+  "diaperSection": "기저귀",
+  "diaperChangeLabel": "기저귀 교체",
+  "timesCount": "{count}회",
+  "diaryCountUnit": "{count}편",
+  "dataLoadFailed": "데이터를 불러올 수 없습니다",
+  "periodDay": "오늘",
+  "periodWeek": "주간",
+  "periodMonth": "월간",
+
+  "logTitle": "육아 기록",
+  "logLoadFailed": "기록을 불러오지 못했어요",
+  "noLogForDay": "이 날은 기록이 없어요",
+  "addLogHint": "+ 버튼을 눌러 기록을 추가해보세요",
+  "editFormula": "분유 수정",
+  "editPumped": "유축 수정",
+  "editBabyFood": "이유식 수정",
+  "editBreast": "모유 수정",
+  "editDiaper": "기저귀 수정",
+  "editSleep": "수면 수정",
+  "editTemperature": "체온 수정",
+  "diaryLog": "일기",
+  "addFormula": "분유 수유",
+  "addPumped": "유축 수유",
+  "addBabyFood": "이유식 기록",
+  "addBreast": "모유 수유",
+  "addDiaper": "기저귀",
+  "addSleep": "수면",
+  "addTemperature": "체온 기록",
+  "editDiary": "일기 수정",
+  "writeDiary": "일기 쓰기",
+
+  "entryFormula": "분유",
+  "entryBreast": "모유",
+  "entryPumped": "유축",
+  "entryBabyFood": "이유식",
+  "entrySleep": "수면",
+  "entrySleeping": "자는 중",
+  "entryDiaper": "기저귀",
+  "entryTemperature": "체온",
+
+  "durationSeconds": "{s}초",
+  "@durationSeconds": {
+    "placeholders": {
+      "s": { "type": "int" }
+    }
+  },
+  "durationMinutesOnly": "{m}분",
+  "@durationMinutesOnly": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "durationHoursOnly": "{h}시간",
+  "@durationHoursOnly": {
+    "placeholders": {
+      "h": { "type": "int" }
+    }
+  },
+  "durationHoursMinutes": "{h}시간 {m}분",
+  "@durationHoursMinutes": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "m": { "type": "int" }
+    }
+  },
+  "elapsedJustNow": "방금",
+  "elapsedMinutes": "{m}분 경과",
+  "@elapsedMinutes": {
+    "placeholders": {
+      "m": { "type": "int" }
+    }
+  },
+  "elapsedHoursOnly": "{h}시간 경과",
+  "@elapsedHoursOnly": {
+    "placeholders": {
+      "h": { "type": "int" }
+    }
+  },
+  "elapsedHoursMinutes": "{h}시간 {m}분 경과",
+  "@elapsedHoursMinutes": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "m": { "type": "int" }
+    }
+  },
+
+  "settings": "설정",
+  "iconSettingsTitle": "아이콘 설정",
+  "iconSettingsHint": "드래그로 순서를 변경하고, 스위치로 표시 여부를 설정하세요.",
+  "logout": "로그아웃",
+
+  "pickerToday": "오늘",
+  "pickerHour": "시",
+  "pickerMinute": "분",
+  "pickerConfirm": "확인",
+
+  "displayTime": "{period} {h}:{minute}",
+  "@displayTime": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "minute": { "type": "String" },
+      "period": { "type": "String" }
+    }
+  },
+  "dateFormatLong": "{year}년 {month}월 {day}일 ({weekday})",
+  "@dateFormatLong": {
+    "placeholders": {
+      "year": { "type": "int" },
+      "month": { "type": "int" },
+      "day": { "type": "int" },
+      "weekday": { "type": "String" }
+    }
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../domain/models/timeline_entry.dart';
 
 class TimelineItemTile extends StatelessWidget {
@@ -115,13 +116,13 @@ class TimelineItemTile extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            entry.title,
+                            entry.localizedTitle(context.l10n),
                             style: AppTypography.labelLarge.copyWith(
                               color: AppColors.onSurface,
                             ),
                           ),
                           Text(
-                            entry.subtitle,
+                            entry.localizedSubtitle(context.l10n),
                             style: AppTypography.bodySmall.copyWith(
                               color: AppColors.onSurfaceMuted,
                             ),

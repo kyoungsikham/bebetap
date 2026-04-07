@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/extensions/l10n_ext.dart';
 import '../../domain/models/family.dart';
 
 class InviteCodeCard extends StatefulWidget {
@@ -18,12 +19,12 @@ class InviteCodeCard extends StatefulWidget {
 class _InviteCodeCardState extends State<InviteCodeCard> {
   final _shareButtonKey = GlobalKey();
 
-  void _share() {
+  void _share(BuildContext context) {
     final box =
         _shareButtonKey.currentContext?.findRenderObject() as RenderBox?;
     Share.share(
-      'BebeTap 앱에서 ${widget.family.name}에 합류하세요!\n초대 코드: ${widget.family.inviteCode}',
-      subject: 'BebeTap 가족 초대',
+      context.l10n.familyShareMessage(widget.family.name, widget.family.inviteCode),
+      subject: context.l10n.familyShareSubject,
       sharePositionOrigin:
           box != null ? box.localToGlobal(Offset.zero) & box.size : null,
     );
@@ -44,7 +45,7 @@ class _InviteCodeCardState extends State<InviteCodeCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '초대 코드',
+            context.l10n.inviteCode,
             style: AppTypography.bodySmall.copyWith(
               color: AppColors.primary,
               fontWeight: FontWeight.w600,
@@ -64,16 +65,16 @@ class _InviteCodeCardState extends State<InviteCodeCard> {
               const Spacer(),
               _ActionButton(
                 icon: Icons.copy_outlined,
-                label: '복사',
+                label: context.l10n.copy,
                 onTap: () async {
                   await Clipboard.setData(
                     ClipboardData(text: widget.family.inviteCode),
                   );
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('초대 코드가 복사되었습니다'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text(context.l10n.inviteCodeCopied),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   }
@@ -83,14 +84,14 @@ class _InviteCodeCardState extends State<InviteCodeCard> {
               _ActionButton(
                 widgetKey: _shareButtonKey,
                 icon: Icons.share_outlined,
-                label: '공유',
-                onTap: _share,
+                label: context.l10n.share,
+                onTap: () => _share(context),
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            '이 코드를 가족에게 공유하여 함께 기록하세요',
+            context.l10n.inviteCodeShareHint,
             style: AppTypography.bodySmall,
           ),
         ],
