@@ -95,8 +95,9 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
             children: [
               Text(
                 _formatDate(_isEditMode ? widget.editEntry!.occurredAt : now),
-                style: AppTypography.bodyMedium
-                    .copyWith(color: AppColors.onSurfaceMuted),
+                style: AppTypography.bodyMedium.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
+                ),
               ),
               const SizedBox(width: AppSpacing.sm),
               membersAsync.when(
@@ -131,13 +132,14 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
             Container(
               padding: const EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
-                color: AppColors.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 context.l10n.diaryReadOnly,
-                style: AppTypography.bodySmall
-                    .copyWith(color: AppColors.onSurfaceMuted),
+                style: AppTypography.bodySmall.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -165,10 +167,11 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
               style: AppTypography.titleMedium,
               decoration: InputDecoration(
                 hintText: context.l10n.diaryTitleHint,
-                hintStyle: AppTypography.titleMedium
-                    .copyWith(color: AppColors.divider),
+                hintStyle: AppTypography.titleMedium.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
                 filled: true,
-                fillColor: AppColors.surfaceVariant,
+                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -193,10 +196,11 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
               style: AppTypography.bodyMedium,
               decoration: InputDecoration(
                 hintText: context.l10n.diaryContentHint,
-                hintStyle: AppTypography.bodyMedium
-                    .copyWith(color: AppColors.divider),
+                hintStyle: AppTypography.bodyMedium.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                ),
                 filled: true,
-                fillColor: AppColors.surfaceVariant,
+                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -234,7 +238,7 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF42A5F5),
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.onPrimary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

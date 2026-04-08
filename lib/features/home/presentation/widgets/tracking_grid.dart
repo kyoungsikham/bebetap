@@ -6,7 +6,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/models/tracking_category.dart';
+import '../../../../shared/models/volume_unit.dart';
 import '../../../../shared/providers/icon_settings_provider.dart';
+import '../../../../shared/providers/volume_unit_provider.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../diaper/presentation/widgets/diaper_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/baby_food_bottom_sheet.dart';
@@ -32,6 +34,7 @@ class TrackingGrid extends ConsumerWidget {
     final activeSleep = ref.watch(activeSleepProvider).valueOrNull;
     final summary = summaryAsync.valueOrNull;
     final visibleTypes = ref.watch(visibleCategoriesProvider);
+    final unit = ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
 
     final l10n = context.l10n;
 
@@ -46,7 +49,7 @@ class TrackingGrid extends ConsumerWidget {
     String formulaSublabel = summary?.lastFeedingType == 'formula'
         ? feedingElapsedLabel()
         : (summary != null && summary.todayFormulaTotalMl > 0
-            ? l10n.todayAmount(summary.todayFormulaTotalMl)
+            ? l10n.todayAmount(unit.formatAmount(summary.todayFormulaTotalMl))
             : l10n.tapToRecord);
 
     String breastSublabel = summary?.lastFeedingType == 'breast'
@@ -56,7 +59,7 @@ class TrackingGrid extends ConsumerWidget {
     String pumpedSublabel = summary?.lastFeedingType == 'pumped'
         ? feedingElapsedLabel()
         : (summary != null && summary.todayPumpedTotalMl > 0
-            ? l10n.todayAmount(summary.todayPumpedTotalMl)
+            ? l10n.todayAmount(unit.formatAmount(summary.todayPumpedTotalMl))
             : l10n.tapToRecord);
 
     String sleepLabel = l10n.tapToRecord;
@@ -152,7 +155,7 @@ class TrackingGrid extends ConsumerWidget {
             icon: info.icon,
             label: info.localizedLabel(l10n),
             sublabel: summary != null && summary.todayBabyFoodTotalMl > 0
-                ? l10n.todayAmount(summary.todayBabyFoodTotalMl)
+                ? l10n.todayAmount(unit.formatAmount(summary.todayBabyFoodTotalMl))
                 : l10n.tapToRecord,
             color: info.color,
             onTap: () => showAppBottomSheet(

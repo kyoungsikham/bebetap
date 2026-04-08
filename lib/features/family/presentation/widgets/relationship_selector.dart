@@ -17,7 +17,7 @@ const kRelationshipPresets = [
   '외삼촌',
 ];
 
-String _localizedPreset(String preset, AppLocalizations l10n) {
+String localizedRelationPreset(String preset, AppLocalizations l10n) {
   return switch (preset) {
     '엄마' => l10n.relationMom,
     '아빠' => l10n.relationDad,
@@ -95,7 +95,7 @@ class _RelationshipSelectorState extends State<RelationshipSelector> {
           runSpacing: AppSpacing.sm,
           children: [
             ...kRelationshipPresets.map((preset) => _Chip(
-                  label: _localizedPreset(preset, l10n),
+                  label: localizedRelationPreset(preset, l10n),
                   selected: _isSelected(preset),
                   onTap: () => _selectPreset(preset),
                 )),

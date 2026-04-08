@@ -11,6 +11,13 @@
   "menuBabyManage": "赤ちゃん管理",
   "menuWidgetAdd": "ウィジェット追加",
   "menuIconSettings": "アイコン設定",
+  "menuTheme": "テーマ設定",
+  "themeLight": "ライト",
+  "themeDark": "ダーク",
+  "themeSystem": "システム",
+  "themeScheduled": "スケジュール",
+  "themeScheduleStart": "開始",
+  "themeScheduleEnd": "終了",
   "menuLanguage": "言語設定",
   "menuLogout": "ログアウト",
   "logoutConfirmTitle": "ログアウト",
@@ -99,16 +106,16 @@
   "save": "保存",
   "edit": "修正",
   "confirm": "確認",
-  "saveAmountMl": "{amount}mlを保存",
+  "saveAmountMl": "{amount}を保存",
   "@saveAmountMl": {
     "placeholders": {
-      "amount": { "type": "int" }
+      "amount": { "type": "String" }
     }
   },
-  "editAmountMl": "{amount}mlを修正",
+  "editAmountMl": "{amount}を修正",
   "@editAmountMl": {
     "placeholders": {
-      "amount": { "type": "int" }
+      "amount": { "type": "String" }
     }
   },
   "formulaRecommendation": "{weight}kg基準 推奨量 {ml}ml/日",
@@ -119,12 +126,15 @@
     }
   },
   "formulaWeightHint": "体重を入力すると推奨量が確認できます",
-  "todayAmount": "今日 {amount}ml",
+  "todayAmount": "今日 {amount}",
   "@todayAmount": {
     "placeholders": {
-      "amount": { "type": "int" }
+      "amount": { "type": "String" }
     }
   },
+  "menuVolumeUnit": "単位設定",
+  "volumeUnitMl": "ミリリットル (ml)",
+  "volumeUnitOz": "オンス (oz)",
   "todayCount": "今日 {count}回",
   "@todayCount": {
     "placeholders": {

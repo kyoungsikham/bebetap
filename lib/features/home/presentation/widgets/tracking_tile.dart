@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 
@@ -48,10 +47,12 @@ class _TrackingTileState extends State<TrackingTile> {
           decoration: BoxDecoration(
             color: widget.isActive
                 ? widget.color.withValues(alpha: 0.1)
-                : AppColors.surfaceVariant,
+                : Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: widget.isActive ? widget.color : AppColors.divider,
+              color: widget.isActive
+                  ? widget.color
+                  : Theme.of(context).dividerColor,
               width: widget.isActive ? 1.5 : 1,
             ),
           ),
@@ -62,7 +63,13 @@ class _TrackingTileState extends State<TrackingTile> {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: widget.color.withValues(alpha: 0.12),
+                  color: widget.isActive
+                      ? widget.color.withValues(alpha: 0.18)
+                      : widget.color.withValues(
+                          alpha: Theme.of(context).brightness == Brightness.dark
+                              ? 0.20
+                              : 0.12,
+                        ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(widget.icon, color: widget.color, size: 20),
@@ -71,14 +78,14 @@ class _TrackingTileState extends State<TrackingTile> {
               Text(
                 widget.label,
                 style: AppTypography.labelLarge.copyWith(
-                  color: AppColors.onSurface,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 widget.sublabel,
                 style: AppTypography.labelSmall.copyWith(
-                  color: AppColors.onSurfaceMuted,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

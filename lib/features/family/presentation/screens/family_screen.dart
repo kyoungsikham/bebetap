@@ -11,6 +11,7 @@ import '../../domain/models/family_member.dart';
 import '../providers/family_provider.dart';
 import '../widgets/invite_code_card.dart';
 import '../widgets/join_family_bottom_sheet.dart';
+import '../widgets/relationship_selector.dart';
 
 class FamilyScreen extends ConsumerStatefulWidget {
   const FamilyScreen({super.key});
@@ -78,9 +79,9 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
     final membersAsync = ref.watch(familyMembersProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(context.l10n.familyTitle, style: AppTypography.titleLarge),
@@ -125,7 +126,8 @@ class _NoFamilyView extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.pagePadding),
       children: [
         const SizedBox(height: AppSpacing.xxxl),
-        const Icon(Icons.group_outlined, size: 64, color: AppColors.onSurfaceMuted),
+        Icon(Icons.group_outlined, size: 64,
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4)),
         const SizedBox(height: AppSpacing.lg),
         Text(
           context.l10n.noFamily,
@@ -161,7 +163,7 @@ class _NoFamilyView extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            side: const BorderSide(color: AppColors.divider),
+            side: BorderSide(color: Theme.of(context).dividerColor),
           ),
         ),
       ],
@@ -221,16 +223,17 @@ class _MemberTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final badgeColor = isMe
         ? AppColors.success
         : member.isOwner
             ? AppColors.primary
-            : AppColors.onSurfaceMuted;
+            : cs.onSurface.withValues(alpha: 0.55);
     final badgeBg = isMe
         ? AppColors.success.withValues(alpha: 0.12)
         : member.isOwner
             ? AppColors.primary.withValues(alpha: 0.1)
-            : AppColors.surfaceVariant;
+            : cs.surfaceContainerHighest;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -248,7 +251,7 @@ class _MemberTile extends StatelessWidget {
             radius: 20,
             backgroundColor: isMe
                 ? AppColors.success.withValues(alpha: 0.15)
-                : AppColors.surfaceVariant,
+                : cs.surfaceContainerHighest,
             backgroundImage: member.avatarUrl != null
                 ? NetworkImage(member.avatarUrl!)
                 : null,
@@ -256,7 +259,9 @@ class _MemberTile extends StatelessWidget {
                 ? Icon(
                     Icons.person_outline,
                     size: 20,
-                    color: isMe ? AppColors.success : AppColors.onSurfaceMuted,
+                    color: isMe
+                        ? AppColors.success
+                        : cs.onSurface.withValues(alpha: 0.55),
                   )
                 : null,
           ),
@@ -287,7 +292,9 @@ class _MemberTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
-              member.nickname ?? (member.isOwner ? context.l10n.caregiverRole : context.l10n.familyRole),
+              member.nickname != null
+                  ? localizedRelationPreset(member.nickname!, context.l10n)
+                  : (member.isOwner ? context.l10n.caregiverRole : context.l10n.familyRole),
               style: AppTypography.labelSmall.copyWith(color: badgeColor),
             ),
           ),

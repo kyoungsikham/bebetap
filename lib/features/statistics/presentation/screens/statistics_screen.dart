@@ -6,6 +6,8 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
+import '../../../../shared/models/volume_unit.dart';
+import '../../../../shared/providers/volume_unit_provider.dart';
 import '../../domain/models/period.dart';
 import '../providers/statistics_provider.dart';
 import '../widgets/period_tab_bar.dart';
@@ -29,9 +31,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
     final diaperAsync = ref.watch(diaperStatsProvider(_period));
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(context.l10n.statistics, style: AppTypography.titleLarge),
@@ -56,7 +58,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
           Text(
             context.l10n.sleepSection,
             style: AppTypography.titleMedium.copyWith(
-              color: AppColors.onSurface,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -80,7 +82,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
           Text(
             context.l10n.feedingSection,
             style: AppTypography.titleMedium.copyWith(
-              color: AppColors.onSurface,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -88,6 +90,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             loading: () => const _SkeletonCard(),
             error: (_, _) => const _ErrorCard(),
             data: (stats) {
+              final unit = ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
               if (stats.totalFormulaMl == 0 && stats.totalBreastSec == 0) {
                 return StatCard(
                   icon: Icons.local_drink,
@@ -102,7 +105,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                     StatCard(
                       icon: Icons.local_drink,
                       label: context.l10n.formula,
-                      value: '${stats.totalFormulaMl}ml',
+                      value: unit.formatAmount(stats.totalFormulaMl),
                       subtitle: context.l10n.timesCount(stats.feedingCount),
                       deltaPercent: stats.formulaDeltaPercent,
                       color: AppColors.primary,
@@ -127,7 +130,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
           Text(
             context.l10n.diaperSection,
             style: AppTypography.titleMedium.copyWith(
-              color: AppColors.onSurface,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -155,9 +158,9 @@ class _SkeletonCard extends StatelessWidget {
     return Container(
       height: 80,
       decoration: BoxDecoration(
-        color: AppColors.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
     );
   }

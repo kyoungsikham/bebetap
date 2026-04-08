@@ -7,6 +7,8 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/constants/medical_constants.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
+import '../../../../shared/models/volume_unit.dart';
+import '../../../../shared/providers/volume_unit_provider.dart';
 import '../../../../shared/widgets/date_time_wheel_picker.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../log/domain/models/timeline_entry.dart';
@@ -28,17 +30,10 @@ class FormulaBottomSheet extends ConsumerStatefulWidget {
 class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
   late int _selectedMl;
   late DateTime _selectedDateTime;
-  late final FixedExtentScrollController _scrollController;
+  late FixedExtentScrollController _scrollController;
+  VolumeUnit? _lastUnit;
 
   bool get _isEditMode => widget.editEntry != null;
-
-  static final _items = List.generate(
-    (MedicalConstants.formulaPickerMaxMl - MedicalConstants.formulaPickerMinMl) ~/
-            MedicalConstants.formulaPickerStepMl +
-        1,
-    (i) => MedicalConstants.formulaPickerMinMl +
-        i * MedicalConstants.formulaPickerStepMl,
-  );
 
   @override
   void initState() {
@@ -46,17 +41,31 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
     final edit = widget.editEntry;
     _selectedMl = edit?.rawAmountMl ?? MedicalConstants.formulaDefaultMl;
     _selectedDateTime = edit?.occurredAt ?? DateTime.now();
-    final initialIndex = ((_selectedMl - MedicalConstants.formulaPickerMinMl) ~/
-            MedicalConstants.formulaPickerStepMl)
-        .clamp(0, _items.length - 1);
-    _scrollController =
-        FixedExtentScrollController(initialItem: initialIndex);
+    _scrollController = FixedExtentScrollController(initialItem: 0);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _initScrollForUnit(VolumeUnit unit, List<int> items) {
+    if (_lastUnit == unit) return;
+    _lastUnit = unit;
+    final snapped = unit.snapToStep(
+      _selectedMl,
+      minMl: MedicalConstants.formulaPickerMinMl,
+      maxMl: MedicalConstants.formulaPickerMaxMl,
+      stepMl: MedicalConstants.formulaPickerStepMl,
+    );
+    _selectedMl = snapped;
+    final idx = items.indexOf(snapped).clamp(0, items.length - 1);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpToItem(idx);
+      }
+    });
   }
 
   String _formatDisplayDateTime(DateTime dt) =>
@@ -80,6 +89,14 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
         ? MedicalConstants.formulaDailyTargetMl(baby!.weightKg!).toInt()
         : null;
     final isLoading = ref.watch(feedingNotifierProvider).isLoading;
+    final unit = ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
+
+    final items = unit.pickerItems(
+      minMl: MedicalConstants.formulaPickerMinMl,
+      maxMl: MedicalConstants.formulaPickerMaxMl,
+      stepMl: MedicalConstants.formulaPickerStepMl,
+    );
+    _initScrollForUnit(unit, items);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -119,7 +136,7 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
           const SizedBox(height: AppSpacing.md),
           const Divider(height: 1),
 
-          // ml 휠 피커
+          // 휠 피커
           SizedBox(
             height: 180,
             child: Stack(
@@ -139,15 +156,15 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
                   diameterRatio: 1.6,
                   physics: const FixedExtentScrollPhysics(),
                   onSelectedItemChanged: (idx) =>
-                      setState(() => _selectedMl = _items[idx]),
+                      setState(() => _selectedMl = items[idx]),
                   childDelegate: ListWheelChildBuilderDelegate(
-                    childCount: _items.length,
+                    childCount: items.length,
                     builder: (context, idx) {
-                      final ml = _items[idx];
+                      final ml = items[idx];
                       final isSelected = ml == _selectedMl;
                       return Center(
                         child: Text(
-                          '$ml ml',
+                          unit.formatAmount(ml),
                           style: (isSelected
                                   ? AppTypography.titleMedium
                                   : AppTypography.bodyMedium)
@@ -168,7 +185,7 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
             ),
           ),
 
-          // 권장량 (분유 모드에서만 표시)
+          // 권장량 (분유 모드에서만 표시, 항상 ml)
           if (!isPumped)
             Align(
               alignment: Alignment.centerRight,
@@ -230,7 +247,7 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.onPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -245,7 +262,11 @@ class _FormulaBottomSheetState extends ConsumerState<FormulaBottomSheet> {
                         color: Colors.white,
                       ),
                     )
-                  : Text(_isEditMode ? context.l10n.editAmountMl(_selectedMl) : context.l10n.saveAmountMl(_selectedMl)),
+                  : Text(
+                      _isEditMode
+                          ? context.l10n.editAmountMl(unit.formatAmount(_selectedMl))
+                          : context.l10n.saveAmountMl(unit.formatAmount(_selectedMl)),
+                    ),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),

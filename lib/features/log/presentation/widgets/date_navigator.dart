@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../providers/log_provider.dart';
@@ -40,7 +39,6 @@ class DateNavigator extends ConsumerWidget {
       children: [
         IconButton(
           icon: const Icon(Icons.chevron_left),
-          color: AppColors.onSurface,
           onPressed: () =>
               ref.read(selectedLogDateProvider.notifier).previousDay(),
         ),
@@ -61,10 +59,13 @@ class DateNavigator extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.calendar_today_outlined,
                   size: 16,
-                  color: AppColors.onSurfaceMuted,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.55),
                 ),
                 const SizedBox(width: 6),
                 Text(
@@ -78,7 +79,7 @@ class DateNavigator extends ConsumerWidget {
         IconButton(
           icon: Icon(
             Icons.chevron_right,
-            color: isToday ? AppColors.divider : AppColors.onSurface,
+            color: isToday ? Theme.of(context).dividerColor : null,
           ),
           onPressed: isToday
               ? null

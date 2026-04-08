@@ -113,9 +113,9 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
     final isLoading = setupState.isLoading;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         title: Text(context.l10n.babySetupTitle, style: AppTypography.titleLarge),
       ),
@@ -144,7 +144,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                   child: Text(
                     context.l10n.photoSelect,
                     style: AppTypography.bodySmall
-                        .copyWith(color: AppColors.onSurfaceMuted),
+                        .copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55)),
                   ),
                 ),
 
@@ -173,9 +173,9 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.lg),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceVariant,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.divider),
+                      border: Border.all(color: Theme.of(context).dividerColor),
                     ),
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -184,8 +184,8 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                           : context.l10n.selectBirthDate,
                       style: AppTypography.bodyMedium.copyWith(
                         color: _birthDate != null
-                            ? AppColors.onSurface
-                            : AppColors.onSurfaceMuted,
+                            ? Theme.of(context).colorScheme.onSurface
+                            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
                       ),
                     ),
                   ),
@@ -266,7 +266,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                     onPressed: isLoading ? null : _submit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.onPrimary,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -278,7 +278,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: AppColors.onPrimary,
                             ),
                           )
                         : Text(context.l10n.startButton),
@@ -290,17 +290,21 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                 // 구분선
                 Row(
                   children: [
-                    const Expanded(child: Divider(color: AppColors.divider)),
+                    const Expanded(child: Divider()),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.md),
                       child: Text(
                         context.l10n.or,
-                        style: AppTypography.bodySmall
-                            .copyWith(color: AppColors.onSurfaceMuted),
+                        style: AppTypography.bodySmall.copyWith(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.55),
+                        ),
                       ),
                     ),
-                    const Expanded(child: Divider(color: AppColors.divider)),
+                    const Expanded(child: Divider()),
                   ],
                 ),
 
@@ -330,35 +334,38 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
     );
   }
 
-  InputDecoration _inputDecoration(String hint) => InputDecoration(
-        hintText: hint,
-        hintStyle:
-            AppTypography.bodyMedium.copyWith(color: AppColors.onSurfaceMuted),
-        filled: true,
-        fillColor: AppColors.surfaceVariant,
-        contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg, vertical: AppSpacing.md),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.divider),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.divider),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.error),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
-        ),
-      );
+  InputDecoration _inputDecoration(String hint) {
+    final cs = Theme.of(context).colorScheme;
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: AppTypography.bodyMedium.copyWith(
+          color: cs.onSurface.withValues(alpha: 0.55)),
+      filled: true,
+      fillColor: cs.surfaceContainerHighest,
+      contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Theme.of(context).dividerColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Theme.of(context).dividerColor),
+      ),
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+        borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+      ),
+      errorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+        borderSide: BorderSide(color: AppColors.error),
+      ),
+      focusedErrorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+        borderSide: BorderSide(color: AppColors.error, width: 1.5),
+      ),
+    );
+  }
 }
 
 class _SectionLabel extends StatelessWidget {
@@ -368,7 +375,9 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         text,
-        style: AppTypography.labelLarge.copyWith(color: AppColors.onSurface),
+        style: AppTypography.labelLarge.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       );
 }
 
@@ -395,10 +404,10 @@ class _GenderButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected
               ? AppColors.primary.withValues(alpha: 0.1)
-              : AppColors.surfaceVariant,
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selected ? AppColors.primary : AppColors.divider,
+            color: selected ? AppColors.primary : Theme.of(context).dividerColor,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -406,14 +415,17 @@ class _GenderButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon,
-                color:
-                    selected ? AppColors.primary : AppColors.onSurfaceMuted,
+                color: selected
+                    ? AppColors.primary
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
                 size: 20),
             const SizedBox(width: AppSpacing.sm),
             Text(
               label,
               style: AppTypography.labelLarge.copyWith(
-                color: selected ? AppColors.primary : AppColors.onSurface,
+                color: selected
+                    ? AppColors.primary
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ],

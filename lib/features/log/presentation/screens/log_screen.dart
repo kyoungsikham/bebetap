@@ -28,9 +28,9 @@ class LogScreen extends ConsumerWidget {
     final timelineAsync = ref.watch(filteredLogTimelineProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(context.l10n.logTitle, style: AppTypography.titleLarge),
@@ -65,8 +65,11 @@ class LogScreen extends ConsumerWidget {
               error: (e, _) => Center(
                 child: Text(
                   context.l10n.logLoadFailed,
-                  style: AppTypography.bodyMedium
-                      .copyWith(color: AppColors.onSurfaceMuted),
+                  style: AppTypography.bodyMedium.copyWith(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.55)),
                 ),
               ),
               data: (entries) {
@@ -78,7 +81,10 @@ class LogScreen extends ConsumerWidget {
                         Icon(
                           Icons.event_note_outlined,
                           size: 48,
-                          color: AppColors.onSurfaceMuted.withValues(alpha: 0.5),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.3),
                         ),
                         const SizedBox(height: AppSpacing.md),
                         Text(
@@ -118,7 +124,7 @@ class LogScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: AppColors.onPrimary,
         shape: const CircleBorder(),
         onPressed: () => _openAddSheet(context, ref),
         child: const Icon(Icons.add),

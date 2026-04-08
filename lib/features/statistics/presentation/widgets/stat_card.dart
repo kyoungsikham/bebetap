@@ -30,9 +30,9 @@ class StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +52,10 @@ class StatCard extends StatelessWidget {
               Text(
                 label,
                 style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.onSurfaceMuted,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.55),
                 ),
               ),
               const Spacer(),
@@ -63,7 +66,7 @@ class StatCard extends StatelessWidget {
           Text(
             value,
             style: AppTypography.titleLarge.copyWith(
-              color: AppColors.onSurface,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           if (subtitle != null) ...[

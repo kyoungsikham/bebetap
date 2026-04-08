@@ -11,6 +11,13 @@
   "menuBabyManage": "Baby Management",
   "menuWidgetAdd": "Add Widget",
   "menuIconSettings": "Icon Settings",
+  "menuTheme": "Theme",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeSystem": "System",
+  "themeScheduled": "Scheduled",
+  "themeScheduleStart": "Start",
+  "themeScheduleEnd": "End",
   "menuLanguage": "Language",
   "menuLogout": "Logout",
   "logoutConfirmTitle": "Logout",
@@ -99,16 +106,16 @@
   "save": "Save",
   "edit": "Edit",
   "confirm": "Confirm",
-  "saveAmountMl": "Save {amount}ml",
+  "saveAmountMl": "Save {amount}",
   "@saveAmountMl": {
     "placeholders": {
-      "amount": { "type": "int" }
+      "amount": { "type": "String" }
     }
   },
-  "editAmountMl": "Edit {amount}ml",
+  "editAmountMl": "Edit {amount}",
   "@editAmountMl": {
     "placeholders": {
-      "amount": { "type": "int" }
+      "amount": { "type": "String" }
     }
   },
   "formulaRecommendation": "{weight}kg → recommended {ml}ml/day",
@@ -119,12 +126,15 @@
     }
   },
   "formulaWeightHint": "Enter baby weight to see recommendation",
-  "todayAmount": "Today {amount}ml",
+  "todayAmount": "Today {amount}",
   "@todayAmount": {
     "placeholders": {
-      "amount": { "type": "int" }
+      "amount": { "type": "String" }
     }
   },
+  "menuVolumeUnit": "Volume Unit",
+  "volumeUnitMl": "Milliliter (ml)",
+  "volumeUnitOz": "Ounce (oz)",
   "todayCount": "Today {count} times",
   "@todayCount": {
     "placeholders": {

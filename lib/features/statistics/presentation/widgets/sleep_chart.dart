@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../domain/models/sleep_stats.dart';
 
@@ -42,7 +41,7 @@ class SleepBarChart extends StatelessWidget {
                   backDrawRodData: BackgroundBarChartRodData(
                     show: true,
                     toY: maxY,
-                    color: AppColors.divider,
+                    color: Theme.of(context).dividerColor,
                   ),
                 ),
               ],
@@ -64,7 +63,10 @@ class SleepBarChart extends StatelessWidget {
                     child: Text(
                       weekday,
                       style: AppTypography.labelSmall.copyWith(
-                        color: AppColors.onSurfaceMuted,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.55),
                       ),
                     ),
                   );

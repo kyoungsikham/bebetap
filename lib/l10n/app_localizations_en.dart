@@ -33,6 +33,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuIconSettings => 'Icon Settings';
 
   @override
+  String get menuTheme => 'Theme';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get themeScheduled => 'Scheduled';
+
+  @override
+  String get themeScheduleStart => 'Start';
+
+  @override
+  String get themeScheduleEnd => 'End';
+
+  @override
   String get menuLanguage => 'Language';
 
   @override
@@ -210,13 +231,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirm => 'Confirm';
 
   @override
-  String saveAmountMl(int amount) {
-    return 'Save ${amount}ml';
+  String saveAmountMl(String amount) {
+    return 'Save $amount';
   }
 
   @override
-  String editAmountMl(int amount) {
-    return 'Edit ${amount}ml';
+  String editAmountMl(String amount) {
+    return 'Edit $amount';
   }
 
   @override
@@ -228,9 +249,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get formulaWeightHint => 'Enter baby weight to see recommendation';
 
   @override
-  String todayAmount(int amount) {
-    return 'Today ${amount}ml';
+  String todayAmount(String amount) {
+    return 'Today $amount';
   }
+
+  @override
+  String get menuVolumeUnit => 'Volume Unit';
+
+  @override
+  String get volumeUnitMl => 'Milliliter (ml)';
+
+  @override
+  String get volumeUnitOz => 'Ounce (oz)';
 
   @override
   String todayCount(int count) {

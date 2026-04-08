@@ -33,6 +33,27 @@ class AppLocalizationsJa extends AppLocalizations {
   String get menuIconSettings => 'アイコン設定';
 
   @override
+  String get menuTheme => 'テーマ設定';
+
+  @override
+  String get themeLight => 'ライト';
+
+  @override
+  String get themeDark => 'ダーク';
+
+  @override
+  String get themeSystem => 'システム';
+
+  @override
+  String get themeScheduled => 'スケジュール';
+
+  @override
+  String get themeScheduleStart => '開始';
+
+  @override
+  String get themeScheduleEnd => '終了';
+
+  @override
   String get menuLanguage => '言語設定';
 
   @override
@@ -209,13 +230,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get confirm => '確認';
 
   @override
-  String saveAmountMl(int amount) {
-    return '${amount}mlを保存';
+  String saveAmountMl(String amount) {
+    return '$amountを保存';
   }
 
   @override
-  String editAmountMl(int amount) {
-    return '${amount}mlを修正';
+  String editAmountMl(String amount) {
+    return '$amountを修正';
   }
 
   @override
@@ -227,9 +248,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get formulaWeightHint => '体重を入力すると推奨量が確認できます';
 
   @override
-  String todayAmount(int amount) {
-    return '今日 ${amount}ml';
+  String todayAmount(String amount) {
+    return '今日 $amount';
   }
+
+  @override
+  String get menuVolumeUnit => '単位設定';
+
+  @override
+  String get volumeUnitMl => 'ミリリットル (ml)';
+
+  @override
+  String get volumeUnitOz => 'オンス (oz)';
 
   @override
   String todayCount(int count) {

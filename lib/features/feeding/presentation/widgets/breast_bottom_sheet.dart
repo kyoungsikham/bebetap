@@ -174,7 +174,7 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.onPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -341,7 +341,7 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.onPrimary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -442,6 +442,7 @@ class _SideButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -450,10 +451,12 @@ class _SideButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: isActive
               ? AppColors.primary.withValues(alpha: 0.1)
-              : AppColors.surfaceVariant,
+              : (isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isActive ? AppColors.primary : AppColors.divider,
+            color: isActive
+                ? AppColors.primary
+                : (isDark ? AppColors.darkDivider : AppColors.divider),
             width: isActive ? 1.5 : 1,
           ),
         ),
@@ -462,20 +465,26 @@ class _SideButton extends StatelessWidget {
           children: [
             Icon(
               isActive ? Icons.pause_circle : Icons.play_circle_outline,
-              color: isActive ? AppColors.primary : AppColors.onSurfaceMuted,
+              color: isActive
+                  ? AppColors.primary
+                  : (isDark ? AppColors.darkOnSurfaceMuted : AppColors.onSurfaceMuted),
               size: 28,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: AppTypography.labelLarge.copyWith(
-                color: isActive ? AppColors.primary : AppColors.onSurface,
+                color: isActive
+                    ? AppColors.primary
+                    : (isDark ? AppColors.darkOnSurface : AppColors.onSurface),
               ),
             ),
             Text(
               duration.formatMmSs(),
               style: AppTypography.bodySmall.copyWith(
-                color: isActive ? AppColors.primary : AppColors.onSurfaceMuted,
+                color: isActive
+                    ? AppColors.primary
+                    : (isDark ? AppColors.darkOnSurfaceMuted : AppColors.onSurfaceMuted),
               ),
             ),
           ],

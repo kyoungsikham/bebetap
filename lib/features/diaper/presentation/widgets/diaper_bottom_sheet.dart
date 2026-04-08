@@ -90,55 +90,60 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
           ),
 
           const SizedBox(height: AppSpacing.xl),
-          Row(
-            children: [
-              Expanded(
-                child: _DiaperTypeButton(
-                  label: context.l10n.diaperWet,
-                  emoji: '💧',
-                  type: 'wet',
-                  color: const Color(0xFFE3F0FF),
-                  textColor: const Color(0xFF3D7ED6),
+          Builder(builder: (context) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _DiaperTypeButton(
+                        label: context.l10n.diaperWet,
+                        emoji: '💧',
+                        type: 'wet',
+                        color: isDark ? const Color(0xFF1A2D40) : const Color(0xFFE3F0FF),
+                        textColor: const Color(0xFF3D7ED6),
+                        occurredAt: _selectedDateTime,
+                        isSelected: _selectedType == 'wet',
+                        onSelectType: _isEditMode
+                            ? (t) => setState(() => _selectedType = t)
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: _DiaperTypeButton(
+                        label: context.l10n.diaperSoiled,
+                        emoji: '🟤',
+                        type: 'soiled',
+                        color: isDark ? const Color(0xFF2D2418) : const Color(0xFFFFF3E0),
+                        textColor: const Color(0xFFB07040),
+                        occurredAt: _selectedDateTime,
+                        isSelected: _selectedType == 'soiled',
+                        onSelectType: _isEditMode
+                            ? (t) => setState(() => _selectedType = t)
+                            : null,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                _DiaperTypeButton(
+                  label: context.l10n.diaperBoth,
+                  emoji: '🔄',
+                  type: 'both',
+                  color: isDark ? const Color(0xFF1A2D1E) : const Color(0xFFE8F5E9),
+                  textColor: const Color(0xFF388E3C),
                   occurredAt: _selectedDateTime,
-                  editId: _isEditMode ? null : null,
-                  isSelected: _selectedType == 'wet',
+                  isSelected: _selectedType == 'both',
                   onSelectType: _isEditMode
                       ? (t) => setState(() => _selectedType = t)
                       : null,
                 ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: _DiaperTypeButton(
-                  label: context.l10n.diaperSoiled,
-                  emoji: '🟤',
-                  type: 'soiled',
-                  color: const Color(0xFFFFF3E0),
-                  textColor: const Color(0xFFB07040),
-                  occurredAt: _selectedDateTime,
-                  editId: _isEditMode ? null : null,
-                  isSelected: _selectedType == 'soiled',
-                  onSelectType: _isEditMode
-                      ? (t) => setState(() => _selectedType = t)
-                      : null,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          _DiaperTypeButton(
-            label: context.l10n.diaperBoth,
-            emoji: '🔄',
-            type: 'both',
-            color: const Color(0xFFE8F5E9),
-            textColor: const Color(0xFF388E3C),
-            occurredAt: _selectedDateTime,
-            editId: _isEditMode ? null : null,
-            isSelected: _selectedType == 'both',
-            onSelectType: _isEditMode
-                ? (t) => setState(() => _selectedType = t)
-                : null,
-          ),
+              ],
+            );
+          }),
 
           // 수정 모드 저장 버튼
           if (_isEditMode) ...[
@@ -160,7 +165,7 @@ class _DiaperBottomSheetState extends ConsumerState<DiaperBottomSheet> {
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.onPrimary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -193,7 +198,6 @@ class _DiaperTypeButton extends ConsumerWidget {
     required this.color,
     required this.textColor,
     required this.occurredAt,
-    this.editId,
     this.isSelected = false,
     this.onSelectType,
   });
@@ -204,7 +208,6 @@ class _DiaperTypeButton extends ConsumerWidget {
   final Color color;
   final Color textColor;
   final DateTime occurredAt;
-  final String? editId;
   final bool isSelected;
   final void Function(String)? onSelectType;
 
@@ -219,16 +222,6 @@ class _DiaperTypeButton extends ConsumerWidget {
               if (onSelectType != null) {
                 // 수정 모드: 선택만 하고 저장하지 않음
                 onSelectType!(type);
-              } else if (editId != null) {
-                await ref.read(diaperNotifierProvider.notifier).updateDiaper(
-                      editId!,
-                      type: type,
-                      occurredAt: occurredAt,
-                    );
-                await Future<void>.delayed(
-                  const Duration(milliseconds: 400),
-                );
-                if (context.mounted) Navigator.of(context).pop();
               } else {
                 await ref.read(diaperNotifierProvider.notifier).saveDiaper(
                       type: type,

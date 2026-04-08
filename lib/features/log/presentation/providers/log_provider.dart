@@ -45,7 +45,7 @@ Future<List<TimelineEntry>> logTimeline(Ref ref) {
 
 // ─── 카테고리 필터 (null = 전체) ──────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 class SelectedTimelineFilter extends _$SelectedTimelineFilter {
   @override
   TimelineEntryType build() => TimelineEntryType.formula;

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router/app_routes.dart';
-import '../../core/theme/app_colors.dart';
 import '../../shared/extensions/l10n_ext.dart';
 
 class ScaffoldWithBottomNav extends StatelessWidget {
@@ -52,8 +51,10 @@ class ScaffoldWithBottomNav extends StatelessWidget {
     return Scaffold(
       body: child,
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppColors.divider)),
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(color: Theme.of(context).dividerColor),
+          ),
         ),
         child: BottomNavigationBar(
           currentIndex: currentIndex,

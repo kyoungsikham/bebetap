@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
+import '../../../../shared/models/volume_unit.dart';
+import '../../../../shared/providers/volume_unit_provider.dart';
 import '../../domain/models/timeline_entry.dart';
 
-class TimelineItemTile extends StatelessWidget {
+class TimelineItemTile extends ConsumerWidget {
   const TimelineItemTile({
     super.key,
     required this.entry,
@@ -24,7 +27,18 @@ class TimelineItemTile extends StatelessWidget {
       '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unit = ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
+
+    String subtitle = entry.localizedSubtitle(context.l10n);
+    // ml 기반 타입이면 unit에 맞게 포맷
+    if (entry.rawAmountMl != null &&
+        (entry.type == TimelineEntryType.formula ||
+            entry.type == TimelineEntryType.pumped ||
+            entry.type == TimelineEntryType.babyFood)) {
+      subtitle = unit.formatAmount(entry.rawAmountMl!);
+    }
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -49,7 +63,6 @@ class TimelineItemTile extends StatelessWidget {
           // 세로선 + 점
           Column(
             children: [
-              // 위쪽 선분
               SizedBox(
                 width: 2,
                 height: 16,
@@ -57,7 +70,6 @@ class TimelineItemTile extends StatelessWidget {
                   color: isFirst ? Colors.transparent : AppColors.primary,
                 ),
               ),
-              // 원형 점
               Container(
                 width: 10,
                 height: 10,
@@ -66,7 +78,6 @@ class TimelineItemTile extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-              // 아래쪽 선분 (flex)
               Expanded(
                 child: SizedBox(
                   width: 2,
@@ -89,58 +100,64 @@ class TimelineItemTile extends StatelessWidget {
               child: GestureDetector(
                 onTap: onTap,
                 child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.divider),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: entry.color.withValues(alpha: 0.12),
-                        shape: BoxShape.circle,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Theme.of(context).dividerColor),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: entry.color.withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(entry.icon, color: entry.color, size: 16),
                       ),
-                      child: Icon(entry.icon, color: entry.color, size: 16),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            entry.localizedTitle(context.l10n),
-                            style: AppTypography.labelLarge.copyWith(
-                              color: AppColors.onSurface,
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              entry.localizedTitle(context.l10n),
+                              style: AppTypography.labelLarge.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                             ),
-                          ),
-                          Text(
-                            entry.localizedSubtitle(context.l10n),
-                            style: AppTypography.bodySmall.copyWith(
-                              color: AppColors.onSurfaceMuted,
+                            Text(
+                              subtitle,
+                              style: AppTypography.bodySmall.copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.55),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const Icon(
-                      Icons.chevron_right,
-                      size: 18,
-                      color: AppColors.onSurfaceMuted,
-                    ),
-                  ],
+                      Icon(
+                        Icons.chevron_right,
+                        size: 18,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.4),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
         ],
       ),
     );

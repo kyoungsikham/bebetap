@@ -33,6 +33,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get menuIconSettings => '아이콘 설정';
 
   @override
+  String get menuTheme => '테마 설정';
+
+  @override
+  String get themeLight => '라이트';
+
+  @override
+  String get themeDark => '다크';
+
+  @override
+  String get themeSystem => '시스템';
+
+  @override
+  String get themeScheduled => '예약';
+
+  @override
+  String get themeScheduleStart => '시작';
+
+  @override
+  String get themeScheduleEnd => '종료';
+
+  @override
   String get menuLanguage => '언어 설정';
 
   @override
@@ -209,13 +230,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get confirm => '확인';
 
   @override
-  String saveAmountMl(int amount) {
-    return '${amount}ml 저장';
+  String saveAmountMl(String amount) {
+    return '$amount 저장';
   }
 
   @override
-  String editAmountMl(int amount) {
-    return '${amount}ml 수정';
+  String editAmountMl(String amount) {
+    return '$amount 수정';
   }
 
   @override
@@ -227,9 +248,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get formulaWeightHint => '아기 몸무게를 등록하면 권장량을 알 수 있어요';
 
   @override
-  String todayAmount(int amount) {
-    return '오늘 ${amount}ml';
+  String todayAmount(String amount) {
+    return '오늘 $amount';
   }
+
+  @override
+  String get menuVolumeUnit => '단위 설정';
+
+  @override
+  String get volumeUnitMl => '밀리리터 (ml)';
+
+  @override
+  String get volumeUnitOz => '온스 (oz)';
 
   @override
   String todayCount(int count) {

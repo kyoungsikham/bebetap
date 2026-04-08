@@ -1,23 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/models/tracking_category.dart';
+import '../../../../shared/models/volume_unit.dart';
 import '../../../../shared/providers/icon_settings_provider.dart';
+import '../../../../shared/providers/volume_unit_provider.dart';
 import '../../domain/models/timeline_entry.dart';
 import '../providers/log_provider.dart';
 
-class LogStatsStrip extends ConsumerWidget {
+class LogStatsStrip extends ConsumerStatefulWidget {
   const LogStatsStrip({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LogStatsStrip> createState() => _LogStatsStripState();
+}
+
+class _LogStatsStripState extends ConsumerState<LogStatsStrip> {
+  final ScrollController _scrollController = ScrollController();
+  LogDaySummary? _lastSummary;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final summaryAsync = ref.watch(logDaySummaryProvider);
     final filter = ref.watch(selectedTimelineFilterProvider);
     final visibleTypes = ref.watch(visibleCategoriesProvider);
+    final unit = ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
 
     // If current filter is hidden, reset to first visible type
     if (visibleTypes.isNotEmpty && !visibleTypes.contains(filter)) {
@@ -26,62 +42,68 @@ class LogStatsStrip extends ConsumerWidget {
           .setFilter(visibleTypes.first));
     }
 
-    return summaryAsync.when(
-      loading: () => _StripSkeleton(count: visibleTypes.length),
-      error: (_, _) => const SizedBox.shrink(),
-      data: (summary) {
-        final l10n = context.l10n;
-        final breastDur = Duration(seconds: summary.breastTotalSec);
+    // Keep last known summary to avoid scroll reset during reload
+    if (summaryAsync.valueOrNull != null) {
+      _lastSummary = summaryAsync.valueOrNull;
+    }
+    final summary = _lastSummary;
 
-        String valueFor(TimelineEntryType type) {
-          switch (type) {
-            case TimelineEntryType.formula:
-              return '${summary.formulaTotalMl}ml';
-            case TimelineEntryType.breast:
-              return breastDur.formatLocalized(l10n);
-            case TimelineEntryType.pumped:
-              return '${summary.pumpedTotalMl}ml';
-            case TimelineEntryType.babyFood:
-              return '${summary.babyFoodTotalMl}ml';
-            case TimelineEntryType.diaper:
-              return l10n.timesCount(summary.diaperCount);
-            case TimelineEntryType.sleep:
-              return summary.sleepTotal.formatLocalized(l10n);
-            case TimelineEntryType.temperature:
-              return l10n.timesCount(summary.temperatureCount);
-            case TimelineEntryType.diary:
-              return l10n.diaryCountUnit(summary.diaryCount);
-          }
-        }
+    if (summary == null) {
+      // First load only
+      return _StripSkeleton(count: visibleTypes.length);
+    }
 
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: Row(
-            children: [
-              for (int i = 0; i < visibleTypes.length; i++) ...[
-                if (i > 0) const SizedBox(width: 10),
-                Builder(builder: (context) {
-                  final type = visibleTypes[i];
-                  final info = TrackingCategoryInfo.all[type]!;
-                  return _StatChip(
-                    type: type,
-                    isSelected: filter == type,
-                    onTap: () => ref
-                        .read(selectedTimelineFilterProvider.notifier)
-                        .setFilter(type),
-                    icon: info.icon,
-                    color: info.color,
-                    bgColor: info.bgColor,
-                    value: valueFor(type),
-                    label: info.localizedLabel(context.l10n),
-                  );
-                }),
-              ],
-            ],
-          ),
-        );
-      },
+    final l10n = context.l10n;
+    final breastDur = Duration(seconds: summary.breastTotalSec);
+
+    String valueFor(TimelineEntryType type) {
+      switch (type) {
+        case TimelineEntryType.formula:
+          return unit.formatAmount(summary.formulaTotalMl);
+        case TimelineEntryType.breast:
+          return breastDur.formatLocalized(l10n);
+        case TimelineEntryType.pumped:
+          return unit.formatAmount(summary.pumpedTotalMl);
+        case TimelineEntryType.babyFood:
+          return unit.formatAmount(summary.babyFoodTotalMl);
+        case TimelineEntryType.diaper:
+          return l10n.timesCount(summary.diaperCount);
+        case TimelineEntryType.sleep:
+          return summary.sleepTotal.formatLocalized(l10n);
+        case TimelineEntryType.temperature:
+          return l10n.timesCount(summary.temperatureCount);
+        case TimelineEntryType.diary:
+          return l10n.diaryCountUnit(summary.diaryCount);
+      }
+    }
+
+    return SingleChildScrollView(
+      controller: _scrollController,
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: Row(
+        children: [
+          for (int i = 0; i < visibleTypes.length; i++) ...[
+            if (i > 0) const SizedBox(width: 10),
+            Builder(builder: (context) {
+              final type = visibleTypes[i];
+              final info = TrackingCategoryInfo.all[type]!;
+              return _StatChip(
+                type: type,
+                isSelected: filter == type,
+                onTap: () => ref
+                    .read(selectedTimelineFilterProvider.notifier)
+                    .setFilter(type),
+                icon: info.icon,
+                color: info.color,
+                bgColor: info.bgColor,
+                value: valueFor(type),
+                label: info.localizedLabel(context.l10n),
+              );
+            }),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -116,10 +138,14 @@ class _StatChip extends StatelessWidget {
         width: 80,
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? color.withValues(alpha: 0.18) : bgColor,
+          color: isSelected
+              ? color.withValues(alpha: 0.18)
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? color : color.withValues(alpha: 0.2),
+            color: isSelected
+                ? color
+                : Theme.of(context).dividerColor,
             width: isSelected ? 2.0 : 1.0,
           ),
         ),
@@ -139,7 +165,7 @@ class _StatChip extends StatelessWidget {
             Text(
               value,
               style: AppTypography.labelLarge.copyWith(
-                color: AppColors.onSurface,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w700,
                 fontSize: 11,
               ),
@@ -151,7 +177,12 @@ class _StatChip extends StatelessWidget {
             Text(
               label,
               style: AppTypography.labelSmall.copyWith(
-                color: isSelected ? color : AppColors.onSurfaceMuted,
+                color: isSelected
+                    ? color
+                    : Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.55),
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
@@ -182,7 +213,7 @@ class _StripSkeleton extends StatelessWidget {
               width: 80,
               height: 86,
               decoration: BoxDecoration(
-                color: AppColors.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
               ),
             ),

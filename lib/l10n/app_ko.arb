@@ -11,6 +11,13 @@
   "menuBabyManage": "아이 관리",
   "menuWidgetAdd": "위젯 추가",
   "menuIconSettings": "아이콘 설정",
+  "menuTheme": "테마 설정",
+  "themeLight": "라이트",
+  "themeDark": "다크",
+  "themeSystem": "시스템",
+  "themeScheduled": "예약",
+  "themeScheduleStart": "시작",
+  "themeScheduleEnd": "종료",
   "menuLanguage": "언어 설정",
   "menuLogout": "로그아웃",
   "logoutConfirmTitle": "로그아웃",
@@ -99,16 +106,16 @@
   "save": "저장",
   "edit": "수정",
   "confirm": "확인",
-  "saveAmountMl": "{amount}ml 저장",
+  "saveAmountMl": "{amount} 저장",
   "@saveAmountMl": {
     "placeholders": {
-      "amount": { "type": "int" }
+      "amount": { "type": "String" }
     }
   },
-  "editAmountMl": "{amount}ml 수정",
+  "editAmountMl": "{amount} 수정",
   "@editAmountMl": {
     "placeholders": {
-      "amount": { "type": "int" }
+      "amount": { "type": "String" }
     }
   },
   "formulaRecommendation": "{weight}kg 기준 권장량 {ml}ml/일",
@@ -119,12 +126,15 @@
     }
   },
   "formulaWeightHint": "아기 몸무게를 등록하면 권장량을 알 수 있어요",
-  "todayAmount": "오늘 {amount}ml",
+  "todayAmount": "오늘 {amount}",
   "@todayAmount": {
     "placeholders": {
-      "amount": { "type": "int" }
+      "amount": { "type": "String" }
     }
   },
+  "menuVolumeUnit": "단위 설정",
+  "volumeUnitMl": "밀리리터 (ml)",
+  "volumeUnitOz": "온스 (oz)",
   "todayCount": "오늘 {count}회",
   "@todayCount": {
     "placeholders": {

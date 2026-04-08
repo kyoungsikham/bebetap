@@ -132,18 +132,18 @@ class _TemperatureBottomSheetState
             ],
             textAlign: TextAlign.center,
             style: AppTypography.displayLarge.copyWith(
-              color: tempColor ?? AppColors.onSurface,
+              color: tempColor ?? Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
             decoration: InputDecoration(
               hintText: '36.5',
               hintStyle: AppTypography.displayLarge.copyWith(
-                color: AppColors.divider,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.25),
                 fontWeight: FontWeight.w700,
               ),
               suffixText: '℃',
               suffixStyle: AppTypography.titleLarge.copyWith(
-                color: tempColor ?? AppColors.onSurfaceMuted,
+                color: tempColor ?? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
               ),
               border: InputBorder.none,
               filled: true,
@@ -151,7 +151,7 @@ class _TemperatureBottomSheetState
                   ? (isHighFever
                       ? AppColors.error.withValues(alpha: 0.08)
                       : AppColors.warning.withValues(alpha: 0.1))
-                  : AppColors.surfaceVariant,
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
               contentPadding: const EdgeInsets.symmetric(
                 vertical: AppSpacing.lg,
                 horizontal: AppSpacing.xl,
@@ -159,7 +159,7 @@ class _TemperatureBottomSheetState
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(
-                  color: tempColor ?? AppColors.divider,
+                  color: tempColor ?? Theme.of(context).dividerColor,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
@@ -191,8 +191,9 @@ class _TemperatureBottomSheetState
           // 측정 방법
           Text(
             context.l10n.measureMethod,
-            style:
-                AppTypography.labelLarge.copyWith(color: AppColors.onSurface),
+            style: AppTypography.labelLarge.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           Wrap(
@@ -210,11 +211,10 @@ class _TemperatureBottomSheetState
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.1)
-                        : AppColors.surfaceVariant,
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color:
-                          isSelected ? AppColors.primary : AppColors.divider,
+                      color: isSelected ? AppColors.primary : Theme.of(context).dividerColor,
                       width: isSelected ? 1.5 : 1,
                     ),
                   ),
@@ -223,7 +223,7 @@ class _TemperatureBottomSheetState
                     style: AppTypography.labelLarge.copyWith(
                       color: isSelected
                           ? AppColors.primary
-                          : AppColors.onSurface,
+                          : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -259,7 +259,7 @@ class _TemperatureBottomSheetState
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.onPrimary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

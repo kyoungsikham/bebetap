@@ -24,4 +24,12 @@ abstract class AppColors {
 
   // White / on-primary
   static const Color onPrimary = Color(0xFFFFFFFF);
+
+  // ── Dark mode ────────────────────────────────────────────────
+  static const Color darkBackground = Color(0xFF121218);
+  static const Color darkSurface = Color(0xFF1E1E26);
+  static const Color darkSurfaceVariant = Color(0xFF2A2A34);
+  static const Color darkOnSurface = Color(0xFFE8E8EC);
+  static const Color darkOnSurfaceMuted = Color(0xFF9A9AAA);
+  static const Color darkDivider = Color(0xFF2E2E38);
 }

@@ -22,9 +22,9 @@ class BabyManageScreen extends ConsumerWidget {
     final babiesAsync = ref.watch(babiesProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(context.l10n.babyManageTitle, style: AppTypography.titleLarge),
@@ -34,8 +34,11 @@ class BabyManageScreen extends ConsumerWidget {
         error: (e, _) => Center(
           child: Text(
             context.l10n.loadFailed(e.toString()),
-            style: AppTypography.bodyMedium
-                .copyWith(color: AppColors.onSurfaceMuted),
+            style: AppTypography.bodyMedium.copyWith(
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.55)),
           ),
         ),
         data: (babies) => _BabyManageBody(babies: babies),
@@ -114,10 +117,10 @@ class _BabyListTile extends ConsumerWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.05)
-              : AppColors.surfaceVariant,
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.divider,
+            color: isSelected ? AppColors.primary : Theme.of(context).dividerColor,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -132,7 +135,7 @@ class _BabyListTile extends ConsumerWidget {
           subtitle: Text(
             DateFormat(context.l10n.dateFormat).format(baby.birthDate),
             style: AppTypography.bodySmall
-                .copyWith(color: AppColors.onSurfaceMuted),
+                .copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55)),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -276,35 +279,39 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
     }
   }
 
-  InputDecoration _inputDecoration(String hint) => InputDecoration(
-        hintText: hint,
-        hintStyle:
-            AppTypography.bodyMedium.copyWith(color: AppColors.onSurfaceMuted),
-        filled: true,
-        fillColor: AppColors.surfaceVariant,
-        contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg, vertical: AppSpacing.md),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.divider),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.divider),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.error),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
-        ),
-      );
+  InputDecoration _inputDecoration(String hint) {
+    final cs = Theme.of(context).colorScheme;
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: AppTypography.bodyMedium.copyWith(
+        color: cs.onSurface.withValues(alpha: 0.55),
+      ),
+      filled: true,
+      fillColor: cs.surfaceContainerHighest,
+      contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Theme.of(context).dividerColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Theme.of(context).dividerColor),
+      ),
+      focusedBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+        borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+      ),
+      errorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+        borderSide: BorderSide(color: AppColors.error),
+      ),
+      focusedErrorBorder: const OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+        borderSide: BorderSide(color: AppColors.error, width: 1.5),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -340,15 +347,15 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
               child: Text(
                 context.l10n.photoSelect,
                 style: AppTypography.bodySmall
-                    .copyWith(color: AppColors.onSurfaceMuted),
+                    .copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55)),
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
 
             // 이름
             Text(context.l10n.babyName,
-                style: AppTypography.labelLarge
-                    .copyWith(color: AppColors.onSurface)),
+                style: AppTypography.labelLarge.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface)),
             const SizedBox(height: AppSpacing.sm),
             TextFormField(
               controller: _nameController,
@@ -361,8 +368,8 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
 
             // 생년월일
             Text(context.l10n.birthDate,
-                style: AppTypography.labelLarge
-                    .copyWith(color: AppColors.onSurface)),
+                style: AppTypography.labelLarge.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface)),
             const SizedBox(height: AppSpacing.sm),
             GestureDetector(
               onTap: _pickBirthDate,
@@ -371,9 +378,9 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceVariant,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.divider),
+                  border: Border.all(color: Theme.of(context).dividerColor),
                 ),
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -382,8 +389,8 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
                       : context.l10n.selectBirthDate,
                   style: AppTypography.bodyMedium.copyWith(
                     color: _birthDate != null
-                        ? AppColors.onSurface
-                        : AppColors.onSurfaceMuted,
+                        ? Theme.of(context).colorScheme.onSurface
+                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
                   ),
                 ),
               ),
@@ -392,8 +399,8 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
 
             // 성별
             Text(context.l10n.genderOptional,
-                style: AppTypography.labelLarge
-                    .copyWith(color: AppColors.onSurface)),
+                style: AppTypography.labelLarge.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface)),
             const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
@@ -422,8 +429,8 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
 
             // 체중
             Text(context.l10n.currentWeight,
-                style: AppTypography.labelLarge
-                    .copyWith(color: AppColors.onSurface)),
+                style: AppTypography.labelLarge.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface)),
             const SizedBox(height: AppSpacing.sm),
             TextFormField(
               controller: _weightController,
@@ -496,10 +503,10 @@ class _GenderButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected
               ? AppColors.primary.withValues(alpha: 0.1)
-              : AppColors.surfaceVariant,
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selected ? AppColors.primary : AppColors.divider,
+            color: selected ? AppColors.primary : Theme.of(context).dividerColor,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -507,14 +514,17 @@ class _GenderButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon,
-                color:
-                    selected ? AppColors.primary : AppColors.onSurfaceMuted,
+                color: selected
+                    ? AppColors.primary
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
                 size: 20),
             const SizedBox(width: AppSpacing.sm),
             Text(
               label,
               style: AppTypography.labelLarge.copyWith(
-                color: selected ? AppColors.primary : AppColors.onSurface,
+                color: selected
+                    ? AppColors.primary
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ],

@@ -95,15 +95,12 @@ final selectedLogDateProvider =
 
 typedef _$SelectedLogDate = AutoDisposeNotifier<DateTime>;
 String _$selectedTimelineFilterHash() =>
-    r'546329f8c86509f980642de8b28fdb79984a0965';
+    r'3130e944fc034c61fc20652d0736bfc987fa87d1';
 
 /// See also [SelectedTimelineFilter].
 @ProviderFor(SelectedTimelineFilter)
 final selectedTimelineFilterProvider =
-    AutoDisposeNotifierProvider<
-      SelectedTimelineFilter,
-      TimelineEntryType
-    >.internal(
+    NotifierProvider<SelectedTimelineFilter, TimelineEntryType>.internal(
       SelectedTimelineFilter.new,
       name: r'selectedTimelineFilterProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -113,6 +110,6 @@ final selectedTimelineFilterProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$SelectedTimelineFilter = AutoDisposeNotifier<TimelineEntryType>;
+typedef _$SelectedTimelineFilter = Notifier<TimelineEntryType>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

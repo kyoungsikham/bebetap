@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_colors.dart'; // semantic colors만 사용
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
+import '../../../../shared/models/volume_unit.dart';
+import '../../../../shared/providers/volume_unit_provider.dart';
 import '../providers/home_provider.dart';
 import '../../../sleep/presentation/providers/sleep_provider.dart';
 
@@ -26,6 +28,7 @@ class StatusCard extends ConsumerWidget {
       loading: () => const _StatusCardSkeleton(),
       error: (_, _) => const SizedBox.shrink(),
       data: (summary) {
+        final unit = ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
         // 수면 중 표시
         if (activeSleep != null) {
           final elapsed = activeSleep.duration;
@@ -73,7 +76,7 @@ class StatusCard extends ConsumerWidget {
           };
           final amountLabel = summary.lastFeedingType != 'breast' &&
                   summary.lastFeedingAmountMl != null
-              ? ' · ${summary.lastFeedingAmountMl}ml'
+              ? ' · ${unit.formatAmount(summary.lastFeedingAmountMl!)}'
               : '';
           final statusIcon = switch (summary.lastFeedingType) {
             'breast' => Icons.favorite_outline,
@@ -93,13 +96,14 @@ class StatusCard extends ConsumerWidget {
         }
 
         // 기록 없음
+        final cs = Theme.of(context).colorScheme;
         return _StatusCardContent(
           icon: Icons.child_care,
-          iconColor: AppColors.onSurfaceMuted,
+          iconColor: cs.onSurface.withValues(alpha: 0.45),
           label: context.l10n.noRecord,
           elapsed: context.l10n.startRecordingHint,
-          bgColor: AppColors.surfaceVariant,
-          borderColor: AppColors.divider,
+          bgColor: cs.surfaceContainerHighest,
+          borderColor: Theme.of(context).dividerColor,
         );
       },
     );
@@ -152,8 +156,12 @@ class _StatusCardContent extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   elapsed,
-                  style: AppTypography.bodySmall
-                      .copyWith(color: AppColors.onSurfaceMuted),
+                  style: AppTypography.bodySmall.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.55),
+                  ),
                 ),
               ],
             ),
@@ -169,13 +177,14 @@ class _StatusCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Shimmer.fromColors(
-      baseColor: const Color(0xFFE8E8EE),
-      highlightColor: const Color(0xFFF8F8FA),
+      baseColor: isDark ? const Color(0xFF2A2A34) : const Color(0xFFE8E8EE),
+      highlightColor: isDark ? const Color(0xFF3A3A46) : const Color(0xFFF8F8FA),
       child: Container(
         height: 76,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF2A2A34) : Colors.white,
           borderRadius: BorderRadius.circular(16),
         ),
       ),

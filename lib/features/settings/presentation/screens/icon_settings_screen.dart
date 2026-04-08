@@ -15,9 +15,9 @@ class IconSettingsScreen extends ConsumerWidget {
     final categories = ref.watch(allCategoriesOrderedProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(context.l10n.iconSettingsTitle, style: AppTypography.titleMedium),
         centerTitle: true,
         elevation: 0,
@@ -81,26 +81,28 @@ class _CategoryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      tileColor: AppColors.background,
+      tileColor: Theme.of(context).scaffoldBackgroundColor,
       leading: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
           color: visible
               ? info.color.withValues(alpha: 0.15)
-              : AppColors.surfaceVariant,
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
           info.icon,
-          color: visible ? info.color : AppColors.onSurfaceMuted,
+          color: visible ? info.color : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           size: 20,
         ),
       ),
       title: Text(
         info.localizedLabel(context.l10n),
         style: AppTypography.bodyLarge.copyWith(
-          color: visible ? AppColors.onSurface : AppColors.onSurfaceMuted,
+          color: visible
+              ? Theme.of(context).colorScheme.onSurface
+              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
         ),
       ),
       trailing: Row(

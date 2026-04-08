@@ -9,7 +9,11 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
+import '../../../../shared/models/theme_mode_setting.dart';
+import '../../../../shared/models/volume_unit.dart';
 import '../../../../shared/providers/locale_provider.dart';
+import '../../../../shared/providers/theme_provider.dart';
+import '../../../../shared/providers/volume_unit_provider.dart';
 import '../../../../shared/widgets/baby_avatar_widget.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../family/presentation/providers/family_provider.dart';
@@ -29,13 +33,11 @@ class HomeScreen extends ConsumerWidget {
     // 세션 복원 시 babies 로딩 중이면 스피너만 표시 (깜빡임 방지)
     if (babiesAsync.isLoading && !babiesAsync.hasValue) {
       return const Scaffold(
-        backgroundColor: AppColors.background,
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(selectedBabyProvider);
@@ -108,17 +110,22 @@ class _HamburgerMenuPanel extends ConsumerStatefulWidget {
 }
 
 class _HamburgerMenuPanelState extends ConsumerState<_HamburgerMenuPanel> {
+  bool _themeExpanded = false;
   bool _languageExpanded = false;
+  bool _unitExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final currentLocale = ref.watch(localeProvider).valueOrNull;
+    final themeSetting =
+        ref.watch(themeSettingProvider).valueOrNull ?? const ThemeModeSetting();
+    final currentUnit = ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
 
     return Align(
       alignment: Alignment.centerRight,
       child: Material(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: const BorderRadius.horizontal(
           left: Radius.circular(20),
         ),
@@ -161,6 +168,71 @@ class _HamburgerMenuPanelState extends ConsumerState<_HamburgerMenuPanel> {
                           () => router.push(AppRoutes.iconSettings));
                     },
                   ),
+                  // 테마 설정
+                  ListTile(
+                    leading: const Icon(Icons.brightness_6_outlined),
+                    title: Text(l10n.menuTheme),
+                    trailing: Icon(
+                      _themeExpanded
+                          ? Icons.expand_less
+                          : Icons.expand_more,
+                      color: AppColors.onSurfaceMuted,
+                    ),
+                    onTap: () =>
+                        setState(() => _themeExpanded = !_themeExpanded),
+                  ),
+                  if (_themeExpanded) ...[
+                    _ThemeOption(
+                      label: l10n.themeLight,
+                      mode: AppThemeMode.light,
+                      isSelected: themeSetting.mode == AppThemeMode.light,
+                      onTap: () => _changeTheme(AppThemeMode.light),
+                    ),
+                    _ThemeOption(
+                      label: l10n.themeDark,
+                      mode: AppThemeMode.dark,
+                      isSelected: themeSetting.mode == AppThemeMode.dark,
+                      onTap: () => _changeTheme(AppThemeMode.dark),
+                    ),
+                    _ThemeOption(
+                      label: l10n.themeSystem,
+                      mode: AppThemeMode.system,
+                      isSelected: themeSetting.mode == AppThemeMode.system,
+                      onTap: () => _changeTheme(AppThemeMode.system),
+                    ),
+                    _ThemeOption(
+                      label: l10n.themeScheduled,
+                      mode: AppThemeMode.scheduled,
+                      isSelected: themeSetting.mode == AppThemeMode.scheduled,
+                      onTap: () => _changeTheme(AppThemeMode.scheduled),
+                    ),
+                    if (themeSetting.mode == AppThemeMode.scheduled) ...[
+                      _ScheduleTimeTile(
+                        label: l10n.themeScheduleStart,
+                        hour: themeSetting.darkStartHour,
+                        minute: themeSetting.darkStartMinute,
+                        onTap: () => _pickTime(
+                          context,
+                          initialHour: themeSetting.darkStartHour,
+                          initialMinute: themeSetting.darkStartMinute,
+                          isStart: true,
+                          setting: themeSetting,
+                        ),
+                      ),
+                      _ScheduleTimeTile(
+                        label: l10n.themeScheduleEnd,
+                        hour: themeSetting.darkEndHour,
+                        minute: themeSetting.darkEndMinute,
+                        onTap: () => _pickTime(
+                          context,
+                          initialHour: themeSetting.darkEndHour,
+                          initialMinute: themeSetting.darkEndMinute,
+                          isStart: false,
+                          setting: themeSetting,
+                        ),
+                      ),
+                    ],
+                  ],
                   // 언어 설정
                   ListTile(
                     leading: const Icon(Icons.language),
@@ -194,6 +266,28 @@ class _HamburgerMenuPanelState extends ConsumerState<_HamburgerMenuPanel> {
                       onTap: () => _changeLocale(const Locale('ja')),
                     ),
                   ],
+                  // 단위 설정
+                  ListTile(
+                    leading: const Icon(Icons.straighten_outlined),
+                    title: Text(l10n.menuVolumeUnit),
+                    trailing: Icon(
+                      _unitExpanded ? Icons.expand_less : Icons.expand_more,
+                      color: AppColors.onSurfaceMuted,
+                    ),
+                    onTap: () => setState(() => _unitExpanded = !_unitExpanded),
+                  ),
+                  if (_unitExpanded) ...[
+                    _UnitOption(
+                      label: l10n.volumeUnitMl,
+                      isSelected: currentUnit == VolumeUnit.ml,
+                      onTap: () => ref.read(volumeUnitProvider.notifier).setUnit(VolumeUnit.ml),
+                    ),
+                    _UnitOption(
+                      label: l10n.volumeUnitOz,
+                      isSelected: currentUnit == VolumeUnit.oz,
+                      onTap: () => ref.read(volumeUnitProvider.notifier).setUnit(VolumeUnit.oz),
+                    ),
+                  ],
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.logout, color: AppColors.error),
@@ -203,7 +297,7 @@ class _HamburgerMenuPanelState extends ConsumerState<_HamburgerMenuPanel> {
                           .copyWith(color: AppColors.error),
                     ),
                     onTap: () async {
-                      Navigator.of(context, rootNavigator: true).pop();
+                      final navigator = Navigator.of(context, rootNavigator: true);
                       final confirmed = await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AlertDialog(
@@ -225,16 +319,16 @@ class _HamburgerMenuPanelState extends ConsumerState<_HamburgerMenuPanel> {
                           ],
                         ),
                       );
-                      if (confirmed == true) {
-                        final db = ref.read(appDatabaseProvider);
-                        try {
-                          await db.clearAllData();
-                        } catch (e) {
-                          debugPrint('clearAllData error (ignored): $e');
-                        }
-                        ref.invalidate(babiesProvider);
-                        await Supabase.instance.client.auth.signOut();
+                      if (confirmed != true) return;
+                      // ref/db를 먼저 캡처한 후 메뉴를 닫아서 disposed 상태 방지
+                      final db = ref.read(appDatabaseProvider);
+                      navigator.pop();
+                      try {
+                        await db.clearAllData();
+                      } catch (e) {
+                        debugPrint('clearAllData error (ignored): $e');
                       }
+                      await Supabase.instance.client.auth.signOut();
                     },
                   ),
                 ],
@@ -250,6 +344,39 @@ class _HamburgerMenuPanelState extends ConsumerState<_HamburgerMenuPanel> {
     await ref.read(localeProvider.notifier).setLocale(locale);
     if (mounted) {
       Navigator.of(context, rootNavigator: true).pop();
+    }
+  }
+
+  Future<void> _changeTheme(AppThemeMode mode) async {
+    await ref.read(themeSettingProvider.notifier).setMode(mode);
+  }
+
+  Future<void> _pickTime(
+    BuildContext context, {
+    required int initialHour,
+    required int initialMinute,
+    required bool isStart,
+    required ThemeModeSetting setting,
+  }) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: initialHour, minute: initialMinute),
+    );
+    if (picked == null) return;
+    if (isStart) {
+      await ref.read(themeSettingProvider.notifier).setSchedule(
+            startHour: picked.hour,
+            startMinute: picked.minute,
+            endHour: setting.darkEndHour,
+            endMinute: setting.darkEndMinute,
+          );
+    } else {
+      await ref.read(themeSettingProvider.notifier).setSchedule(
+            startHour: setting.darkStartHour,
+            startMinute: setting.darkStartMinute,
+            endHour: picked.hour,
+            endMinute: picked.minute,
+          );
     }
   }
 }
@@ -269,6 +396,7 @@ class _LanguageOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -282,14 +410,152 @@ class _LanguageOption extends StatelessWidget {
             Text(
               label,
               style: AppTypography.bodyMedium.copyWith(
-                color: isSelected ? AppColors.primary : AppColors.onSurface,
-                fontWeight:
-                    isSelected ? FontWeight.w600 : FontWeight.w400,
+                color: isSelected ? AppColors.primary : colorScheme.onSurface,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),
             const Spacer(),
             if (isSelected)
               const Icon(Icons.check, color: AppColors.primary, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _UnitOption extends StatelessWidget {
+  const _UnitOption({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.pagePadding,
+          vertical: 10,
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 40 + AppSpacing.md),
+            Text(
+              label,
+              style: AppTypography.bodyMedium.copyWith(
+                color: isSelected ? AppColors.primary : colorScheme.onSurface,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+            const Spacer(),
+            if (isSelected)
+              const Icon(Icons.check, color: AppColors.primary, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ThemeOption extends StatelessWidget {
+  const _ThemeOption({
+    required this.label,
+    required this.mode,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final AppThemeMode mode;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.pagePadding,
+          vertical: 10,
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 40 + AppSpacing.md),
+            Text(
+              label,
+              style: AppTypography.bodyMedium.copyWith(
+                color: isSelected ? AppColors.primary : colorScheme.onSurface,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+            const Spacer(),
+            if (isSelected)
+              const Icon(Icons.check, color: AppColors.primary, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ScheduleTimeTile extends StatelessWidget {
+  const _ScheduleTimeTile({
+    required this.label,
+    required this.hour,
+    required this.minute,
+    required this.onTap,
+  });
+
+  final String label;
+  final int hour;
+  final int minute;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final timeStr =
+        '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.pagePadding,
+          vertical: 10,
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 40 + AppSpacing.md + 16),
+            Text(
+              label,
+              style: AppTypography.bodySmall.copyWith(
+                color: colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              timeStr,
+              style: AppTypography.bodyMedium.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.access_time,
+              size: 16,
+              color: colorScheme.onSurface.withValues(alpha: 0.4),
+            ),
           ],
         ),
       ),
@@ -312,17 +578,24 @@ class _HomeHeader extends ConsumerWidget {
     final babyColorIndex =
         baby != null ? babies.indexWhere((b) => b.id == baby.id) : 0;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFFFEEF0),
-            Color(0xFFFFF5F6),
-            Color(0xFFFFFFFF),
-          ],
-          stops: [0.0, 0.6, 1.0],
+          colors: isDark
+              ? const [
+                  Color(0xFF1A1020),
+                  Color(0xFF161520),
+                  Color(0xFF121218),
+                ]
+              : const [
+                  Color(0xFFFFEEF0),
+                  Color(0xFFFFF5F6),
+                  Color(0xFFFFFFFF),
+                ],
+          stops: const [0.0, 0.6, 1.0],
         ),
       ),
       padding: EdgeInsets.only(
@@ -346,7 +619,6 @@ class _HomeHeader extends ConsumerWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.menu),
-                color: AppColors.onSurface,
                 onPressed: onMenuTap,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
@@ -370,7 +642,10 @@ class _HomeHeader extends ConsumerWidget {
                     Text(
                       context.l10n.homeEncouragement,
                       style: AppTypography.bodyMedium.copyWith(
-                        color: AppColors.onSurfaceMuted,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.55),
                       ),
                     ),
                   ],

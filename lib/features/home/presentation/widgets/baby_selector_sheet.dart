@@ -89,10 +89,10 @@ class _BabySelectorTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.05)
-              : AppColors.surfaceVariant,
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.divider,
+            color: isSelected ? AppColors.primary : Theme.of(context).dividerColor,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -112,8 +112,12 @@ class _BabySelectorTile extends StatelessWidget {
                   Text(baby.name, style: AppTypography.bodyLarge),
                   Text(
                     dateFormat.format(baby.birthDate),
-                    style: AppTypography.bodySmall
-                        .copyWith(color: AppColors.onSurfaceMuted),
+                    style: AppTypography.bodySmall.copyWith(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.55),
+                    ),
                   ),
                 ],
               ),

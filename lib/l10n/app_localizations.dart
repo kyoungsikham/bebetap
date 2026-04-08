@@ -148,6 +148,48 @@ abstract class AppLocalizations {
   /// **'Icon Settings'**
   String get menuIconSettings;
 
+  /// No description provided for @menuTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get menuTheme;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeSystem;
+
+  /// No description provided for @themeScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get themeScheduled;
+
+  /// No description provided for @themeScheduleStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get themeScheduleStart;
+
+  /// No description provided for @themeScheduleEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get themeScheduleEnd;
+
   /// No description provided for @menuLanguage.
   ///
   /// In en, this message translates to:
@@ -487,14 +529,14 @@ abstract class AppLocalizations {
   /// No description provided for @saveAmountMl.
   ///
   /// In en, this message translates to:
-  /// **'Save {amount}ml'**
-  String saveAmountMl(int amount);
+  /// **'Save {amount}'**
+  String saveAmountMl(String amount);
 
   /// No description provided for @editAmountMl.
   ///
   /// In en, this message translates to:
-  /// **'Edit {amount}ml'**
-  String editAmountMl(int amount);
+  /// **'Edit {amount}'**
+  String editAmountMl(String amount);
 
   /// No description provided for @formulaRecommendation.
   ///
@@ -511,8 +553,26 @@ abstract class AppLocalizations {
   /// No description provided for @todayAmount.
   ///
   /// In en, this message translates to:
-  /// **'Today {amount}ml'**
-  String todayAmount(int amount);
+  /// **'Today {amount}'**
+  String todayAmount(String amount);
+
+  /// No description provided for @menuVolumeUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume Unit'**
+  String get menuVolumeUnit;
+
+  /// No description provided for @volumeUnitMl.
+  ///
+  /// In en, this message translates to:
+  /// **'Milliliter (ml)'**
+  String get volumeUnitMl;
+
+  /// No description provided for @volumeUnitOz.
+  ///
+  /// In en, this message translates to:
+  /// **'Ounce (oz)'**
+  String get volumeUnitOz;
 
   /// No description provided for @todayCount.
   ///

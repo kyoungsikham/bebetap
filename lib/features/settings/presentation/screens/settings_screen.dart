@@ -14,7 +14,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(title: Text(context.l10n.settings)),
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.pagePadding),

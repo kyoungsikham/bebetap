@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../domain/models/period.dart';
@@ -19,7 +18,7 @@ class PeriodTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(3),
@@ -27,13 +26,14 @@ class PeriodTabBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: Period.values.map((p) {
           final isSelected = p == selected;
+          final colorScheme = Theme.of(context).colorScheme;
           return GestureDetector(
             onTap: () => onChanged(p),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.transparent,
+                color: isSelected ? colorScheme.surface : Colors.transparent,
                 borderRadius: BorderRadius.circular(9),
                 boxShadow: isSelected
                     ? [
@@ -49,8 +49,8 @@ class PeriodTabBar extends StatelessWidget {
                 p.localizedLabel(context.l10n),
                 style: AppTypography.bodySmall.copyWith(
                   color: isSelected
-                      ? AppColors.onSurface
-                      : AppColors.onSurfaceMuted,
+                      ? colorScheme.onSurface
+                      : colorScheme.onSurface.withValues(alpha: 0.55),
                   fontWeight:
                       isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),

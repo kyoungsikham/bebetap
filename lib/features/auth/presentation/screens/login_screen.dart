@@ -154,7 +154,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isLoading = _loading || showPostLoginLoading;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.pagePadding),
