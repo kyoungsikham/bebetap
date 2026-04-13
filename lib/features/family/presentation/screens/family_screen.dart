@@ -12,6 +12,8 @@ import '../providers/family_provider.dart';
 import '../widgets/invite_code_card.dart';
 import '../widgets/join_family_bottom_sheet.dart';
 import '../widgets/relationship_selector.dart';
+import '../../../../core/config/ad_config.dart';
+import '../../../../shared/widgets/banner_ad_widget.dart';
 
 class FamilyScreen extends ConsumerStatefulWidget {
   const FamilyScreen({super.key});
@@ -166,6 +168,8 @@ class _NoFamilyView extends StatelessWidget {
             side: BorderSide(color: Theme.of(context).dividerColor),
           ),
         ),
+        const SizedBox(height: AppSpacing.lg),
+        BannerAdWidget(adUnitId: AdConfig.familyBannerId),
       ],
     );
   }
@@ -211,6 +215,8 @@ class _FamilyView extends StatelessWidget {
             );
           },
         ),
+        const SizedBox(height: AppSpacing.lg),
+        BannerAdWidget(adUnitId: AdConfig.familyBannerId),
       ],
     );
   }

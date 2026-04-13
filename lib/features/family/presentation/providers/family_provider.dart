@@ -19,8 +19,10 @@ import '../../domain/models/family_member.dart';
 part 'family_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-FamilyRepository familyRepository(Ref ref) =>
-    FamilyRepository(Supabase.instance.client);
+FamilyRepository familyRepository(Ref ref) {
+  ref.watch(authStateProvider); // auth 변경 시 재생성 → 인메모리 캐시 초기화
+  return FamilyRepository(Supabase.instance.client);
+}
 
 @riverpod
 Future<Family?> myFamily(Ref ref) {

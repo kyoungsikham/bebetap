@@ -8,6 +8,7 @@ Future<T?> showAppBottomSheet<T>({
   required BuildContext context,
   required Widget child,
   String? title,
+  Widget? titleTrailing,
   bool isDismissible = true,
   bool isScrollControlled = true,
 }) {
@@ -16,15 +17,16 @@ Future<T?> showAppBottomSheet<T>({
     isScrollControlled: isScrollControlled,
     backgroundColor: Colors.transparent,
     isDismissible: isDismissible,
-    builder: (_) => _AppBottomSheetWrapper(title: title, child: child),
+    builder: (_) => _AppBottomSheetWrapper(title: title, titleTrailing: titleTrailing, child: child),
   );
 }
 
 class _AppBottomSheetWrapper extends StatelessWidget {
-  const _AppBottomSheetWrapper({required this.child, this.title});
+  const _AppBottomSheetWrapper({required this.child, this.title, this.titleTrailing});
 
   final Widget child;
   final String? title;
+  final Widget? titleTrailing;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,17 @@ class _AppBottomSheetWrapper extends StatelessWidget {
             ),
             if (title != null) ...[
               const SizedBox(height: AppSpacing.lg),
-              Text(title!, style: AppTypography.titleMedium),
+              SizedBox(
+                width: double.infinity,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Text(title!, style: AppTypography.titleMedium),
+                    if (titleTrailing != null)
+                      Positioned(right: AppSpacing.pagePadding, child: titleTrailing!),
+                  ],
+                ),
+              ),
             ],
             child,
           ],

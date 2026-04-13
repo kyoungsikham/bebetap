@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,11 +16,22 @@ class SyncEngine {
   final SupabaseClient _client;
 
   bool _syncing = false;
+  Timer? _debounceTimer;
 
+  /// 세션 내 이미 pull한 범위를 기억해 중복 요청을 방지
+  final Set<String> _pulledStatsRanges = {};
+
+  /// 동일 범위 동시 요청 방지를 위한 in-flight Completer 맵
+  final Map<String, Completer<void>> _pendingStatsRanges = {};
+
+  /// 3초 디바운스: 연속 저장 시 API 호출을 하나로 통합
   void trigger() {
-    if (_syncing) return;
-    _syncAll().catchError((Object e) {
-      debugPrint('SyncEngine error: $e');
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(seconds: 3), () {
+      if (_syncing) return;
+      _syncAll().catchError((Object e) {
+        debugPrint('SyncEngine error: $e');
+      });
     });
   }
 
@@ -38,17 +51,78 @@ class SyncEngine {
     }
   }
 
+  /// 통계 화면용: 특정 날짜 범위 데이터만 pull.
+  /// 같은 범위는 세션 내 1회만 요청한다 (동시 요청도 보호).
+  Future<void> pullStatsRange(
+    String familyId,
+    DateTime from,
+    DateTime to,
+  ) async {
+    final fromDay = DateTime(from.year, from.month, from.day);
+    final toDay = DateTime(to.year, to.month, to.day);
+    final cacheKey =
+        '$familyId|${fromDay.millisecondsSinceEpoch}|${toDay.millisecondsSinceEpoch}';
+
+    if (_pulledStatsRanges.contains(cacheKey)) return;
+
+    // 동일 키로 진행 중인 요청이 있으면 그 결과를 기다린다
+    final inflight = _pendingStatsRanges[cacheKey];
+    if (inflight != null) {
+      await inflight.future;
+      return;
+    }
+
+    final completer = Completer<void>();
+    _pendingStatsRanges[cacheKey] = completer;
+    try {
+      await Future.wait([
+        _pullFeedingRange(familyId, fromDay, toDay),
+        _pullDiaperRange(familyId, fromDay, toDay),
+        _pullSleepRange(familyId, fromDay, toDay),
+        _pullTemperatureRange(familyId, fromDay, toDay),
+      ]);
+      _pulledStatsRanges.add(cacheKey);
+      completer.complete();
+    } catch (e) {
+      completer.completeError(e);
+      debugPrint('SyncEngine pullStatsRange error: $e');
+    } finally {
+      _pendingStatsRanges.remove(cacheKey);
+    }
+  }
+
   String _resolveId(Map<String, dynamic> r) =>
       (r['local_id'] as String?) ?? (r['id'] as String);
 
-  Future<void> _pullFeeding(String familyId) async {
-    final from = DateTime.now().subtract(const Duration(days: 7));
-    final rows = await _client
+  Future<void> _pullFeedingRange(String familyId, DateTime from, DateTime to) =>
+      _pullFeeding(familyId, from: from, to: to);
+
+  Future<void> _pullDiaperRange(String familyId, DateTime from, DateTime to) =>
+      _pullDiaper(familyId, from: from, to: to);
+
+  Future<void> _pullSleepRange(String familyId, DateTime from, DateTime to) =>
+      _pullSleep(familyId, from: from, to: to);
+
+  Future<void> _pullTemperatureRange(
+          String familyId, DateTime from, DateTime to) =>
+      _pullTemperature(familyId, from: from, to: to);
+
+  Future<void> _pullFeeding(String familyId,
+      {DateTime? from, DateTime? to}) async {
+    from ??= DateTime.now().subtract(const Duration(days: 7));
+    var query = _client
         .from('feeding_entries')
-        .select()
+        .select(
+          'id, baby_id, family_id, type, amount_ml, duration_left_sec, '
+          'duration_right_sec, started_at, ended_at, local_id',
+        )
         .eq('family_id', familyId)
         .gte('started_at', from.toUtc().toIso8601String())
-        .isFilter('deleted_at', null) as List<dynamic>;
+        .isFilter('deleted_at', null);
+    if (to != null) {
+      query = query.lte('started_at', to.toUtc().toIso8601String());
+    }
+    final rows = await query.limit(500) as List<dynamic>;
     for (final raw in rows) {
       final r = raw as Map<String, dynamic>;
       try {
@@ -80,14 +154,19 @@ class SyncEngine {
     }
   }
 
-  Future<void> _pullDiaper(String familyId) async {
-    final from = DateTime.now().subtract(const Duration(days: 7));
-    final rows = await _client
+  Future<void> _pullDiaper(String familyId,
+      {DateTime? from, DateTime? to}) async {
+    from ??= DateTime.now().subtract(const Duration(days: 7));
+    var query = _client
         .from('diaper_entries')
-        .select()
+        .select('id, baby_id, family_id, type, occurred_at, local_id')
         .eq('family_id', familyId)
         .gte('occurred_at', from.toUtc().toIso8601String())
-        .isFilter('deleted_at', null) as List<dynamic>;
+        .isFilter('deleted_at', null);
+    if (to != null) {
+      query = query.lte('occurred_at', to.toUtc().toIso8601String());
+    }
+    final rows = await query.limit(500) as List<dynamic>;
     for (final raw in rows) {
       final r = raw as Map<String, dynamic>;
       try {
@@ -100,7 +179,8 @@ class SyncEngine {
             babyId: Value(r['baby_id'] as String),
             familyId: Value(r['family_id'] as String),
             type: Value(r['type'] as String),
-            occurredAt: Value(parseSupabaseDateTime(r['occurred_at'] as String)),
+            occurredAt:
+                Value(parseSupabaseDateTime(r['occurred_at'] as String)),
             syncStatus: const Value('synced'),
             remoteId: Value(r['id'] as String),
           ),
@@ -111,14 +191,21 @@ class SyncEngine {
     }
   }
 
-  Future<void> _pullSleep(String familyId) async {
-    final from = DateTime.now().subtract(const Duration(days: 7));
-    final rows = await _client
+  Future<void> _pullSleep(String familyId,
+      {DateTime? from, DateTime? to}) async {
+    from ??= DateTime.now().subtract(const Duration(days: 7));
+    var query = _client
         .from('sleep_entries')
-        .select()
+        .select(
+          'id, baby_id, family_id, started_at, ended_at, quality, local_id',
+        )
         .eq('family_id', familyId)
         .gte('started_at', from.toUtc().toIso8601String())
-        .isFilter('deleted_at', null) as List<dynamic>;
+        .isFilter('deleted_at', null);
+    if (to != null) {
+      query = query.lte('started_at', to.toUtc().toIso8601String());
+    }
+    final rows = await query.limit(500) as List<dynamic>;
     for (final raw in rows) {
       final r = raw as Map<String, dynamic>;
       try {
@@ -147,14 +234,21 @@ class SyncEngine {
     }
   }
 
-  Future<void> _pullTemperature(String familyId) async {
-    final from = DateTime.now().subtract(const Duration(days: 7));
-    final rows = await _client
+  Future<void> _pullTemperature(String familyId,
+      {DateTime? from, DateTime? to}) async {
+    from ??= DateTime.now().subtract(const Duration(days: 7));
+    var query = _client
         .from('temperature_entries')
-        .select()
+        .select(
+          'id, baby_id, family_id, celsius, method, occurred_at, local_id',
+        )
         .eq('family_id', familyId)
         .gte('occurred_at', from.toUtc().toIso8601String())
-        .isFilter('deleted_at', null) as List<dynamic>;
+        .isFilter('deleted_at', null);
+    if (to != null) {
+      query = query.lte('occurred_at', to.toUtc().toIso8601String());
+    }
+    final rows = await query.limit(500) as List<dynamic>;
     for (final raw in rows) {
       final r = raw as Map<String, dynamic>;
       try {
@@ -165,7 +259,8 @@ class SyncEngine {
             familyId: Value(r['family_id'] as String),
             celsius: Value((r['celsius'] as num).toDouble()),
             method: Value(r['method'] as String? ?? 'axillary'),
-            occurredAt: Value(parseSupabaseDateTime(r['occurred_at'] as String)),
+            occurredAt:
+                Value(parseSupabaseDateTime(r['occurred_at'] as String)),
             syncStatus: const Value('synced'),
             remoteId: Value(r['id'] as String),
           ),
@@ -193,13 +288,21 @@ class SyncEngine {
 
   Future<void> _syncFeeding() async {
     final pending = await _db.feedingDao.getPendingSync();
+    if (pending.isEmpty) return;
+
+    final upserts = <Map<String, dynamic>>[];
+    final deleteIds = <String>[];
+    final userId = _client.auth.currentUser?.id;
+
     for (final row in pending) {
-      try {
-        final payload = {
+      if (row.syncStatus == 'pending_delete') {
+        deleteIds.add(row.id);
+      } else {
+        upserts.add({
           'id': row.remoteId ?? row.id,
           'baby_id': row.babyId,
           'family_id': row.familyId,
-          'recorded_by': _client.auth.currentUser?.id,
+          'recorded_by': userId,
           'type': row.type,
           'amount_ml': row.amountMl,
           'duration_left_sec': row.durationLeftSec,
@@ -208,140 +311,201 @@ class SyncEngine {
           'ended_at': row.endedAt?.toUtc().toIso8601String(),
           'notes': row.notes,
           'local_id': row.id,
-        };
-        if (row.syncStatus == 'pending_delete') {
-          await _client
-              .from('feeding_entries')
-              .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
-              .eq('local_id', row.id);
-        } else {
-          await _client.from('feeding_entries').upsert(payload);
-        }
-        await _db.feedingDao.updateSyncStatus(row.id, 'synced');
-      } catch (e) {
-        debugPrint('feeding sync error (${row.id}): $e');
+        });
       }
+    }
+
+    try {
+      if (upserts.isNotEmpty) {
+        await _client.from('feeding_entries').upsert(upserts);
+      }
+      if (deleteIds.isNotEmpty) {
+        await _client
+            .from('feeding_entries')
+            .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+            .inFilter('local_id', deleteIds);
+      }
+      for (final row in pending) {
+        await _db.feedingDao.updateSyncStatus(row.id, 'synced');
+      }
+    } catch (e) {
+      debugPrint('feeding sync error: $e');
     }
   }
 
   Future<void> _syncDiaper() async {
     final pending = await _db.diaperDao.getPendingSync();
+    if (pending.isEmpty) return;
+
+    final upserts = <Map<String, dynamic>>[];
+    final deleteIds = <String>[];
+    final userId = _client.auth.currentUser?.id;
+
     for (final row in pending) {
-      try {
-        final payload = {
+      if (row.syncStatus == 'pending_delete') {
+        deleteIds.add(row.id);
+      } else {
+        upserts.add({
           'id': row.remoteId ?? row.id,
           'baby_id': row.babyId,
           'family_id': row.familyId,
-          'recorded_by': _client.auth.currentUser?.id,
+          'recorded_by': userId,
           'type': row.type,
           'occurred_at': row.occurredAt.toUtc().toIso8601String(),
           'local_id': row.id,
-        };
-        if (row.syncStatus == 'pending_delete') {
-          await _client
-              .from('diaper_entries')
-              .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
-              .eq('local_id', row.id);
-        } else {
-          await _client.from('diaper_entries').upsert(payload);
-        }
-        await _db.diaperDao.updateSyncStatus(row.id, 'synced');
-      } catch (e) {
-        debugPrint('diaper sync error (${row.id}): $e');
+        });
       }
+    }
+
+    try {
+      if (upserts.isNotEmpty) {
+        await _client.from('diaper_entries').upsert(upserts);
+      }
+      if (deleteIds.isNotEmpty) {
+        await _client
+            .from('diaper_entries')
+            .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+            .inFilter('local_id', deleteIds);
+      }
+      for (final row in pending) {
+        await _db.diaperDao.updateSyncStatus(row.id, 'synced');
+      }
+    } catch (e) {
+      debugPrint('diaper sync error: $e');
     }
   }
 
   Future<void> _syncSleep() async {
     final pending = await _db.sleepDao.getPendingSync();
+    if (pending.isEmpty) return;
+
+    final upserts = <Map<String, dynamic>>[];
+    final deleteIds = <String>[];
+    final userId = _client.auth.currentUser?.id;
+
     for (final row in pending) {
-      try {
-        final payload = {
+      if (row.syncStatus == 'pending_delete') {
+        deleteIds.add(row.id);
+      } else {
+        upserts.add({
           'id': row.remoteId ?? row.id,
           'baby_id': row.babyId,
           'family_id': row.familyId,
-          'recorded_by': _client.auth.currentUser?.id,
+          'recorded_by': userId,
           'started_at': row.startedAt.toUtc().toIso8601String(),
           'ended_at': row.endedAt?.toUtc().toIso8601String(),
           'quality': row.quality,
           'local_id': row.id,
-        };
-        if (row.syncStatus == 'pending_delete') {
-          await _client
-              .from('sleep_entries')
-              .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
-              .eq('local_id', row.id);
-        } else {
-          await _client.from('sleep_entries').upsert(payload);
-        }
-        await _db.sleepDao.updateSyncStatus(row.id, 'synced');
-      } catch (e) {
-        debugPrint('sleep sync error (${row.id}): $e');
+        });
       }
+    }
+
+    try {
+      if (upserts.isNotEmpty) {
+        await _client.from('sleep_entries').upsert(upserts);
+      }
+      if (deleteIds.isNotEmpty) {
+        await _client
+            .from('sleep_entries')
+            .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+            .inFilter('local_id', deleteIds);
+      }
+      for (final row in pending) {
+        await _db.sleepDao.updateSyncStatus(row.id, 'synced');
+      }
+    } catch (e) {
+      debugPrint('sleep sync error: $e');
     }
   }
 
   Future<void> _syncTemperature() async {
     final pending = await _db.temperatureDao.getPendingSync();
+    if (pending.isEmpty) return;
+
+    final upserts = <Map<String, dynamic>>[];
+    final deleteIds = <String>[];
+    final userId = _client.auth.currentUser?.id;
+
     for (final row in pending) {
-      try {
-        final payload = {
+      if (row.syncStatus == 'pending_delete') {
+        deleteIds.add(row.id);
+      } else {
+        upserts.add({
           'id': row.remoteId ?? row.id,
           'baby_id': row.babyId,
           'family_id': row.familyId,
-          'recorded_by': _client.auth.currentUser?.id,
+          'recorded_by': userId,
           'celsius': row.celsius,
           'method': row.method,
           'occurred_at': row.occurredAt.toUtc().toIso8601String(),
           'local_id': row.id,
-        };
-        if (row.syncStatus == 'pending_delete') {
-          await _client
-              .from('temperature_entries')
-              .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
-              .eq('local_id', row.id);
-        } else {
-          await _client.from('temperature_entries').upsert(payload);
-        }
-        await _db.temperatureDao.updateSyncStatus(row.id, 'synced');
-      } catch (e) {
-        debugPrint('temperature sync error (${row.id}): $e');
+        });
       }
+    }
+
+    try {
+      if (upserts.isNotEmpty) {
+        await _client.from('temperature_entries').upsert(upserts);
+      }
+      if (deleteIds.isNotEmpty) {
+        await _client
+            .from('temperature_entries')
+            .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+            .inFilter('local_id', deleteIds);
+      }
+      for (final row in pending) {
+        await _db.temperatureDao.updateSyncStatus(row.id, 'synced');
+      }
+    } catch (e) {
+      debugPrint('temperature sync error: $e');
     }
   }
 
   Future<void> _syncDiary() async {
     final pending = await _db.diaryDao.getPendingSync();
+    if (pending.isEmpty) return;
+
+    final upserts = <Map<String, dynamic>>[];
+    final deleteIds = <String>[];
+    final userId = _client.auth.currentUser?.id;
+
     for (final row in pending) {
-      try {
-        // entry_date를 YYYY-MM-DD 형식으로 변환
+      if (row.syncStatus == 'pending_delete') {
+        deleteIds.add(row.id);
+      } else {
         final entryDate =
             '${row.entryDate.year.toString().padLeft(4, '0')}-'
             '${row.entryDate.month.toString().padLeft(2, '0')}-'
             '${row.entryDate.day.toString().padLeft(2, '0')}';
-        final payload = {
+        upserts.add({
           'id': row.remoteId ?? row.id,
           'baby_id': row.babyId,
           'family_id': row.familyId,
-          'recorded_by': row.recordedBy ?? _client.auth.currentUser?.id,
+          'recorded_by': row.recordedBy ?? userId,
           'title': row.title,
           'content': row.content,
           'entry_date': entryDate,
           'author_nickname': row.authorNickname,
           'local_id': row.id,
-        };
-        if (row.syncStatus == 'pending_delete') {
-          await _client
-              .from('diary_entries')
-              .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
-              .eq('local_id', row.id);
-        } else {
-          await _client.from('diary_entries').upsert(payload);
-        }
-        await _db.diaryDao.updateSyncStatus(row.id, 'synced');
-      } catch (e) {
-        debugPrint('diary sync error (${row.id}): $e');
+        });
       }
+    }
+
+    try {
+      if (upserts.isNotEmpty) {
+        await _client.from('diary_entries').upsert(upserts);
+      }
+      if (deleteIds.isNotEmpty) {
+        await _client
+            .from('diary_entries')
+            .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+            .inFilter('local_id', deleteIds);
+      }
+      for (final row in pending) {
+        await _db.diaryDao.updateSyncStatus(row.id, 'synced');
+      }
+    } catch (e) {
+      debugPrint('diary sync error: $e');
     }
   }
 
@@ -349,17 +513,24 @@ class SyncEngine {
     final from = DateTime.now().subtract(const Duration(days: 7));
     final rows = await _client
         .from('diary_entries')
-        .select()
+        .select(
+          'id, baby_id, family_id, recorded_by, title, content, '
+          'entry_date, author_nickname, local_id',
+        )
         .eq('family_id', familyId)
-        .gte('entry_date', '${from.year}-${from.month.toString().padLeft(2, '0')}-${from.day.toString().padLeft(2, '0')}')
-        .isFilter('deleted_at', null) as List<dynamic>;
+        .gte(
+          'entry_date',
+          '${from.year}-${from.month.toString().padLeft(2, '0')}-'
+          '${from.day.toString().padLeft(2, '0')}',
+        )
+        .isFilter('deleted_at', null)
+        .limit(500) as List<dynamic>;
     for (final raw in rows) {
       final r = raw as Map<String, dynamic>;
       try {
         final localId = _resolveId(r);
         final existing = await _db.diaryDao.getDiaryById(localId);
         if (existing != null && existing.syncStatus != 'synced') continue;
-        // entry_date는 'YYYY-MM-DD' 문자열로 옴
         final dateStr = r['entry_date'] as String;
         final parts = dateStr.split('-');
         final entryDate = DateTime.utc(

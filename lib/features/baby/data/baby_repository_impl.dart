@@ -8,18 +8,35 @@ import '../domain/models/baby.dart';
 class BabyRepository {
   final SupabaseClient _client;
   static const _uuid = Uuid();
+  static const _cacheTtl = Duration(minutes: 5);
 
   BabyRepository(this._client);
+
+  List<Baby>? _cachedBabies;
+  DateTime? _babiesCacheTime;
+
+  void _invalidateBabiesCache() {
+    _cachedBabies = null;
+    _babiesCacheTime = null;
+  }
 
   /// 현재 로그인 사용자가 속한 가족의 아기 목록을 가져옵니다.
   Future<List<Baby>> fetchBabies() async {
     final user = _client.auth.currentUser;
     if (user == null) return [];
 
+    // 유효한 캐시가 있으면 바로 반환
+    if (_cachedBabies != null &&
+        _babiesCacheTime != null &&
+        DateTime.now().difference(_babiesCacheTime!) < _cacheTtl) {
+      return _cachedBabies!;
+    }
+
     final memberRows = await _client
         .from('family_members')
         .select('family_id')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .limit(1);
 
     if (memberRows.isEmpty) return [];
 
@@ -27,12 +44,15 @@ class BabyRepository {
 
     final rows = await _client
         .from('babies')
-        .select()
+        .select('id, family_id, name, birth_date, gender, weight_kg, photo_url, is_active')
         .eq('family_id', familyId)
         .eq('is_active', true)
         .order('birth_date', ascending: false);
 
-    return rows.map(_fromMap).toList();
+    final babies = rows.map(_fromMap).toList();
+    _cachedBabies = babies;
+    _babiesCacheTime = DateTime.now();
+    return babies;
   }
 
   /// 아기 사진을 Supabase Storage에 업로드하고 public URL을 반환합니다.
@@ -93,6 +113,7 @@ class BabyRepository {
         .select()
         .single();
 
+    _invalidateBabiesCache();
     return _fromMap(babyRow);
   }
 
@@ -117,6 +138,7 @@ class BabyRepository {
         .eq('id', id)
         .select()
         .single();
+    _invalidateBabiesCache();
     return _fromMap(row);
   }
 
@@ -143,6 +165,7 @@ class BabyRepository {
         })
         .select()
         .single();
+    _invalidateBabiesCache();
     return _fromMap(row);
   }
 

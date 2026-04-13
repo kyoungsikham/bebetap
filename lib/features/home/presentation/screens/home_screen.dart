@@ -21,6 +21,8 @@ import '../widgets/baby_selector_sheet.dart';
 import '../widgets/status_card.dart';
 import '../widgets/stats_strip.dart';
 import '../widgets/tracking_grid.dart';
+import '../../../../core/config/ad_config.dart';
+import '../../../../shared/widgets/banner_ad_widget.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -66,11 +68,14 @@ class HomeScreen extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.lg),
                   Text(
                     context.l10n.sectionRecord,
-                    style: AppTypography.titleMedium
-                        .copyWith(color: AppColors.onSurface),
+                    style: AppTypography.titleMedium.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   const TrackingGrid(),
+                  const SizedBox(height: AppSpacing.lg),
+                  BannerAdWidget(adUnitId: AdConfig.homeBannerId),
                 ]),
               ),
             ),
@@ -575,6 +580,7 @@ class _HomeHeader extends ConsumerWidget {
     final babies = ref.watch(babiesProvider).valueOrNull ?? [];
     final name = baby?.name ?? context.l10n.userLabel;
     final canSwitch = babies.length > 1;
+    final ageLabel = baby != null ? _babyAgeLabel(context, baby.birthDate) : null;
     final babyColorIndex =
         baby != null ? babies.indexWhere((b) => b.id == baby.id) : 0;
 
@@ -634,9 +640,27 @@ class _HomeHeader extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      context.l10n.homeGreeting(name),
-                      style: AppTypography.headlineMedium,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(
+                          name,
+                          style: AppTypography.headlineMedium,
+                        ),
+                        if (ageLabel != null) ...[
+                          const SizedBox(width: 8),
+                          Text(
+                            ageLabel,
+                            style: AppTypography.bodyMedium.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.6),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
@@ -693,6 +717,21 @@ class _HomeHeader extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  String _babyAgeLabel(BuildContext context, DateTime birthDate) {
+    final today = DateTime.now();
+    final days = today.difference(DateTime(birthDate.year, birthDate.month, birthDate.day)).inDays;
+    if (days < 100) {
+      return context.l10n.babyAgeDays(days);
+    }
+    final months = (today.year - birthDate.year) * 12 + (today.month - birthDate.month) -
+        (today.day < birthDate.day ? 1 : 0);
+    final remainDays = today.day < birthDate.day
+        ? today.day + (DateTime(today.year, today.month, 0).day - birthDate.day)
+        : today.day - birthDate.day;
+    if (remainDays == 0) return context.l10n.babyAgeMonths(months);
+    return context.l10n.babyAgeMonthsDays(months, remainDays);
   }
 }
 

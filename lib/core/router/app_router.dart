@@ -11,6 +11,9 @@ import '../../features/baby/presentation/providers/baby_provider.dart';
 import '../../features/baby/presentation/screens/baby_setup_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/log/presentation/screens/log_screen.dart';
+import '../../features/statistics/presentation/screens/baby_food_stats_screen.dart';
+import '../../features/statistics/presentation/screens/feeding_stats_screen.dart';
+import '../../features/statistics/presentation/screens/sleep_stats_screen.dart';
 import '../../features/statistics/presentation/screens/statistics_screen.dart';
 import '../../features/family/presentation/screens/family_screen.dart';
 import '../../features/baby/presentation/screens/baby_manage_screen.dart';
@@ -137,6 +140,29 @@ GoRouter appRouter(Ref ref) {
         pageBuilder: (_, s) => _fadePage(
           key: s.pageKey,
           child: const ResetPasswordScreen(),
+        ),
+      ),
+
+      // 통계 하위 페이지 (바텀 네비 없음)
+      GoRoute(
+        path: AppRoutes.feedingStats,
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const FeedingStatsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.babyFoodStats,
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const BabyFoodStatsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.sleepStats,
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const SleepStatsScreen(),
         ),
       ),
 

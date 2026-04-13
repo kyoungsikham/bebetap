@@ -5,10 +5,13 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/config/ad_initializer.dart';
 import 'core/config/app_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeAds();
 
   KakaoSdk.init(nativeAppKey: '3b9088a9581a023f815855a1cc2c96f5');
 

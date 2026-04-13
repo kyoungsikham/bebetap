@@ -5,7 +5,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/models/tracking_category.dart';
+import '../../../../core/config/ad_config.dart';
 import '../../../../shared/providers/icon_settings_provider.dart';
+import '../../../../shared/widgets/banner_ad_widget.dart';
 
 class IconSettingsScreen extends ConsumerWidget {
   const IconSettingsScreen({super.key});
@@ -33,6 +35,7 @@ class IconSettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
+          BannerAdWidget(adUnitId: AdConfig.iconSettingsBannerId),
           Expanded(
             child: ReorderableListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),

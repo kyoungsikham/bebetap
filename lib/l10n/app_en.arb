@@ -105,6 +105,9 @@
 
   "save": "Save",
   "edit": "Edit",
+  "delete": "Delete",
+  "deleteConfirmTitle": "Delete Entry",
+  "deleteConfirmMessage": "Delete this entry?",
   "confirm": "Confirm",
   "saveAmountMl": "Save {amount}",
   "@saveAmountMl": {
@@ -370,6 +373,20 @@
   "periodDay": "Today",
   "periodWeek": "Week",
   "periodMonth": "Month",
+  "period3Months": "3 Months",
+  "period6Months": "6 Months",
+
+  "insightsTitle": "Insights",
+  "lifePattern": "Life Pattern",
+  "lifePatternTip": "💡 Tap an icon to filter and view only that category",
+  "feedingStatsTitle": "Feeding Stats",
+  "babyFoodStatsTitle": "Baby Food Stats",
+  "sleepStatsTitle": "Sleep Stats",
+  "viewDetails": "View Details",
+  "totalBabyFood": "Total Baby Food",
+  "babyFoodCount": "Baby Food Count",
+  "noBabyFoodRecord": "No baby food records",
+  "dailyBabyFoodTrend": "Daily Baby Food Trend",
 
   "logTitle": "Parenting Log",
   "logLoadFailed": "Could not load records",
@@ -473,6 +490,85 @@
       "month": { "type": "int" },
       "day": { "type": "int" },
       "weekday": { "type": "String" }
+    }
+  },
+
+  "napSleep": "Nap",
+  "nightSleep": "Night",
+  "napVsNight": "Nap vs Night",
+  "dailySleepTrend": "Daily sleep trend",
+  "longestSleep": "Longest sleep",
+  "bedtimeConsistency": "Bedtime consistency",
+  "avgDailySleep": "Avg daily sleep",
+  "belowRecommended": "Below recommended",
+  "aboveRecommended": "Above recommended",
+  "withinRecommended": "Within range",
+  "recommended": "Recommended",
+
+  "avgFeedingInterval": "Avg interval",
+  "dailyIntakeTrend": "Daily intake trend",
+  "leftRightBalance": "Left / Right balance",
+  "leftBreast": "Left",
+  "rightBreast": "Right",
+
+  "wetDiaper": "Wet",
+  "soiledDiaper": "Soiled",
+  "bothDiaper": "Both",
+  "dailyDiaperTrend": "Daily diaper trend",
+
+  "healthSection": "Health",
+  "avgLabel": "Avg",
+  "temperatureTrend": "Temperature trend",
+
+  "dailyRoutine": "Daily routine",
+  "heatmapLow": "Low",
+  "heatmapHigh": "High",
+
+  "insightsSection": "Insights",
+  "insightFeedingPredictionBody": "Baby may be hungry in about {minutes} minutes",
+  "@insightFeedingPredictionBody": {
+    "placeholders": { "minutes": { "type": "String" } }
+  },
+  "insightNapPredictionBody": "Based on pattern, next nap in ~{minutes} minutes",
+  "@insightNapPredictionBody": {
+    "placeholders": { "minutes": { "type": "String" } }
+  },
+  "insightIntakeDropBody": "Formula intake dropped {percent}% over the last 3 days",
+  "@insightIntakeDropBody": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "insightLowWetDiapersBody": "Only {count} wet diapers in last 24h — check hydration",
+  "@insightLowWetDiapersBody": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "insightFeverBody": "Latest temperature {temp}°C is above normal range",
+  "@insightFeverBody": {
+    "placeholders": { "temp": { "type": "String" } }
+  },
+  "insightSleepRegressionBody": "Total sleep dropped {percent}% compared to last week",
+  "@insightSleepRegressionBody": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "insightNapNightCorrelationBody": "Less daytime napping tends to mean more night wakings",
+
+  "babyComparison": "Compare",
+  "comparisonAge": "Age to compare",
+  "daysLabel": "days",
+  "monthsLabel": "months",
+  "comparisonNeedTwoBabies": "Register 2 or more babies to compare",
+  "babyAgeDays": "{count} days old",
+  "@babyAgeDays": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "babyAgeMonths": "{months} months",
+  "@babyAgeMonths": {
+    "placeholders": { "months": { "type": "int" } }
+  },
+  "babyAgeMonthsDays": "{months}m {days}d",
+  "@babyAgeMonthsDays": {
+    "placeholders": {
+      "months": { "type": "int" },
+      "days": { "type": "int" }
     }
   }
 }

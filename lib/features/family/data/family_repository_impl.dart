@@ -5,13 +5,30 @@ import '../domain/models/family.dart';
 import '../domain/models/family_member.dart';
 
 class FamilyRepository {
-  const FamilyRepository(this._client);
+  FamilyRepository(this._client);
   final SupabaseClient _client;
+
+  static const _cacheTtl = Duration(minutes: 5);
+  Family? _cachedFamily;
+  DateTime? _familyCacheTime;
 
   String? get _userId => _client.auth.currentUser?.id;
 
+  void _invalidateCache() {
+    _cachedFamily = null;
+    _familyCacheTime = null;
+  }
+
   Future<Family?> getMyFamily() async {
     if (_userId == null) return null;
+
+    // 유효한 캐시가 있으면 바로 반환
+    if (_cachedFamily != null &&
+        _familyCacheTime != null &&
+        DateTime.now().difference(_familyCacheTime!) < _cacheTtl) {
+      return _cachedFamily;
+    }
+
     try {
       final data = await _client
           .from('family_members')
@@ -22,12 +39,15 @@ class FamilyRepository {
 
       if (data == null) return null;
       final f = data['families'] as Map<String, dynamic>;
-      return Family(
+      final family = Family(
         id: f['id'] as String,
         name: f['name'] as String,
         inviteCode: f['invite_code'] as String,
         createdAt: DateTime.parse(f['created_at'] as String),
       );
+      _cachedFamily = family;
+      _familyCacheTime = DateTime.now();
+      return family;
     } catch (e) {
       debugPrint('getMyFamily error: $e');
       return null;
@@ -71,15 +91,17 @@ class FamilyRepository {
       'family_id': familyData['id'],
       'user_id': uid,
       'role': 'owner',
-      if (nickname != null) 'nickname': nickname,
+      'nickname': ?nickname,
     });
 
-    return Family(
+    final family = Family(
       id: familyData['id'] as String,
       name: familyData['name'] as String,
       inviteCode: familyData['invite_code'] as String,
       createdAt: DateTime.parse(familyData['created_at'] as String),
     );
+    _invalidateCache();
+    return family;
   }
 
   Future<Family> joinFamily(String inviteCode, {String? nickname}) async {
@@ -108,16 +130,18 @@ class FamilyRepository {
         'family_id': familyId,
         'user_id': uid,
         'role': 'caregiver',
-        if (nickname != null) 'nickname': nickname,
+        'nickname': ?nickname,
       });
     }
 
-    return Family(
+    final family = Family(
       id: familyId,
       name: familyData['name'] as String,
       inviteCode: familyData['invite_code'] as String,
       createdAt: DateTime.parse(familyData['created_at'] as String),
     );
+    _invalidateCache();
+    return family;
   }
 
   Future<List<FamilyMember>> getMembers(String familyId) async {

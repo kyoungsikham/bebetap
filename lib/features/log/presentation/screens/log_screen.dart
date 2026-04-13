@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/config/ad_config.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/banner_ad_widget.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
@@ -109,13 +111,21 @@ class LogScreen extends ConsumerWidget {
                     AppSpacing.pagePadding,
                     AppSpacing.pagePadding + 80, // FAB 여백
                   ),
-                  itemCount: entries.length,
-                  itemBuilder: (context, i) => TimelineItemTile(
-                    entry: entries[i],
-                    isFirst: i == 0,
-                    isLast: i == entries.length - 1,
-                    onTap: () => _openEditSheet(context, entries[i]),
-                  ),
+                  itemCount: entries.length + 1,
+                  itemBuilder: (context, i) {
+                    if (i == entries.length) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.md),
+                        child: BannerAdWidget(adUnitId: AdConfig.logBannerId),
+                      );
+                    }
+                    return TimelineItemTile(
+                      entry: entries[i],
+                      isFirst: i == 0,
+                      isLast: i == entries.length - 1,
+                      onTap: () => _openEditSheet(context, ref, entries[i]),
+                    );
+                  },
                 );
               },
             ),
@@ -132,7 +142,7 @@ class LogScreen extends ConsumerWidget {
     );
   }
 
-  void _openEditSheet(BuildContext context, TimelineEntry entry) {
+  void _openEditSheet(BuildContext context, WidgetRef ref, TimelineEntry entry) {
     late Widget sheet;
     late String title;
     switch (entry.type) {
@@ -161,7 +171,48 @@ class LogScreen extends ConsumerWidget {
         sheet = DiaryBottomSheet(editEntry: entry);
         title = context.l10n.diaryLog;
     }
-    showAppBottomSheet(context: context, child: sheet, title: title);
+    showAppBottomSheet(
+      context: context,
+      child: sheet,
+      title: title,
+      titleTrailing: IconButton(
+        icon: const Icon(Icons.delete_outline),
+        color: Theme.of(context).colorScheme.error,
+        tooltip: context.l10n.delete,
+        onPressed: () => _confirmDelete(context, ref, entry),
+      ),
+    );
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    TimelineEntry entry,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(context.l10n.deleteConfirmTitle),
+        content: Text(context.l10n.deleteConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(context.l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: Text(context.l10n.delete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await ref.read(logRepositoryProvider).deleteEntry(entry);
+    ref.invalidate(logTimelineProvider);
+    if (context.mounted) Navigator.of(context).pop();
   }
 
   Future<void> _openAddSheet(BuildContext context, WidgetRef ref) async {

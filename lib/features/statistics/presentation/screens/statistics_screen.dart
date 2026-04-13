@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
-import '../../../../shared/models/volume_unit.dart';
-import '../../../../shared/providers/volume_unit_provider.dart';
-import '../../domain/models/period.dart';
+import '../../../../shared/models/tracking_category.dart';
+import '../../../../shared/providers/icon_settings_provider.dart';
+import '../../../../shared/widgets/baby_avatar_widget.dart';
+import '../../../baby/presentation/providers/baby_provider.dart';
+import '../../../log/domain/models/timeline_entry.dart';
+import '../../domain/models/daily_timeline.dart';
 import '../providers/statistics_provider.dart';
-import '../widgets/period_tab_bar.dart';
-import '../widgets/sleep_chart.dart';
-import '../widgets/stat_card.dart';
+import '../widgets/daily_timeline_chart.dart';
+import '../widgets/insight_card.dart';
+import '../widgets/pattern_date_range_bar.dart';
+import '../widgets/stats_nav_card.dart';
+import 'comparison_screen.dart';
+import '../../../../core/config/ad_config.dart';
+import '../../../../shared/widgets/banner_ad_widget.dart';
 
 class StatisticsScreen extends ConsumerStatefulWidget {
   const StatisticsScreen({super.key});
@@ -22,13 +29,64 @@ class StatisticsScreen extends ConsumerStatefulWidget {
 }
 
 class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
-  Period _period = Period.week;
+  final _activeFilters = <TimelineEventType>{};
+  bool _filtersInitialized = false;
+
+  /// Map TimelineEntryType (icon settings) → TimelineEventType (chart filter)
+  static const _entryToEventType = <TimelineEntryType, TimelineEventType>{
+    TimelineEntryType.formula: TimelineEventType.formula,
+    TimelineEntryType.breast: TimelineEventType.breast,
+    TimelineEntryType.pumped: TimelineEventType.pumped,
+    TimelineEntryType.babyFood: TimelineEventType.babyFood,
+    TimelineEntryType.diaper: TimelineEventType.diaper,
+    TimelineEntryType.sleep: TimelineEventType.sleep,
+  };
+
+  /// Types that appear as filter chips (exclude temperature, diary)
+  static const _filterableTypes = {
+    TimelineEntryType.formula,
+    TimelineEntryType.breast,
+    TimelineEntryType.pumped,
+    TimelineEntryType.babyFood,
+    TimelineEntryType.diaper,
+    TimelineEntryType.sleep,
+  };
 
   @override
   Widget build(BuildContext context) {
-    final sleepAsync = ref.watch(sleepStatsProvider(_period));
-    final feedingAsync = ref.watch(feedingStatsProvider(_period));
-    final diaperAsync = ref.watch(diaperStatsProvider(_period));
+    final l10n = context.l10n;
+    final range = ref.watch(statsDateRangeProvider);
+    final timelineAsync = ref.watch(dailyTimelineProvider(range));
+    final visibleCategories = ref.watch(visibleCategoriesProvider);
+
+    // Initialize filters from icon settings (once)
+    if (!_filtersInitialized) {
+      _filtersInitialized = true;
+      for (final type in visibleCategories) {
+        final eventType = _entryToEventType[type];
+        if (eventType != null) _activeFilters.add(eventType);
+      }
+    }
+
+    // Visible filterable types for chips
+    final visibleFilterable = visibleCategories
+        .where((t) => _filterableTypes.contains(t))
+        .toList();
+
+    final baby = ref.watch(selectedBabyProvider).valueOrNull;
+    final babies = ref.watch(babiesProvider).valueOrNull ?? [];
+    final colorIndex = baby != null
+        ? babies.indexWhere((b) => b.id == baby.id)
+        : -1;
+
+    // Determine which nav cards to show
+    final hasFeedingTypes = visibleCategories.any((t) =>
+        t == TimelineEntryType.formula ||
+        t == TimelineEntryType.breast ||
+        t == TimelineEntryType.pumped);
+    final hasBabyFood =
+        visibleCategories.contains(TimelineEntryType.babyFood);
+    final hasSleep = visibleCategories.contains(TimelineEntryType.sleep);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -36,7 +94,32 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text(context.l10n.statistics, style: AppTypography.titleLarge),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (baby != null) ...[
+              BabyAvatarWidget(
+                photoUrl: baby.photoUrl,
+                gender: baby.gender,
+                colorIndex: colorIndex >= 0 ? colorIndex : null,
+                size: 32,
+              ),
+              const SizedBox(width: 8),
+            ],
+            Text(baby?.name ?? l10n.statistics, style: AppTypography.titleLarge),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.compare_arrows, size: 22),
+            tooltip: l10n.babyComparison,
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const ComparisonScreen(),
+              ),
+            ),
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
@@ -46,104 +129,174 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
           AppSpacing.pagePadding,
         ),
         children: [
-          Center(
-            child: PeriodTabBar(
-              selected: _period,
-              onChanged: (p) => setState(() => _period = p),
-            ),
+          // Date range selector (day/week toggle + arrows)
+          PatternDateRangeBar(
+            selected: range,
+            onChanged: (r) =>
+                ref.read(statsDateRangeProvider.notifier).setRange(r),
           ),
-          const SizedBox(height: AppSpacing.xxl),
+          const SizedBox(height: AppSpacing.lg),
 
-          // 수면
+          // Section title
           Text(
-            context.l10n.sleepSection,
+            l10n.lifePattern,
             style: AppTypography.titleMedium.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          sleepAsync.when(
-            loading: () => const _SkeletonCard(),
-            error: (_, _) => const _ErrorCard(),
-            data: (stats) => StatCard(
-              icon: Icons.bedtime,
-              label: context.l10n.totalSleep,
-              value: stats.totalDuration.formatHhMm(),
-              deltaPercent: stats.deltaPercent,
-              color: const Color(0xFF7B68EE),
-              child: _period == Period.week && stats.dailyEntries.isNotEmpty
-                  ? SleepBarChart(entries: stats.dailyEntries)
-                  : null,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xxl),
-
-          // 수유
+          const SizedBox(height: AppSpacing.xs),
           Text(
-            context.l10n.feedingSection,
-            style: AppTypography.titleMedium.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
+            l10n.lifePatternTip,
+            style: AppTypography.bodySmall.copyWith(
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          feedingAsync.when(
-            loading: () => const _SkeletonCard(),
-            error: (_, _) => const _ErrorCard(),
-            data: (stats) {
-              final unit = ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
-              if (stats.totalFormulaMl == 0 && stats.totalBreastSec == 0) {
-                return StatCard(
-                  icon: Icons.local_drink,
-                  label: context.l10n.feedingSection,
-                  value: context.l10n.noFeedingRecord,
-                  color: AppColors.primary,
+
+          // Filter chips (horizontal scroll)
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: visibleFilterable.map((entryType) {
+                final eventType = _entryToEventType[entryType]!;
+                final info = TrackingCategoryInfo.all[entryType]!;
+                return Padding(
+                  padding: const EdgeInsets.only(right: AppSpacing.xs),
+                  child: TimelineFilterChip(
+                    label: info.localizedLabel(l10n),
+                    type: eventType,
+                    selected: _activeFilters.contains(eventType),
+                    onSelected: (v) {
+                      setState(() {
+                        if (v) {
+                          _activeFilters.add(eventType);
+                        } else {
+                          _activeFilters.remove(eventType);
+                        }
+                      });
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.lg),
+
+          // Timeline chart
+          timelineAsync.when(
+            loading: () => const _SkeletonCard(height: 200),
+            error: (_, _) => const SizedBox.shrink(),
+            data: (data) {
+              final hasData = data.days.any((d) => d.events.isNotEmpty);
+              if (!hasData) {
+                return Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                        color: Theme.of(context).dividerColor),
+                  ),
+                  child: Text(
+                    l10n.dataLoadFailed,
+                    style: AppTypography.bodySmall.copyWith(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.4),
+                    ),
+                  ),
                 );
               }
-              return Column(
-                children: [
-                  if (stats.totalFormulaMl > 0)
-                    StatCard(
-                      icon: Icons.local_drink,
-                      label: context.l10n.formula,
-                      value: unit.formatAmount(stats.totalFormulaMl),
-                      subtitle: context.l10n.timesCount(stats.feedingCount),
-                      deltaPercent: stats.formulaDeltaPercent,
-                      color: AppColors.primary,
-                    ),
-                  if (stats.totalFormulaMl > 0 && stats.totalBreastSec > 0)
-                    const SizedBox(height: AppSpacing.sm),
-                  if (stats.totalBreastSec > 0)
-                    StatCard(
-                      icon: Icons.favorite_outline,
-                      label: context.l10n.breast,
-                      value: stats.totalBreastDuration.formatHhMm(),
-                      subtitle: context.l10n.timesCount(stats.feedingCount),
-                      color: const Color(0xFFE91E8C),
-                    ),
-                ],
+              return Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                      color: Theme.of(context).dividerColor),
+                ),
+                child: DailyTimelineChart(
+                  data: data,
+                  activeFilters: _activeFilters,
+                ),
               );
             },
           ),
           const SizedBox(height: AppSpacing.xxl),
 
-          // 기저귀
-          Text(
-            context.l10n.diaperSection,
-            style: AppTypography.titleMedium.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+          // Insights
+          Builder(
+            builder: (context) {
+              final insightsAsync = ref.watch(parentInsightsProvider);
+              return insightsAsync.when(
+                loading: () => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
+                data: (insights) {
+                  if (insights.isEmpty) return const SizedBox.shrink();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.insightsTitle,
+                        style: AppTypography.titleMedium.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      for (final insight in insights) ...[
+                        InsightCard(
+                          insight: insight,
+                          resolvedBody: resolveInsightBody(l10n, insight),
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                      ],
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
+                  );
+                },
+              );
+            },
           ),
-          const SizedBox(height: AppSpacing.sm),
-          diaperAsync.when(
-            loading: () => const _SkeletonCard(),
-            error: (_, _) => const _ErrorCard(),
-            data: (count) => StatCard(
-              icon: Icons.baby_changing_station,
-              label: context.l10n.diaperChangeLabel,
-              value: context.l10n.timesCount(count),
-              color: const Color(0xFF52B788),
+
+          // Navigation cards to sub-pages
+          if (hasFeedingTypes)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: StatsNavCard(
+                icon: Icons.local_drink,
+                title: l10n.feedingStatsTitle,
+                color: const Color(0xFF5B7FFF),
+                onTap: () => context.push(AppRoutes.feedingStats),
+              ),
             ),
-          ),
+          if (hasBabyFood)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: StatsNavCard(
+                icon: Icons.restaurant,
+                title: l10n.babyFoodStatsTitle,
+                color: const Color(0xFFFF9800),
+                onTap: () => context.push(AppRoutes.babyFoodStats),
+              ),
+            ),
+          if (hasSleep)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: StatsNavCard(
+                icon: Icons.bedtime,
+                title: l10n.sleepStatsTitle,
+                color: const Color(0xFF7B68EE),
+                onTap: () => context.push(AppRoutes.sleepStats),
+              ),
+            ),
+          const SizedBox(height: AppSpacing.md),
+          BannerAdWidget(adUnitId: AdConfig.statsBannerId),
         ],
       ),
     );
@@ -151,32 +304,17 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
 }
 
 class _SkeletonCard extends StatelessWidget {
-  const _SkeletonCard();
+  const _SkeletonCard({this.height = 80});
+  final double height;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
+      height: height,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor),
-      ),
-    );
-  }
-}
-
-class _ErrorCard extends StatelessWidget {
-  const _ErrorCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 60,
-      alignment: Alignment.center,
-      child: Text(
-        context.l10n.dataLoadFailed,
-        style: AppTypography.bodySmall,
       ),
     );
   }

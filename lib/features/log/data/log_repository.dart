@@ -38,6 +38,21 @@ class LogRepository {
     return entries;
   }
 
+  Future<void> deleteEntry(TimelineEntry entry) {
+    return switch (entry.type) {
+      TimelineEntryType.formula ||
+      TimelineEntryType.breast ||
+      TimelineEntryType.pumped ||
+      TimelineEntryType.babyFood =>
+        _db.feedingDao.softDeleteFeeding(entry.id),
+      TimelineEntryType.sleep => _db.sleepDao.softDeleteSleep(entry.id),
+      TimelineEntryType.diaper => _db.diaperDao.softDeleteDiaper(entry.id),
+      TimelineEntryType.temperature =>
+        _db.temperatureDao.softDeleteTemperature(entry.id),
+      TimelineEntryType.diary => _db.diaryDao.softDeleteDiary(entry.id),
+    };
+  }
+
   Future<LogDaySummary> getDaySummary(
     String babyId,
     DateTime date,

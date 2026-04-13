@@ -5,8 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/config/ad_config.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/providers/interstitial_ad_provider.dart';
+import '../../../../shared/widgets/banner_ad_widget.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
@@ -47,13 +50,13 @@ class BabyManageScreen extends ConsumerWidget {
   }
 }
 
-class _BabyManageBody extends StatelessWidget {
+class _BabyManageBody extends ConsumerWidget {
   const _BabyManageBody({required this.babies});
 
   final List<Baby> babies;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.pagePadding),
       child: Column(
@@ -68,7 +71,7 @@ class _BabyManageBody extends StatelessWidget {
             const SizedBox(height: AppSpacing.xl),
           ],
           ElevatedButton.icon(
-            onPressed: () => _openForm(context, babies, null, colorIndex: babies.length),
+            onPressed: () => _openForm(context, ref, babies, null, colorIndex: babies.length),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
@@ -81,18 +84,30 @@ class _BabyManageBody extends StatelessWidget {
             icon: const Icon(Icons.add),
             label: Text(context.l10n.addNewBaby),
           ),
+          const SizedBox(height: AppSpacing.lg),
+          BannerAdWidget(adUnitId: AdConfig.babyManageBannerId),
         ],
       ),
     );
   }
 
-  void _openForm(BuildContext context, List<Baby> babies, Baby? editBaby, {int? colorIndex}) {
+  Future<void> _openForm(
+    BuildContext context,
+    WidgetRef ref,
+    List<Baby> babies,
+    Baby? editBaby, {
+    int? colorIndex,
+  }) async {
     final familyId = babies.isNotEmpty ? babies.first.familyId : null;
-    showAppBottomSheet(
+    await showAppBottomSheet(
       context: context,
       title: editBaby != null ? context.l10n.babyEditTitle : context.l10n.babyAddTitle,
       child: _BabyFormSheet(editBaby: editBaby, familyId: familyId, colorIndex: colorIndex),
     );
+    // 새 아기 추가 완료 후 인터스티셜 표시 (편집은 제외)
+    if (editBaby == null) {
+      await ref.read(interstitialAdProvider).showIfReady();
+    }
   }
 }
 

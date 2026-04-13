@@ -227,6 +227,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get edit => '修正';
 
   @override
+  String get delete => '削除';
+
+  @override
+  String get deleteConfirmTitle => '記録を削除';
+
+  @override
+  String get deleteConfirmMessage => 'この記録を削除しますか？';
+
+  @override
   String get confirm => '確認';
 
   @override
@@ -752,6 +761,45 @@ class AppLocalizationsJa extends AppLocalizations {
   String get periodMonth => '月間';
 
   @override
+  String get period3Months => '3ヶ月';
+
+  @override
+  String get period6Months => '6ヶ月';
+
+  @override
+  String get insightsTitle => 'インサイト';
+
+  @override
+  String get lifePattern => '生活パターン';
+
+  @override
+  String get lifePatternTip => '💡 アイコンをタップすると、見たい項目だけ絞り込めます';
+
+  @override
+  String get feedingStatsTitle => '授乳統計';
+
+  @override
+  String get babyFoodStatsTitle => '離乳食統計';
+
+  @override
+  String get sleepStatsTitle => '睡眠統計';
+
+  @override
+  String get viewDetails => '詳しく見る';
+
+  @override
+  String get totalBabyFood => '離乳食合計';
+
+  @override
+  String get babyFoodCount => '離乳食回数';
+
+  @override
+  String get noBabyFoodRecord => '離乳食の記録なし';
+
+  @override
+  String get dailyBabyFoodTrend => '離乳食の日別推移';
+
+  @override
   String get logTitle => '育児記録';
 
   @override
@@ -908,5 +956,149 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String dateFormatLong(int year, int month, int day, String weekday) {
     return '$year年$month月$day日（$weekday）';
+  }
+
+  @override
+  String get napSleep => '昼寝';
+
+  @override
+  String get nightSleep => '夜睡眠';
+
+  @override
+  String get napVsNight => '昼寝 vs 夜睡眠';
+
+  @override
+  String get dailySleepTrend => '日別睡眠推移';
+
+  @override
+  String get longestSleep => '最長連続睡眠';
+
+  @override
+  String get bedtimeConsistency => '就寝時刻の一貫性';
+
+  @override
+  String get avgDailySleep => '1日平均睡眠';
+
+  @override
+  String get belowRecommended => '推奨以下';
+
+  @override
+  String get aboveRecommended => '推奨超過';
+
+  @override
+  String get withinRecommended => '適正範囲';
+
+  @override
+  String get recommended => '推奨';
+
+  @override
+  String get avgFeedingInterval => '平均授乳間隔';
+
+  @override
+  String get dailyIntakeTrend => '日別摂取量推移';
+
+  @override
+  String get leftRightBalance => '左右バランス';
+
+  @override
+  String get leftBreast => '左';
+
+  @override
+  String get rightBreast => '右';
+
+  @override
+  String get wetDiaper => 'おしっこ';
+
+  @override
+  String get soiledDiaper => 'うんち';
+
+  @override
+  String get bothDiaper => '両方';
+
+  @override
+  String get dailyDiaperTrend => '日別おむつ推移';
+
+  @override
+  String get healthSection => '健康';
+
+  @override
+  String get avgLabel => '平均';
+
+  @override
+  String get temperatureTrend => '体温推移';
+
+  @override
+  String get dailyRoutine => '生活リズム';
+
+  @override
+  String get heatmapLow => '少';
+
+  @override
+  String get heatmapHigh => '多';
+
+  @override
+  String get insightsSection => 'インサイト';
+
+  @override
+  String insightFeedingPredictionBody(String minutes) {
+    return '約$minutes分後にお腹が空くかもしれません';
+  }
+
+  @override
+  String insightNapPredictionBody(String minutes) {
+    return 'パターンから、約$minutes分後がお昼寝の時間です';
+  }
+
+  @override
+  String insightIntakeDropBody(String percent) {
+    return '過去3日間でミルク摂取量が$percent%減少しました';
+  }
+
+  @override
+  String insightLowWetDiapersBody(String count) {
+    return '24時間以内のおしっこおむつが$count回のみです — 水分摂取を確認してください';
+  }
+
+  @override
+  String insightFeverBody(String temp) {
+    return '最新体温$temp°Cが正常範囲を超えています';
+  }
+
+  @override
+  String insightSleepRegressionBody(String percent) {
+    return '先週と比べて総睡眠が$percent%減少しました';
+  }
+
+  @override
+  String get insightNapNightCorrelationBody => '昼寝が少ない日は夜に起きる回数が多い傾向があります';
+
+  @override
+  String get babyComparison => '比較';
+
+  @override
+  String get comparisonAge => '比較する日齢';
+
+  @override
+  String get daysLabel => '日';
+
+  @override
+  String get monthsLabel => 'ヶ月';
+
+  @override
+  String get comparisonNeedTwoBabies => '比較するには2人以上の赤ちゃんを登録してください';
+
+  @override
+  String babyAgeDays(int count) {
+    return '$count日';
+  }
+
+  @override
+  String babyAgeMonths(int months) {
+    return '$monthsヶ月';
+  }
+
+  @override
+  String babyAgeMonthsDays(int months, int days) {
+    return '$monthsヶ月$days日';
   }
 }

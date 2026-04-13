@@ -520,6 +520,24 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get edit;
 
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Entry'**
+  String get deleteConfirmTitle;
+
+  /// No description provided for @deleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this entry?'**
+  String get deleteConfirmMessage;
+
   /// No description provided for @confirm.
   ///
   /// In en, this message translates to:
@@ -1498,6 +1516,84 @@ abstract class AppLocalizations {
   /// **'Month'**
   String get periodMonth;
 
+  /// No description provided for @period3Months.
+  ///
+  /// In en, this message translates to:
+  /// **'3 Months'**
+  String get period3Months;
+
+  /// No description provided for @period6Months.
+  ///
+  /// In en, this message translates to:
+  /// **'6 Months'**
+  String get period6Months;
+
+  /// No description provided for @insightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get insightsTitle;
+
+  /// No description provided for @lifePattern.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Pattern'**
+  String get lifePattern;
+
+  /// No description provided for @lifePatternTip.
+  ///
+  /// In en, this message translates to:
+  /// **'💡 Tap an icon to filter and view only that category'**
+  String get lifePatternTip;
+
+  /// No description provided for @feedingStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Feeding Stats'**
+  String get feedingStatsTitle;
+
+  /// No description provided for @babyFoodStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Baby Food Stats'**
+  String get babyFoodStatsTitle;
+
+  /// No description provided for @sleepStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep Stats'**
+  String get sleepStatsTitle;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// No description provided for @totalBabyFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Baby Food'**
+  String get totalBabyFood;
+
+  /// No description provided for @babyFoodCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Baby Food Count'**
+  String get babyFoodCount;
+
+  /// No description provided for @noBabyFoodRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'No baby food records'**
+  String get noBabyFoodRecord;
+
+  /// No description provided for @dailyBabyFoodTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Baby Food Trend'**
+  String get dailyBabyFoodTrend;
+
   /// No description provided for @logTitle.
   ///
   /// In en, this message translates to:
@@ -1779,6 +1875,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{month}/{day}/{year} ({weekday})'**
   String dateFormatLong(int year, int month, int day, String weekday);
+
+  /// No description provided for @napSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Nap'**
+  String get napSleep;
+
+  /// No description provided for @nightSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Night'**
+  String get nightSleep;
+
+  /// No description provided for @napVsNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Nap vs Night'**
+  String get napVsNight;
+
+  /// No description provided for @dailySleepTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily sleep trend'**
+  String get dailySleepTrend;
+
+  /// No description provided for @longestSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest sleep'**
+  String get longestSleep;
+
+  /// No description provided for @bedtimeConsistency.
+  ///
+  /// In en, this message translates to:
+  /// **'Bedtime consistency'**
+  String get bedtimeConsistency;
+
+  /// No description provided for @avgDailySleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg daily sleep'**
+  String get avgDailySleep;
+
+  /// No description provided for @belowRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Below recommended'**
+  String get belowRecommended;
+
+  /// No description provided for @aboveRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Above recommended'**
+  String get aboveRecommended;
+
+  /// No description provided for @withinRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Within range'**
+  String get withinRecommended;
+
+  /// No description provided for @recommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get recommended;
+
+  /// No description provided for @avgFeedingInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg interval'**
+  String get avgFeedingInterval;
+
+  /// No description provided for @dailyIntakeTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily intake trend'**
+  String get dailyIntakeTrend;
+
+  /// No description provided for @leftRightBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Left / Right balance'**
+  String get leftRightBalance;
+
+  /// No description provided for @leftBreast.
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get leftBreast;
+
+  /// No description provided for @rightBreast.
+  ///
+  /// In en, this message translates to:
+  /// **'Right'**
+  String get rightBreast;
+
+  /// No description provided for @wetDiaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Wet'**
+  String get wetDiaper;
+
+  /// No description provided for @soiledDiaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Soiled'**
+  String get soiledDiaper;
+
+  /// No description provided for @bothDiaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get bothDiaper;
+
+  /// No description provided for @dailyDiaperTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily diaper trend'**
+  String get dailyDiaperTrend;
+
+  /// No description provided for @healthSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get healthSection;
+
+  /// No description provided for @avgLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg'**
+  String get avgLabel;
+
+  /// No description provided for @temperatureTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature trend'**
+  String get temperatureTrend;
+
+  /// No description provided for @dailyRoutine.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily routine'**
+  String get dailyRoutine;
+
+  /// No description provided for @heatmapLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get heatmapLow;
+
+  /// No description provided for @heatmapHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get heatmapHigh;
+
+  /// No description provided for @insightsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get insightsSection;
+
+  /// No description provided for @insightFeedingPredictionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Baby may be hungry in about {minutes} minutes'**
+  String insightFeedingPredictionBody(String minutes);
+
+  /// No description provided for @insightNapPredictionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on pattern, next nap in ~{minutes} minutes'**
+  String insightNapPredictionBody(String minutes);
+
+  /// No description provided for @insightIntakeDropBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Formula intake dropped {percent}% over the last 3 days'**
+  String insightIntakeDropBody(String percent);
+
+  /// No description provided for @insightLowWetDiapersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only {count} wet diapers in last 24h — check hydration'**
+  String insightLowWetDiapersBody(String count);
+
+  /// No description provided for @insightFeverBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest temperature {temp}°C is above normal range'**
+  String insightFeverBody(String temp);
+
+  /// No description provided for @insightSleepRegressionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Total sleep dropped {percent}% compared to last week'**
+  String insightSleepRegressionBody(String percent);
+
+  /// No description provided for @insightNapNightCorrelationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Less daytime napping tends to mean more night wakings'**
+  String get insightNapNightCorrelationBody;
+
+  /// No description provided for @babyComparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare'**
+  String get babyComparison;
+
+  /// No description provided for @comparisonAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Age to compare'**
+  String get comparisonAge;
+
+  /// No description provided for @daysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get daysLabel;
+
+  /// No description provided for @monthsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'months'**
+  String get monthsLabel;
+
+  /// No description provided for @comparisonNeedTwoBabies.
+  ///
+  /// In en, this message translates to:
+  /// **'Register 2 or more babies to compare'**
+  String get comparisonNeedTwoBabies;
+
+  /// No description provided for @babyAgeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days old'**
+  String babyAgeDays(int count);
+
+  /// No description provided for @babyAgeMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{months} months'**
+  String babyAgeMonths(int months);
+
+  /// No description provided for @babyAgeMonthsDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{months}m {days}d'**
+  String babyAgeMonthsDays(int months, int days);
 }
 
 class _AppLocalizationsDelegate

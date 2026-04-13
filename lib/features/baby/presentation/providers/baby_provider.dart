@@ -11,8 +11,10 @@ part 'baby_provider.g.dart';
 // ── Repository ────────────────────────────────────────────────────────────────
 
 @riverpod
-BabyRepository babyRepository(Ref ref) =>
-    BabyRepository(Supabase.instance.client);
+BabyRepository babyRepository(Ref ref) {
+  ref.watch(authStateProvider); // auth 변경 시 재생성 → 인메모리 캐시 초기화
+  return BabyRepository(Supabase.instance.client);
+}
 
 // ── Baby list ─────────────────────────────────────────────────────────────────
 

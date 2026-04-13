@@ -105,6 +105,9 @@
 
   "save": "保存",
   "edit": "修正",
+  "delete": "削除",
+  "deleteConfirmTitle": "記録を削除",
+  "deleteConfirmMessage": "この記録を削除しますか？",
   "confirm": "確認",
   "saveAmountMl": "{amount}を保存",
   "@saveAmountMl": {
@@ -360,6 +363,20 @@
   "periodDay": "今日",
   "periodWeek": "週間",
   "periodMonth": "月間",
+  "period3Months": "3ヶ月",
+  "period6Months": "6ヶ月",
+
+  "insightsTitle": "インサイト",
+  "lifePattern": "生活パターン",
+  "lifePatternTip": "💡 アイコンをタップすると、見たい項目だけ絞り込めます",
+  "feedingStatsTitle": "授乳統計",
+  "babyFoodStatsTitle": "離乳食統計",
+  "sleepStatsTitle": "睡眠統計",
+  "viewDetails": "詳しく見る",
+  "totalBabyFood": "離乳食合計",
+  "babyFoodCount": "離乳食回数",
+  "noBabyFoodRecord": "離乳食の記録なし",
+  "dailyBabyFoodTrend": "離乳食の日別推移",
 
   "logTitle": "育児記録",
   "logLoadFailed": "記録を読み込めませんでした",
@@ -463,6 +480,85 @@
       "month": { "type": "int" },
       "day": { "type": "int" },
       "weekday": { "type": "String" }
+    }
+  },
+
+  "napSleep": "昼寝",
+  "nightSleep": "夜睡眠",
+  "napVsNight": "昼寝 vs 夜睡眠",
+  "dailySleepTrend": "日別睡眠推移",
+  "longestSleep": "最長連続睡眠",
+  "bedtimeConsistency": "就寝時刻の一貫性",
+  "avgDailySleep": "1日平均睡眠",
+  "belowRecommended": "推奨以下",
+  "aboveRecommended": "推奨超過",
+  "withinRecommended": "適正範囲",
+  "recommended": "推奨",
+
+  "avgFeedingInterval": "平均授乳間隔",
+  "dailyIntakeTrend": "日別摂取量推移",
+  "leftRightBalance": "左右バランス",
+  "leftBreast": "左",
+  "rightBreast": "右",
+
+  "wetDiaper": "おしっこ",
+  "soiledDiaper": "うんち",
+  "bothDiaper": "両方",
+  "dailyDiaperTrend": "日別おむつ推移",
+
+  "healthSection": "健康",
+  "avgLabel": "平均",
+  "temperatureTrend": "体温推移",
+
+  "dailyRoutine": "生活リズム",
+  "heatmapLow": "少",
+  "heatmapHigh": "多",
+
+  "insightsSection": "インサイト",
+  "insightFeedingPredictionBody": "約{minutes}分後にお腹が空くかもしれません",
+  "@insightFeedingPredictionBody": {
+    "placeholders": { "minutes": { "type": "String" } }
+  },
+  "insightNapPredictionBody": "パターンから、約{minutes}分後がお昼寝の時間です",
+  "@insightNapPredictionBody": {
+    "placeholders": { "minutes": { "type": "String" } }
+  },
+  "insightIntakeDropBody": "過去3日間でミルク摂取量が{percent}%減少しました",
+  "@insightIntakeDropBody": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "insightLowWetDiapersBody": "24時間以内のおしっこおむつが{count}回のみです — 水分摂取を確認してください",
+  "@insightLowWetDiapersBody": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "insightFeverBody": "最新体温{temp}°Cが正常範囲を超えています",
+  "@insightFeverBody": {
+    "placeholders": { "temp": { "type": "String" } }
+  },
+  "insightSleepRegressionBody": "先週と比べて総睡眠が{percent}%減少しました",
+  "@insightSleepRegressionBody": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "insightNapNightCorrelationBody": "昼寝が少ない日は夜に起きる回数が多い傾向があります",
+
+  "babyComparison": "比較",
+  "comparisonAge": "比較する日齢",
+  "daysLabel": "日",
+  "monthsLabel": "ヶ月",
+  "comparisonNeedTwoBabies": "比較するには2人以上の赤ちゃんを登録してください",
+  "babyAgeDays": "{count}日",
+  "@babyAgeDays": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "babyAgeMonths": "{months}ヶ月",
+  "@babyAgeMonths": {
+    "placeholders": { "months": { "type": "int" } }
+  },
+  "babyAgeMonthsDays": "{months}ヶ月{days}日",
+  "@babyAgeMonthsDays": {
+    "placeholders": {
+      "months": { "type": "int" },
+      "days": { "type": "int" }
     }
   }
 }

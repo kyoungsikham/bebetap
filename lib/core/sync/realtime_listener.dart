@@ -19,93 +19,46 @@ class RealtimeListener {
     _onRemoteChange = onRemoteChange;
     _channel?.unsubscribe();
 
+    final filter = PostgresChangeFilter(
+      type: PostgresChangeFilterType.eq,
+      column: 'family_id',
+      value: familyId,
+    );
+
     _channel = _client.channel('family_realtime_$familyId')
       ..onPostgresChanges(
-        event: PostgresChangeEvent.insert,
+        event: PostgresChangeEvent.all,
         schema: 'public',
         table: 'feeding_entries',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'family_id',
-          value: familyId,
-        ),
+        filter: filter,
         callback: (payload) => _handleFeedingChange(payload),
       )
       ..onPostgresChanges(
-        event: PostgresChangeEvent.update,
-        schema: 'public',
-        table: 'feeding_entries',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'family_id',
-          value: familyId,
-        ),
-        callback: (payload) => _handleFeedingChange(payload),
-      )
-      ..onPostgresChanges(
-        event: PostgresChangeEvent.insert,
+        event: PostgresChangeEvent.all,
         schema: 'public',
         table: 'diaper_entries',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'family_id',
-          value: familyId,
-        ),
+        filter: filter,
         callback: (payload) => _handleDiaperChange(payload),
       )
       ..onPostgresChanges(
-        event: PostgresChangeEvent.insert,
+        event: PostgresChangeEvent.all,
         schema: 'public',
         table: 'sleep_entries',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'family_id',
-          value: familyId,
-        ),
+        filter: filter,
         callback: (payload) => _handleSleepChange(payload),
       )
       ..onPostgresChanges(
-        event: PostgresChangeEvent.update,
-        schema: 'public',
-        table: 'sleep_entries',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'family_id',
-          value: familyId,
-        ),
-        callback: (payload) => _handleSleepChange(payload),
-      )
-      ..onPostgresChanges(
-        event: PostgresChangeEvent.insert,
+        event: PostgresChangeEvent.all,
         schema: 'public',
         table: 'temperature_entries',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'family_id',
-          value: familyId,
-        ),
+        filter: filter,
         callback: (payload) => _handleTemperatureChange(payload),
       )
       ..onPostgresChanges(
-        event: PostgresChangeEvent.insert,
+        event: PostgresChangeEvent.all,
         schema: 'public',
         table: 'diary_entries',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'family_id',
-          value: familyId,
-        ),
-        callback: (payload) => _handleDiaryChange(payload),
-      )
-      ..onPostgresChanges(
-        event: PostgresChangeEvent.update,
-        schema: 'public',
-        table: 'diary_entries',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'family_id',
-          value: familyId,
-        ),
+        filter: filter,
         callback: (payload) => _handleDiaryChange(payload),
       );
 

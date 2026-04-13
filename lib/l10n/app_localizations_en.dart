@@ -228,6 +228,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit => 'Edit';
 
   @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteConfirmTitle => 'Delete Entry';
+
+  @override
+  String get deleteConfirmMessage => 'Delete this entry?';
+
+  @override
   String get confirm => 'Confirm';
 
   @override
@@ -761,6 +770,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get periodMonth => 'Month';
 
   @override
+  String get period3Months => '3 Months';
+
+  @override
+  String get period6Months => '6 Months';
+
+  @override
+  String get insightsTitle => 'Insights';
+
+  @override
+  String get lifePattern => 'Life Pattern';
+
+  @override
+  String get lifePatternTip =>
+      '💡 Tap an icon to filter and view only that category';
+
+  @override
+  String get feedingStatsTitle => 'Feeding Stats';
+
+  @override
+  String get babyFoodStatsTitle => 'Baby Food Stats';
+
+  @override
+  String get sleepStatsTitle => 'Sleep Stats';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String get totalBabyFood => 'Total Baby Food';
+
+  @override
+  String get babyFoodCount => 'Baby Food Count';
+
+  @override
+  String get noBabyFoodRecord => 'No baby food records';
+
+  @override
+  String get dailyBabyFoodTrend => 'Daily Baby Food Trend';
+
+  @override
   String get logTitle => 'Parenting Log';
 
   @override
@@ -917,5 +966,150 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String dateFormatLong(int year, int month, int day, String weekday) {
     return '$month/$day/$year ($weekday)';
+  }
+
+  @override
+  String get napSleep => 'Nap';
+
+  @override
+  String get nightSleep => 'Night';
+
+  @override
+  String get napVsNight => 'Nap vs Night';
+
+  @override
+  String get dailySleepTrend => 'Daily sleep trend';
+
+  @override
+  String get longestSleep => 'Longest sleep';
+
+  @override
+  String get bedtimeConsistency => 'Bedtime consistency';
+
+  @override
+  String get avgDailySleep => 'Avg daily sleep';
+
+  @override
+  String get belowRecommended => 'Below recommended';
+
+  @override
+  String get aboveRecommended => 'Above recommended';
+
+  @override
+  String get withinRecommended => 'Within range';
+
+  @override
+  String get recommended => 'Recommended';
+
+  @override
+  String get avgFeedingInterval => 'Avg interval';
+
+  @override
+  String get dailyIntakeTrend => 'Daily intake trend';
+
+  @override
+  String get leftRightBalance => 'Left / Right balance';
+
+  @override
+  String get leftBreast => 'Left';
+
+  @override
+  String get rightBreast => 'Right';
+
+  @override
+  String get wetDiaper => 'Wet';
+
+  @override
+  String get soiledDiaper => 'Soiled';
+
+  @override
+  String get bothDiaper => 'Both';
+
+  @override
+  String get dailyDiaperTrend => 'Daily diaper trend';
+
+  @override
+  String get healthSection => 'Health';
+
+  @override
+  String get avgLabel => 'Avg';
+
+  @override
+  String get temperatureTrend => 'Temperature trend';
+
+  @override
+  String get dailyRoutine => 'Daily routine';
+
+  @override
+  String get heatmapLow => 'Low';
+
+  @override
+  String get heatmapHigh => 'High';
+
+  @override
+  String get insightsSection => 'Insights';
+
+  @override
+  String insightFeedingPredictionBody(String minutes) {
+    return 'Baby may be hungry in about $minutes minutes';
+  }
+
+  @override
+  String insightNapPredictionBody(String minutes) {
+    return 'Based on pattern, next nap in ~$minutes minutes';
+  }
+
+  @override
+  String insightIntakeDropBody(String percent) {
+    return 'Formula intake dropped $percent% over the last 3 days';
+  }
+
+  @override
+  String insightLowWetDiapersBody(String count) {
+    return 'Only $count wet diapers in last 24h — check hydration';
+  }
+
+  @override
+  String insightFeverBody(String temp) {
+    return 'Latest temperature $temp°C is above normal range';
+  }
+
+  @override
+  String insightSleepRegressionBody(String percent) {
+    return 'Total sleep dropped $percent% compared to last week';
+  }
+
+  @override
+  String get insightNapNightCorrelationBody =>
+      'Less daytime napping tends to mean more night wakings';
+
+  @override
+  String get babyComparison => 'Compare';
+
+  @override
+  String get comparisonAge => 'Age to compare';
+
+  @override
+  String get daysLabel => 'days';
+
+  @override
+  String get monthsLabel => 'months';
+
+  @override
+  String get comparisonNeedTwoBabies => 'Register 2 or more babies to compare';
+
+  @override
+  String babyAgeDays(int count) {
+    return '$count days old';
+  }
+
+  @override
+  String babyAgeMonths(int months) {
+    return '$months months';
+  }
+
+  @override
+  String babyAgeMonthsDays(int months, int days) {
+    return '${months}m ${days}d';
   }
 }

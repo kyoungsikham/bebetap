@@ -105,6 +105,9 @@
 
   "save": "저장",
   "edit": "수정",
+  "delete": "삭제",
+  "deleteConfirmTitle": "기록 삭제",
+  "deleteConfirmMessage": "이 기록을 삭제하시겠어요?",
   "confirm": "확인",
   "saveAmountMl": "{amount} 저장",
   "@saveAmountMl": {
@@ -360,6 +363,20 @@
   "periodDay": "오늘",
   "periodWeek": "주간",
   "periodMonth": "월간",
+  "period3Months": "3개월",
+  "period6Months": "6개월",
+
+  "insightsTitle": "인사이트",
+  "lifePattern": "생활패턴",
+  "lifePatternTip": "💡 아이콘을 탭하면 원하는 항목만 골라 볼 수 있어요",
+  "feedingStatsTitle": "수유 통계",
+  "babyFoodStatsTitle": "이유식 통계",
+  "sleepStatsTitle": "수면 통계",
+  "viewDetails": "자세히 보기",
+  "totalBabyFood": "이유식 총량",
+  "babyFoodCount": "이유식 횟수",
+  "noBabyFoodRecord": "이유식 기록 없음",
+  "dailyBabyFoodTrend": "일별 이유식 추이",
 
   "logTitle": "육아 기록",
   "logLoadFailed": "기록을 불러오지 못했어요",
@@ -463,6 +480,85 @@
       "month": { "type": "int" },
       "day": { "type": "int" },
       "weekday": { "type": "String" }
+    }
+  },
+
+  "napSleep": "낮잠",
+  "nightSleep": "밤잠",
+  "napVsNight": "낮잠 vs 밤잠",
+  "dailySleepTrend": "일별 수면 추이",
+  "longestSleep": "최장 연속 수면",
+  "bedtimeConsistency": "취침 시각 일관성",
+  "avgDailySleep": "일평균 수면",
+  "belowRecommended": "권장 이하",
+  "aboveRecommended": "권장 초과",
+  "withinRecommended": "적정 범위",
+  "recommended": "권장",
+
+  "avgFeedingInterval": "평균 수유 간격",
+  "dailyIntakeTrend": "일별 섭취량 추이",
+  "leftRightBalance": "좌/우 밸런스",
+  "leftBreast": "왼쪽",
+  "rightBreast": "오른쪽",
+
+  "wetDiaper": "소변",
+  "soiledDiaper": "대변",
+  "bothDiaper": "소변+대변",
+  "dailyDiaperTrend": "일별 기저귀 추이",
+
+  "healthSection": "건강",
+  "avgLabel": "평균",
+  "temperatureTrend": "체온 추이",
+
+  "dailyRoutine": "일과 패턴",
+  "heatmapLow": "적음",
+  "heatmapHigh": "많음",
+
+  "insightsSection": "인사이트",
+  "insightFeedingPredictionBody": "약 {minutes}분 후에 배고파할 수 있어요",
+  "@insightFeedingPredictionBody": {
+    "placeholders": { "minutes": { "type": "String" } }
+  },
+  "insightNapPredictionBody": "패턴 기반, 약 {minutes}분 후 낮잠 시간이에요",
+  "@insightNapPredictionBody": {
+    "placeholders": { "minutes": { "type": "String" } }
+  },
+  "insightIntakeDropBody": "최근 3일간 분유 섭취량이 {percent}% 감소했어요",
+  "@insightIntakeDropBody": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "insightLowWetDiapersBody": "24시간 내 소변 기저귀가 {count}회뿐이에요 — 수분 섭취를 확인하세요",
+  "@insightLowWetDiapersBody": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "insightFeverBody": "최근 체온 {temp}°C로 정상 범위를 초과했어요",
+  "@insightFeverBody": {
+    "placeholders": { "temp": { "type": "String" } }
+  },
+  "insightSleepRegressionBody": "지난주 대비 총 수면이 {percent}% 감소했어요",
+  "@insightSleepRegressionBody": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "insightNapNightCorrelationBody": "낮잠이 적은 날에 밤에 더 자주 깨는 경향이 있어요",
+
+  "babyComparison": "비교",
+  "comparisonAge": "비교할 일령",
+  "daysLabel": "일",
+  "monthsLabel": "개월",
+  "comparisonNeedTwoBabies": "비교하려면 아이를 2명 이상 등록해주세요",
+  "babyAgeDays": "{count}일",
+  "@babyAgeDays": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "babyAgeMonths": "{months}개월",
+  "@babyAgeMonths": {
+    "placeholders": { "months": { "type": "int" } }
+  },
+  "babyAgeMonthsDays": "{months}개월 {days}일",
+  "@babyAgeMonthsDays": {
+    "placeholders": {
+      "months": { "type": "int" },
+      "days": { "type": "int" }
     }
   }
 }
