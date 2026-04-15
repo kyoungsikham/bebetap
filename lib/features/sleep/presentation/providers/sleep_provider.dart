@@ -1,11 +1,11 @@
 import 'dart:async' show unawaited;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/providers/database_provider.dart';
 import '../../../../core/providers/sync_provider.dart';
+import '../../../../core/widget/widget_sync_service.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../home/presentation/providers/home_provider.dart';
 import '../../../log/presentation/providers/log_provider.dart';
@@ -45,7 +45,9 @@ class SleepSessionNotifier extends _$SleepSessionNotifier {
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
-      _pushSleepWidget(active: true, startedAt: startedAt);
+      unawaited(WidgetSyncService.pushSleepStart(
+        startedAt: startedAt ?? DateTime.now(),
+      ));
     });
   }
 
@@ -54,48 +56,38 @@ class SleepSessionNotifier extends _$SleepSessionNotifier {
     required DateTime startedAt,
     DateTime? endedAt,
   }) async {
+    final baby = ref.read(selectedBabyProvider).valueOrNull;
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await ref.read(sleepRepositoryProvider).updateSleep(
-            id,
-            startedAt: startedAt,
-            endedAt: endedAt,
-          );
+      final repo = ref.read(sleepRepositoryProvider);
+      await repo.updateSleep(id, startedAt: startedAt, endedAt: endedAt);
       ref.invalidate(activeSleepProvider);
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
-      if (endedAt != null) _pushSleepWidget(active: false);
+      if (endedAt != null && baby != null) {
+        final total = await repo.getTodaySleepTotal(baby.id);
+        unawaited(WidgetSyncService.pushSleepEnd(
+          todaySleepMin: total.inMinutes,
+        ));
+      }
     });
   }
 
   Future<void> endSleep(String sleepId, {DateTime? endedAt}) async {
+    final baby = ref.read(selectedBabyProvider).valueOrNull;
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await ref.read(sleepRepositoryProvider).endSleep(sleepId, endedAt: endedAt);
+      final repo = ref.read(sleepRepositoryProvider);
+      await repo.endSleep(sleepId, endedAt: endedAt);
       ref.invalidate(activeSleepProvider);
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
-      _pushSleepWidget(active: false);
+      final total = baby != null
+          ? await repo.getTodaySleepTotal(baby.id)
+          : Duration.zero;
+      unawaited(WidgetSyncService.pushSleepEnd(todaySleepMin: total.inMinutes));
     });
-  }
-
-  void _pushSleepWidget({required bool active, DateTime? startedAt}) {
-    unawaited(HomeWidget.saveWidgetData<bool>('sleepActive', active));
-    if (active) {
-      unawaited(
-        HomeWidget.saveWidgetData<String>(
-          'sleepStartTime',
-          (startedAt ?? DateTime.now()).toIso8601String(),
-        ),
-      );
-    }
-    unawaited(
-      HomeWidget.updateWidget(
-        iOSName: 'BebetapWidget',
-        androidName: 'BebetapWidget',
-      ),
-    );
   }
 }

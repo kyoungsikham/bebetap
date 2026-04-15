@@ -77,9 +77,6 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get homeEncouragement => '育児は大変ですが、本当によく頑張っています！ 💛';
-
-  @override
   String get sectionRecord => '記録する';
 
   @override

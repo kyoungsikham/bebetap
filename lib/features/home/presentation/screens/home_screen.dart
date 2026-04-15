@@ -16,6 +16,7 @@ import '../../../../shared/providers/theme_provider.dart';
 import '../../../../shared/providers/volume_unit_provider.dart';
 import '../../../../shared/widgets/baby_avatar_widget.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
+import '../../../daily_message/presentation/providers/daily_message_provider.dart';
 import '../../../family/presentation/providers/family_provider.dart';
 import '../widgets/baby_selector_sheet.dart';
 import '../widgets/status_card.dart';
@@ -151,16 +152,6 @@ class _HamburgerMenuPanelState extends ConsumerState<_HamburgerMenuPanel> {
                       Navigator.of(context, rootNavigator: true).pop();
                       Future.microtask(
                           () => router.push(AppRoutes.babyManage));
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.widgets_outlined),
-                    title: Text(l10n.menuWidgetAdd),
-                    onTap: () {
-                      final messenger = ScaffoldMessenger.of(context);
-                      Navigator.of(context, rootNavigator: true).pop();
-                      Future.microtask(() => messenger.showSnackBar(
-                          SnackBar(content: Text(l10n.comingSoon))));
                     },
                   ),
                   ListTile(
@@ -664,7 +655,7 @@ class _HomeHeader extends ConsumerWidget {
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
-                      context.l10n.homeEncouragement,
+                      ref.watch(dailyMessageProvider),
                       style: AppTypography.bodyMedium.copyWith(
                         color: Theme.of(context)
                             .colorScheme

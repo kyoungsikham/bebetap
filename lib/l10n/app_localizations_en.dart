@@ -77,10 +77,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get homeEncouragement =>
-      'Parenting is hard, but you\'re doing amazing! 💛';
-
-  @override
   String get sectionRecord => 'Record';
 
   @override

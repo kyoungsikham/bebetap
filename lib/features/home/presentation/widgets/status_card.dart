@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/theme/app_colors.dart'; // semantic colors만 사용
-import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
@@ -129,41 +128,31 @@ class _StatusCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: borderColor),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.12),
-              shape: BoxShape.circle,
+          Icon(icon, color: iconColor, size: 14),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: AppTypography.labelSmall.copyWith(
+              color: cs.onSurface,
+              fontWeight: FontWeight.w600,
             ),
-            child: Icon(icon, color: iconColor, size: 22),
           ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: AppTypography.labelLarge),
-                const SizedBox(height: 2),
-                Text(
-                  elapsed,
-                  style: AppTypography.bodySmall.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.55),
-                  ),
-                ),
-              ],
+          const SizedBox(width: 4),
+          Text(
+            elapsed,
+            style: AppTypography.labelSmall.copyWith(
+              color: cs.onSurface.withValues(alpha: 0.5),
             ),
           ),
         ],

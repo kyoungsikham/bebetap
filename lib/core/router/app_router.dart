@@ -66,6 +66,15 @@ GoRouter appRouter(Ref ref) {
       final babiesLoaded = babiesAsync.hasValue && !babiesAsync.isLoading;
       final loc = state.matchedLocation;
 
+      // 0. 위젯 딥링크(bebetap://...)는 WidgetActionHandler가 처리하므로
+      //    GoRouter에서는 홈으로 리다이렉트.
+      if (state.uri.scheme == 'bebetap' ||
+          loc.startsWith('bebetap://') ||
+          loc.startsWith('/log/') ||
+          loc.startsWith('/action/')) {
+        return AppRoutes.home;
+      }
+
       // 1. 비밀번호 재설정 이벤트 → 재설정 화면으로
       final authEvent = authAsync.valueOrNull?.event;
       if (authEvent == AuthChangeEvent.passwordRecovery) {

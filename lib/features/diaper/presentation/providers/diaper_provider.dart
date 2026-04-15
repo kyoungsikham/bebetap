@@ -1,8 +1,11 @@
+import 'dart:async' show unawaited;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/providers/database_provider.dart';
 import '../../../../core/providers/sync_provider.dart';
+import '../../../../core/widget/widget_sync_service.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../home/presentation/providers/home_provider.dart';
 import '../../../log/presentation/providers/log_provider.dart';
@@ -43,15 +46,18 @@ class DiaperNotifier extends _$DiaperNotifier {
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await ref.read(diaperRepositoryProvider).saveDiaper(
-            babyId: baby.id,
-            familyId: baby.familyId,
-            type: type,
-            occurredAt: occurredAt,
-          );
+      final repo = ref.read(diaperRepositoryProvider);
+      await repo.saveDiaper(
+        babyId: baby.id,
+        familyId: baby.familyId,
+        type: type,
+        occurredAt: occurredAt,
+      );
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
+      final count = await repo.getTodayDiaperCount(baby.id);
+      unawaited(WidgetSyncService.pushDiaper(type: type, countToday: count));
     });
   }
 }

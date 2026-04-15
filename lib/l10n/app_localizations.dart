@@ -232,12 +232,6 @@ abstract class AppLocalizations {
   /// **'Hello, {name}!'**
   String homeGreeting(String name);
 
-  /// No description provided for @homeEncouragement.
-  ///
-  /// In en, this message translates to:
-  /// **'Parenting is hard, but you\'re doing amazing! 💛'**
-  String get homeEncouragement;
-
   /// No description provided for @sectionRecord.
   ///
   /// In en, this message translates to:

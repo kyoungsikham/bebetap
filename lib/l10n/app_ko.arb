@@ -31,7 +31,6 @@
       "name": { "type": "String" }
     }
   },
-  "homeEncouragement": "아기도 힘들지만 엄마 아빠도\n정말 수고하고 있을 거예요 💛",
   "sectionRecord": "기록하기",
 
   "formula": "분유",

@@ -31,7 +31,6 @@
       "name": { "type": "String" }
     }
   },
-  "homeEncouragement": "Parenting is hard, but you're doing amazing! 💛",
   "sectionRecord": "Record",
 
   "formula": "Formula",

@@ -77,9 +77,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get homeEncouragement => '아기도 힘들지만 엄마 아빠도\n정말 수고하고 있을 거예요 💛';
-
-  @override
   String get sectionRecord => '기록하기';
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/ad_config.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -8,6 +9,7 @@ import '../../../../shared/widgets/banner_ad_widget.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
+import '../../../../core/widget/widget_action_handler.dart';
 import '../../../diaper/presentation/widgets/diaper_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/baby_food_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/breast_bottom_sheet.dart';
@@ -22,11 +24,43 @@ import '../widgets/date_navigator.dart';
 import '../widgets/log_stats_strip.dart';
 import '../widgets/timeline_item_tile.dart';
 
-class LogScreen extends ConsumerWidget {
+class LogScreen extends ConsumerStatefulWidget {
   const LogScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LogScreen> createState() => _LogScreenState();
+}
+
+class _LogScreenState extends ConsumerState<LogScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 위젯 클릭으로 pendingWidgetTabProvider가 설정된 경우 바텀 시트 자동 열기
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndOpenPendingTab();
+    });
+  }
+
+  void _checkAndOpenPendingTab() {
+    final pendingTab = ref.read(pendingWidgetTabProvider);
+    if (pendingTab != null) {
+      ref.read(pendingWidgetTabProvider.notifier).state = null;
+      _openAddSheetForTab(pendingTab);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // pendingWidgetTabProvider 변경 시 바텀 시트 자동 열기 (앱이 이미 열려 있는 경우)
+    ref.listen(pendingWidgetTabProvider, (prev, next) {
+      if (next != null) {
+        ref.read(pendingWidgetTabProvider.notifier).state = null;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _openAddSheetForTab(next);
+        });
+      }
+    });
+
     final timelineAsync = ref.watch(filteredLogTimelineProvider);
 
     return Scaffold(
@@ -171,16 +205,22 @@ class LogScreen extends ConsumerWidget {
         sheet = DiaryBottomSheet(editEntry: entry);
         title = context.l10n.diaryLog;
     }
+    // 일기는 작성자만 삭제 가능
+    final bool canDelete = entry.type != TimelineEntryType.diary ||
+        entry.rawRecordedBy == Supabase.instance.client.auth.currentUser?.id;
+
     showAppBottomSheet(
       context: context,
       child: sheet,
       title: title,
-      titleTrailing: IconButton(
-        icon: const Icon(Icons.delete_outline),
-        color: Theme.of(context).colorScheme.error,
-        tooltip: context.l10n.delete,
-        onPressed: () => _confirmDelete(context, ref, entry),
-      ),
+      titleTrailing: canDelete
+          ? IconButton(
+              icon: const Icon(Icons.delete_outline),
+              color: Theme.of(context).colorScheme.error,
+              tooltip: context.l10n.delete,
+              onPressed: () => _confirmDelete(context, ref, entry),
+            )
+          : null,
     );
   }
 
@@ -213,6 +253,36 @@ class LogScreen extends ConsumerWidget {
     await ref.read(logRepositoryProvider).deleteEntry(entry);
     ref.invalidate(logTimelineProvider);
     if (context.mounted) Navigator.of(context).pop();
+  }
+
+  /// 위젯 딥링크 탭 이름으로 바텀 시트 열기.
+  /// tab: 'formula' | 'breast' | 'pumped' | 'baby_food' | 'temperature'
+  void _openAddSheetForTab(String tab) {
+    if (!mounted) return;
+    late Widget sheet;
+    late String title;
+    switch (tab) {
+      case 'formula':
+        sheet = const FormulaBottomSheet();
+        title = context.l10n.addFormula;
+      case 'breast':
+        sheet = const BreastBottomSheet();
+        title = context.l10n.addBreast;
+      case 'pumped':
+        sheet = const FormulaBottomSheet(feedingType: MlFeedingType.pumped);
+        title = context.l10n.addPumped;
+      case 'baby_food':
+        sheet = const BabyFoodBottomSheet();
+        title = context.l10n.addBabyFood;
+      case 'temperature':
+        sheet = const TemperatureBottomSheet();
+        title = context.l10n.addTemperature;
+      default:
+        // 알 수 없는 탭이면 일반 추가 시트 열기
+        _openAddSheet(context, ref);
+        return;
+    }
+    showAppBottomSheet(context: context, child: sheet, title: title);
   }
 
   Future<void> _openAddSheet(BuildContext context, WidgetRef ref) async {

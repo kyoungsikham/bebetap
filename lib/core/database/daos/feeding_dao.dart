@@ -29,6 +29,19 @@ class FeedingDao extends DatabaseAccessor<AppDatabase> with _$FeedingDaoMixin {
             ..limit(1))
           .getSingleOrNull();
 
+  Future<FeedingEntriesTableData?> getLastFeedingByBabyAndType(
+    String babyId,
+    String type,
+  ) =>
+      (select(feedingEntriesTable)
+            ..where((t) =>
+                t.babyId.equals(babyId) &
+                t.type.equals(type) &
+                t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.desc(t.startedAt)])
+            ..limit(1))
+          .getSingleOrNull();
+
   Future<int> getDailyFormulaTotalMl(String babyId, DateTime date) async {
     final from = DateTime(date.year, date.month, date.day);
     final to = from.add(const Duration(days: 1));

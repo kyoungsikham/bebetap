@@ -31,7 +31,6 @@
       "name": { "type": "String" }
     }
   },
-  "homeEncouragement": "育児は大変ですが、本当によく頑張っています！ 💛",
   "sectionRecord": "記録する",
 
   "formula": "ミルク",

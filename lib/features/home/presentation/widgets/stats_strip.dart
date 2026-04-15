@@ -24,10 +24,7 @@ class StatsStrip extends ConsumerWidget {
       loading: () => const _StatsStripSkeleton(),
       error: (_, _) => const SizedBox.shrink(),
       data: (summary) {
-        final targetMl = summary.formulaDailyTargetMl;
-        final formulaLabel = targetMl != null
-            ? '${unit.formatAmount(summary.todayFormulaTotalMl)}/${unit.formatAmount(targetMl)}'
-            : unit.formatAmount(summary.todayFormulaTotalMl);
+        final formulaLabel = unit.formatAmount(summary.todayFormulaTotalMl);
 
         return Container(
           padding: const EdgeInsets.symmetric(
