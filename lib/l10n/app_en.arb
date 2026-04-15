@@ -569,5 +569,32 @@
       "months": { "type": "int" },
       "days": { "type": "int" }
     }
-  }
+  },
+  "currentHeight": "Current height",
+  "heightHint": "e.g. 65.5",
+  "invalidHeight": "Enter valid height (1–150 cm)",
+  "growthStatsTitle": "Growth",
+  "growthStatsEmpty": "Add height & weight in baby settings\nto compare with average growth",
+  "growthPercentileLabel": "{p}th percentile",
+  "@growthPercentileLabel": {
+    "placeholders": { "p": { "type": "int" } }
+  },
+  "growthAboveAverage": "+{diff} above average",
+  "@growthAboveAverage": {
+    "placeholders": { "diff": { "type": "String" } }
+  },
+  "growthBelowAverage": "-{diff} below average",
+  "@growthBelowAverage": {
+    "placeholders": { "diff": { "type": "String" } }
+  },
+  "growthOnAverage": "Near average",
+  "growthHeightLabel": "Height",
+  "growthWeightLabel": "Weight",
+  "growthWhoReference": "Based on WHO Child Growth Standards",
+  "growthCurrentAge": "Age: {months} months",
+  "@growthCurrentAge": {
+    "placeholders": { "months": { "type": "int" } }
+  },
+  "growthNoData": "No data",
+  "growthGoToManage": "Enter baby info"
 }

@@ -559,5 +559,32 @@
       "months": { "type": "int" },
       "days": { "type": "int" }
     }
-  }
+  },
+  "currentHeight": "現在の身長",
+  "heightHint": "例: 65.5",
+  "invalidHeight": "有効な身長を入力してください（1〜150 cm）",
+  "growthStatsTitle": "身長・体重",
+  "growthStatsEmpty": "赤ちゃん管理画面で身長・体重を登録すると\n平均と比較できます",
+  "growthPercentileLabel": "{p}パーセンタイル",
+  "@growthPercentileLabel": {
+    "placeholders": { "p": { "type": "int" } }
+  },
+  "growthAboveAverage": "平均より +{diff}",
+  "@growthAboveAverage": {
+    "placeholders": { "diff": { "type": "String" } }
+  },
+  "growthBelowAverage": "平均より -{diff}",
+  "@growthBelowAverage": {
+    "placeholders": { "diff": { "type": "String" } }
+  },
+  "growthOnAverage": "平均付近",
+  "growthHeightLabel": "身長",
+  "growthWeightLabel": "体重",
+  "growthWhoReference": "WHO 成長基準準拠",
+  "growthCurrentAge": "月齢: {months}ヶ月",
+  "@growthCurrentAge": {
+    "placeholders": { "months": { "type": "int" } }
+  },
+  "growthNoData": "データなし",
+  "growthGoToManage": "赤ちゃん情報を入力"
 }

@@ -27,6 +27,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _weightController = TextEditingController();
+  final _heightController = TextEditingController();
 
   DateTime? _birthDate;
   String? _gender;
@@ -38,6 +39,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
   void dispose() {
     _nameController.dispose();
     _weightController.dispose();
+    _heightController.dispose();
     super.dispose();
   }
 
@@ -81,6 +83,9 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
     final weightText = _weightController.text.trim();
     final weightKg =
         weightText.isNotEmpty ? double.tryParse(weightText) : null;
+    final heightText = _heightController.text.trim();
+    final heightCm =
+        heightText.isNotEmpty ? double.tryParse(heightText) : null;
     final repo = ref.read(babyRepositoryProvider);
 
     String? photoUrl;
@@ -94,6 +99,7 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
           birthDate: _birthDate!,
           gender: _gender,
           weightKg: weightKg,
+          heightCm: heightCm,
           nickname: _nickname,
           photoUrl: photoUrl,
         );
@@ -245,6 +251,26 @@ class _BabySetupScreenState extends ConsumerState<BabySetupScreen> {
                   context.l10n.weightFormulaHint,
                   style: AppTypography.bodySmall
                       .copyWith(color: AppColors.onSurfaceMuted),
+                ),
+
+                const SizedBox(height: AppSpacing.xl),
+
+                // 키 (선택)
+                _SectionLabel(context.l10n.currentHeight),
+                const SizedBox(height: AppSpacing.sm),
+                TextFormField(
+                  controller: _heightController,
+                  decoration: _inputDecoration(context.l10n.heightHint),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) return null;
+                    final parsed = double.tryParse(v.trim());
+                    if (parsed == null || parsed <= 0 || parsed > 150) {
+                      return context.l10n.invalidHeight;
+                    }
+                    return null;
+                  },
                 ),
 
                 const SizedBox(height: AppSpacing.xl),

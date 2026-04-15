@@ -59,6 +59,7 @@ class BabyManageNotifier extends AsyncNotifier<void> {
     required DateTime birthDate,
     String? gender,
     double? weightKg,
+    double? heightCm,
     String? photoUrl,
   }) async {
     state = const AsyncLoading();
@@ -69,6 +70,7 @@ class BabyManageNotifier extends AsyncNotifier<void> {
             birthDate: birthDate,
             gender: gender,
             weightKg: weightKg,
+            heightCm: heightCm,
             photoUrl: photoUrl,
           );
       ref.invalidate(babiesProvider);
@@ -81,6 +83,7 @@ class BabyManageNotifier extends AsyncNotifier<void> {
     required DateTime birthDate,
     String? gender,
     double? weightKg,
+    double? heightCm,
     String? photoUrl,
   }) async {
     state = const AsyncLoading();
@@ -91,6 +94,7 @@ class BabyManageNotifier extends AsyncNotifier<void> {
             birthDate: birthDate,
             gender: gender,
             weightKg: weightKg,
+            heightCm: heightCm,
             photoUrl: photoUrl,
           );
       ref.invalidate(babiesProvider);
@@ -114,6 +118,7 @@ class BabySetupNotifier extends _$BabySetupNotifier {
     required DateTime birthDate,
     String? gender,
     double? weightKg,
+    double? heightCm,
     String? nickname,
     String? photoUrl,
   }) async {
@@ -124,6 +129,7 @@ class BabySetupNotifier extends _$BabySetupNotifier {
             birthDate: birthDate,
             gender: gender,
             weightKg: weightKg,
+            heightCm: heightCm,
             nickname: nickname,
             photoUrl: photoUrl,
           );

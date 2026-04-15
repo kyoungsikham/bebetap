@@ -295,6 +295,16 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 onTap: () => context.push(AppRoutes.sleepStats),
               ),
             ),
+          if (baby != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: StatsNavCard(
+                icon: Icons.monitor_weight,
+                title: l10n.growthStatsTitle,
+                color: const Color(0xFF26A69A),
+                onTap: () => context.push(AppRoutes.growthStats),
+              ),
+            ),
           const SizedBox(height: AppSpacing.md),
           BannerAdWidget(adUnitId: AdConfig.statsBannerId),
         ],

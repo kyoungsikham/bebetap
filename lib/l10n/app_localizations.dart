@@ -2121,6 +2121,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{months}m {days}d'**
   String babyAgeMonthsDays(int months, int days);
+
+  /// No description provided for @currentHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Current height'**
+  String get currentHeight;
+
+  /// No description provided for @heightHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 65.5'**
+  String get heightHint;
+
+  /// No description provided for @invalidHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter valid height (1–150 cm)'**
+  String get invalidHeight;
+
+  /// No description provided for @growthStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth'**
+  String get growthStatsTitle;
+
+  /// No description provided for @growthStatsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Add height & weight in baby settings\nto compare with average growth'**
+  String get growthStatsEmpty;
+
+  /// No description provided for @growthPercentileLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{p}th percentile'**
+  String growthPercentileLabel(int p);
+
+  /// No description provided for @growthAboveAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'+{diff} above average'**
+  String growthAboveAverage(String diff);
+
+  /// No description provided for @growthBelowAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'-{diff} below average'**
+  String growthBelowAverage(String diff);
+
+  /// No description provided for @growthOnAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Near average'**
+  String get growthOnAverage;
+
+  /// No description provided for @growthHeightLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Height'**
+  String get growthHeightLabel;
+
+  /// No description provided for @growthWeightLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get growthWeightLabel;
+
+  /// No description provided for @growthWhoReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on WHO Child Growth Standards'**
+  String get growthWhoReference;
+
+  /// No description provided for @growthCurrentAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Age: {months} months'**
+  String growthCurrentAge(int months);
+
+  /// No description provided for @growthNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data'**
+  String get growthNoData;
+
+  /// No description provided for @growthGoToManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter baby info'**
+  String get growthGoToManage;
 }
 
 class _AppLocalizationsDelegate

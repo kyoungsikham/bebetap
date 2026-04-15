@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 mixin _$Baby {
 
  String get id; String get familyId; String get name; DateTime get birthDate; String? get gender;// 'male' | 'female' | 'unknown'
- double? get weightKg; String? get photoUrl; bool get isActive;
+ double? get weightKg; double? get heightCm; String? get photoUrl; bool get isActive;
 /// Create a copy of Baby
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $BabyCopyWith<Baby> get copyWith => _$BabyCopyWithImpl<Baby>(this as Baby, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Baby&&(identical(other.id, id) || other.id == id)&&(identical(other.familyId, familyId) || other.familyId == familyId)&&(identical(other.name, name) || other.name == name)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.weightKg, weightKg) || other.weightKg == weightKg)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Baby&&(identical(other.id, id) || other.id == id)&&(identical(other.familyId, familyId) || other.familyId == familyId)&&(identical(other.name, name) || other.name == name)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.weightKg, weightKg) || other.weightKg == weightKg)&&(identical(other.heightCm, heightCm) || other.heightCm == heightCm)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,familyId,name,birthDate,gender,weightKg,photoUrl,isActive);
+int get hashCode => Object.hash(runtimeType,id,familyId,name,birthDate,gender,weightKg,heightCm,photoUrl,isActive);
 
 @override
 String toString() {
-  return 'Baby(id: $id, familyId: $familyId, name: $name, birthDate: $birthDate, gender: $gender, weightKg: $weightKg, photoUrl: $photoUrl, isActive: $isActive)';
+  return 'Baby(id: $id, familyId: $familyId, name: $name, birthDate: $birthDate, gender: $gender, weightKg: $weightKg, heightCm: $heightCm, photoUrl: $photoUrl, isActive: $isActive)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $BabyCopyWith<$Res>  {
   factory $BabyCopyWith(Baby value, $Res Function(Baby) _then) = _$BabyCopyWithImpl;
 @useResult
 $Res call({
- String id, String familyId, String name, DateTime birthDate, String? gender, double? weightKg, String? photoUrl, bool isActive
+ String id, String familyId, String name, DateTime birthDate, String? gender, double? weightKg, double? heightCm, String? photoUrl, bool isActive
 });
 
 
@@ -63,7 +63,7 @@ class _$BabyCopyWithImpl<$Res>
 
 /// Create a copy of Baby
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? familyId = null,Object? name = null,Object? birthDate = null,Object? gender = freezed,Object? weightKg = freezed,Object? photoUrl = freezed,Object? isActive = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? familyId = null,Object? name = null,Object? birthDate = null,Object? gender = freezed,Object? weightKg = freezed,Object? heightCm = freezed,Object? photoUrl = freezed,Object? isActive = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,familyId: null == familyId ? _self.familyId : familyId // ignore: cast_nullable_to_non_nullable
@@ -71,6 +71,7 @@ as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non
 as String,birthDate: null == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
 as DateTime,gender: freezed == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
 as String?,weightKg: freezed == weightKg ? _self.weightKg : weightKg // ignore: cast_nullable_to_non_nullable
+as double?,heightCm: freezed == heightCm ? _self.heightCm : heightCm // ignore: cast_nullable_to_non_nullable
 as double?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
 as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,
@@ -158,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String familyId,  String name,  DateTime birthDate,  String? gender,  double? weightKg,  String? photoUrl,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String familyId,  String name,  DateTime birthDate,  String? gender,  double? weightKg,  double? heightCm,  String? photoUrl,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Baby() when $default != null:
-return $default(_that.id,_that.familyId,_that.name,_that.birthDate,_that.gender,_that.weightKg,_that.photoUrl,_that.isActive);case _:
+return $default(_that.id,_that.familyId,_that.name,_that.birthDate,_that.gender,_that.weightKg,_that.heightCm,_that.photoUrl,_that.isActive);case _:
   return orElse();
 
 }
@@ -179,10 +180,10 @@ return $default(_that.id,_that.familyId,_that.name,_that.birthDate,_that.gender,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String familyId,  String name,  DateTime birthDate,  String? gender,  double? weightKg,  String? photoUrl,  bool isActive)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String familyId,  String name,  DateTime birthDate,  String? gender,  double? weightKg,  double? heightCm,  String? photoUrl,  bool isActive)  $default,) {final _that = this;
 switch (_that) {
 case _Baby():
-return $default(_that.id,_that.familyId,_that.name,_that.birthDate,_that.gender,_that.weightKg,_that.photoUrl,_that.isActive);case _:
+return $default(_that.id,_that.familyId,_that.name,_that.birthDate,_that.gender,_that.weightKg,_that.heightCm,_that.photoUrl,_that.isActive);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +200,10 @@ return $default(_that.id,_that.familyId,_that.name,_that.birthDate,_that.gender,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String familyId,  String name,  DateTime birthDate,  String? gender,  double? weightKg,  String? photoUrl,  bool isActive)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String familyId,  String name,  DateTime birthDate,  String? gender,  double? weightKg,  double? heightCm,  String? photoUrl,  bool isActive)?  $default,) {final _that = this;
 switch (_that) {
 case _Baby() when $default != null:
-return $default(_that.id,_that.familyId,_that.name,_that.birthDate,_that.gender,_that.weightKg,_that.photoUrl,_that.isActive);case _:
+return $default(_that.id,_that.familyId,_that.name,_that.birthDate,_that.gender,_that.weightKg,_that.heightCm,_that.photoUrl,_that.isActive);case _:
   return null;
 
 }
@@ -214,7 +215,7 @@ return $default(_that.id,_that.familyId,_that.name,_that.birthDate,_that.gender,
 
 
 class _Baby implements Baby {
-  const _Baby({required this.id, required this.familyId, required this.name, required this.birthDate, this.gender, this.weightKg, this.photoUrl, this.isActive = true});
+  const _Baby({required this.id, required this.familyId, required this.name, required this.birthDate, this.gender, this.weightKg, this.heightCm, this.photoUrl, this.isActive = true});
   
 
 @override final  String id;
@@ -224,6 +225,7 @@ class _Baby implements Baby {
 @override final  String? gender;
 // 'male' | 'female' | 'unknown'
 @override final  double? weightKg;
+@override final  double? heightCm;
 @override final  String? photoUrl;
 @override@JsonKey() final  bool isActive;
 
@@ -237,16 +239,16 @@ _$BabyCopyWith<_Baby> get copyWith => __$BabyCopyWithImpl<_Baby>(this, _$identit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Baby&&(identical(other.id, id) || other.id == id)&&(identical(other.familyId, familyId) || other.familyId == familyId)&&(identical(other.name, name) || other.name == name)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.weightKg, weightKg) || other.weightKg == weightKg)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Baby&&(identical(other.id, id) || other.id == id)&&(identical(other.familyId, familyId) || other.familyId == familyId)&&(identical(other.name, name) || other.name == name)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.weightKg, weightKg) || other.weightKg == weightKg)&&(identical(other.heightCm, heightCm) || other.heightCm == heightCm)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,familyId,name,birthDate,gender,weightKg,photoUrl,isActive);
+int get hashCode => Object.hash(runtimeType,id,familyId,name,birthDate,gender,weightKg,heightCm,photoUrl,isActive);
 
 @override
 String toString() {
-  return 'Baby(id: $id, familyId: $familyId, name: $name, birthDate: $birthDate, gender: $gender, weightKg: $weightKg, photoUrl: $photoUrl, isActive: $isActive)';
+  return 'Baby(id: $id, familyId: $familyId, name: $name, birthDate: $birthDate, gender: $gender, weightKg: $weightKg, heightCm: $heightCm, photoUrl: $photoUrl, isActive: $isActive)';
 }
 
 
@@ -257,7 +259,7 @@ abstract mixin class _$BabyCopyWith<$Res> implements $BabyCopyWith<$Res> {
   factory _$BabyCopyWith(_Baby value, $Res Function(_Baby) _then) = __$BabyCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String familyId, String name, DateTime birthDate, String? gender, double? weightKg, String? photoUrl, bool isActive
+ String id, String familyId, String name, DateTime birthDate, String? gender, double? weightKg, double? heightCm, String? photoUrl, bool isActive
 });
 
 
@@ -274,7 +276,7 @@ class __$BabyCopyWithImpl<$Res>
 
 /// Create a copy of Baby
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? familyId = null,Object? name = null,Object? birthDate = null,Object? gender = freezed,Object? weightKg = freezed,Object? photoUrl = freezed,Object? isActive = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? familyId = null,Object? name = null,Object? birthDate = null,Object? gender = freezed,Object? weightKg = freezed,Object? heightCm = freezed,Object? photoUrl = freezed,Object? isActive = null,}) {
   return _then(_Baby(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,familyId: null == familyId ? _self.familyId : familyId // ignore: cast_nullable_to_non_nullable
@@ -282,6 +284,7 @@ as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non
 as String,birthDate: null == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
 as DateTime,gender: freezed == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
 as String?,weightKg: freezed == weightKg ? _self.weightKg : weightKg // ignore: cast_nullable_to_non_nullable
+as double?,heightCm: freezed == heightCm ? _self.heightCm : heightCm // ignore: cast_nullable_to_non_nullable
 as double?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
 as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,

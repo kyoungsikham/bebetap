@@ -44,7 +44,7 @@ class BabyRepository {
 
     final rows = await _client
         .from('babies')
-        .select('id, family_id, name, birth_date, gender, weight_kg, photo_url, is_active')
+        .select('id, family_id, name, birth_date, gender, weight_kg, height_cm, photo_url, is_active')
         .eq('family_id', familyId)
         .eq('is_active', true)
         .order('birth_date', ascending: false);
@@ -75,6 +75,7 @@ class BabyRepository {
     required DateTime birthDate,
     String? gender,
     double? weightKg,
+    double? heightCm,
     String? nickname,
     String? photoUrl,
   }) async {
@@ -108,6 +109,7 @@ class BabyRepository {
           'birth_date': _toDateString(birthDate),
           'gender': gender,
           'weight_kg': weightKg,
+          'height_cm': heightCm,
           'photo_url': ?photoUrl,
         })
         .select()
@@ -124,6 +126,7 @@ class BabyRepository {
     required DateTime birthDate,
     String? gender,
     double? weightKg,
+    double? heightCm,
     String? photoUrl,
   }) async {
     final row = await _client
@@ -133,6 +136,7 @@ class BabyRepository {
           'birth_date': _toDateString(birthDate),
           'gender': gender,
           'weight_kg': weightKg,
+          'height_cm': heightCm,
           'photo_url': ?photoUrl,
         })
         .eq('id', id)
@@ -149,6 +153,7 @@ class BabyRepository {
     required DateTime birthDate,
     String? gender,
     double? weightKg,
+    double? heightCm,
     String? photoUrl,
   }) async {
     final babyId = _uuid.v4();
@@ -161,6 +166,7 @@ class BabyRepository {
           'birth_date': _toDateString(birthDate),
           'gender': gender,
           'weight_kg': weightKg,
+          'height_cm': heightCm,
           'photo_url': ?photoUrl,
         })
         .select()
@@ -176,6 +182,7 @@ class BabyRepository {
         birthDate: DateTime.parse(map['birth_date'] as String),
         gender: map['gender'] as String?,
         weightKg: (map['weight_kg'] as num?)?.toDouble(),
+        heightCm: (map['height_cm'] as num?)?.toDouble(),
         photoUrl: map['photo_url'] as String?,
         isActive: map['is_active'] as bool? ?? true,
       );

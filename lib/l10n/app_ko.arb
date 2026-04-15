@@ -559,5 +559,32 @@
       "months": { "type": "int" },
       "days": { "type": "int" }
     }
-  }
+  },
+  "currentHeight": "현재 키",
+  "heightHint": "예: 65.5",
+  "invalidHeight": "유효한 키를 입력하세요 (1–150 cm)",
+  "growthStatsTitle": "키/몸무게 추이",
+  "growthStatsEmpty": "아이 관리 화면에서 키·몸무게를 등록하면\n또래 평균과 비교할 수 있어요",
+  "growthPercentileLabel": "{p}백분위",
+  "@growthPercentileLabel": {
+    "placeholders": { "p": { "type": "int" } }
+  },
+  "growthAboveAverage": "평균보다 +{diff}",
+  "@growthAboveAverage": {
+    "placeholders": { "diff": { "type": "String" } }
+  },
+  "growthBelowAverage": "평균보다 -{diff}",
+  "@growthBelowAverage": {
+    "placeholders": { "diff": { "type": "String" } }
+  },
+  "growthOnAverage": "평균과 비슷해요",
+  "growthHeightLabel": "키 (신장)",
+  "growthWeightLabel": "몸무게 (체중)",
+  "growthWhoReference": "WHO 성장표준 기준",
+  "growthCurrentAge": "현재 월령: {months}개월",
+  "@growthCurrentAge": {
+    "placeholders": { "months": { "type": "int" } }
+  },
+  "growthNoData": "데이터 없음",
+  "growthGoToManage": "아이 정보 입력하기"
 }

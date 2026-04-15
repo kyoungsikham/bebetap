@@ -189,6 +189,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _weightController;
+  late final TextEditingController _heightController;
   DateTime? _birthDate;
   String? _gender;
   File? _imageFile;
@@ -201,6 +202,9 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
     _weightController = TextEditingController(
       text: b?.weightKg != null ? b!.weightKg!.toString() : '',
     );
+    _heightController = TextEditingController(
+      text: b?.heightCm != null ? b!.heightCm!.toString() : '',
+    );
     _birthDate = b?.birthDate;
     _gender = b?.gender;
   }
@@ -209,6 +213,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
   void dispose() {
     _nameController.dispose();
     _weightController.dispose();
+    _heightController.dispose();
     super.dispose();
   }
 
@@ -246,6 +251,9 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
     final weightText = _weightController.text.trim();
     final weightKg =
         weightText.isNotEmpty ? double.tryParse(weightText) : null;
+    final heightText = _heightController.text.trim();
+    final heightCm =
+        heightText.isNotEmpty ? double.tryParse(heightText) : null;
     final notifier = ref.read(babyManageNotifierProvider.notifier);
     final repo = ref.read(babyRepositoryProvider);
     final messenger = ScaffoldMessenger.of(context);
@@ -264,6 +272,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
         birthDate: _birthDate!,
         gender: _gender,
         weightKg: weightKg,
+        heightCm: heightCm,
         photoUrl: photoUrl,
       );
     } else {
@@ -279,6 +288,7 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
         birthDate: _birthDate!,
         gender: _gender,
         weightKg: weightKg,
+        heightCm: heightCm,
         photoUrl: photoUrl,
       );
     }
@@ -457,6 +467,27 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
                 final parsed = double.tryParse(v.trim());
                 if (parsed == null || parsed <= 0 || parsed > 30) {
                   return context.l10n.invalidWeight;
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: AppSpacing.xl),
+
+            // 키
+            Text(context.l10n.currentHeight,
+                style: AppTypography.labelLarge.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface)),
+            const SizedBox(height: AppSpacing.sm),
+            TextFormField(
+              controller: _heightController,
+              decoration: _inputDecoration(context.l10n.heightHint),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return null;
+                final parsed = double.tryParse(v.trim());
+                if (parsed == null || parsed <= 0 || parsed > 150) {
+                  return context.l10n.invalidHeight;
                 }
                 return null;
               },

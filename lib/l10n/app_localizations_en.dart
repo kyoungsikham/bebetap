@@ -1108,4 +1108,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String babyAgeMonthsDays(int months, int days) {
     return '${months}m ${days}d';
   }
+
+  @override
+  String get currentHeight => 'Current height';
+
+  @override
+  String get heightHint => 'e.g. 65.5';
+
+  @override
+  String get invalidHeight => 'Enter valid height (1–150 cm)';
+
+  @override
+  String get growthStatsTitle => 'Growth';
+
+  @override
+  String get growthStatsEmpty =>
+      'Add height & weight in baby settings\nto compare with average growth';
+
+  @override
+  String growthPercentileLabel(int p) {
+    return '${p}th percentile';
+  }
+
+  @override
+  String growthAboveAverage(String diff) {
+    return '+$diff above average';
+  }
+
+  @override
+  String growthBelowAverage(String diff) {
+    return '-$diff below average';
+  }
+
+  @override
+  String get growthOnAverage => 'Near average';
+
+  @override
+  String get growthHeightLabel => 'Height';
+
+  @override
+  String get growthWeightLabel => 'Weight';
+
+  @override
+  String get growthWhoReference => 'Based on WHO Child Growth Standards';
+
+  @override
+  String growthCurrentAge(int months) {
+    return 'Age: $months months';
+  }
+
+  @override
+  String get growthNoData => 'No data';
+
+  @override
+  String get growthGoToManage => 'Enter baby info';
 }

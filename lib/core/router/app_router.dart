@@ -13,6 +13,7 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/log/presentation/screens/log_screen.dart';
 import '../../features/statistics/presentation/screens/baby_food_stats_screen.dart';
 import '../../features/statistics/presentation/screens/feeding_stats_screen.dart';
+import '../../features/statistics/presentation/screens/growth_stats_screen.dart';
 import '../../features/statistics/presentation/screens/sleep_stats_screen.dart';
 import '../../features/statistics/presentation/screens/statistics_screen.dart';
 import '../../features/family/presentation/screens/family_screen.dart';
@@ -172,6 +173,13 @@ GoRouter appRouter(Ref ref) {
         pageBuilder: (_, s) => _fadePage(
           key: s.pageKey,
           child: const SleepStatsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.growthStats,
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const GrowthStatsScreen(),
         ),
       ),
 

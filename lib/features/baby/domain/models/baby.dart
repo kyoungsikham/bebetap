@@ -11,6 +11,7 @@ abstract class Baby with _$Baby {
     required DateTime birthDate,
     String? gender,   // 'male' | 'female' | 'unknown'
     double? weightKg,
+    double? heightCm,
     String? photoUrl,
     @Default(true) bool isActive,
   }) = _Baby;

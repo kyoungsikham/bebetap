@@ -11,6 +11,7 @@ abstract class AppRoutes {
   static const String feedingStats   = '/statistics/feeding';
   static const String babyFoodStats  = '/statistics/baby-food';
   static const String sleepStats     = '/statistics/sleep';
+  static const String growthStats    = '/statistics/growth';
 
   static const String login         = '/login';
   static const String emailAuth     = '/email-auth';

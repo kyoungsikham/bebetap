@@ -6,7 +6,7 @@ part of 'baby_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$babyRepositoryHash() => r'd619cf6afaa9dbe52703ed53b29ae2681b2d221e';
+String _$babyRepositoryHash() => r'5a613bea0cbad52875809904ebf996095272a7ed';
 
 /// See also [babyRepository].
 @ProviderFor(babyRepository)
@@ -77,7 +77,7 @@ final selectedBabyIdProvider =
     );
 
 typedef _$SelectedBabyId = AutoDisposeNotifier<String?>;
-String _$babySetupNotifierHash() => r'65ffe73f04c348bbde348de97dd3763475deb9a5';
+String _$babySetupNotifierHash() => r'413c1f55dbb1f72c5a697a14b656b82550cca680';
 
 /// 온보딩에서 가족 + 아기 생성을 처리하는 Notifier.
 ///

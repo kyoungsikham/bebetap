@@ -1098,4 +1098,57 @@ class AppLocalizationsKo extends AppLocalizations {
   String babyAgeMonthsDays(int months, int days) {
     return '$months개월 $days일';
   }
+
+  @override
+  String get currentHeight => '현재 키';
+
+  @override
+  String get heightHint => '예: 65.5';
+
+  @override
+  String get invalidHeight => '유효한 키를 입력하세요 (1–150 cm)';
+
+  @override
+  String get growthStatsTitle => '키/몸무게 추이';
+
+  @override
+  String get growthStatsEmpty => '아이 관리 화면에서 키·몸무게를 등록하면\n또래 평균과 비교할 수 있어요';
+
+  @override
+  String growthPercentileLabel(int p) {
+    return '$p백분위';
+  }
+
+  @override
+  String growthAboveAverage(String diff) {
+    return '평균보다 +$diff';
+  }
+
+  @override
+  String growthBelowAverage(String diff) {
+    return '평균보다 -$diff';
+  }
+
+  @override
+  String get growthOnAverage => '평균과 비슷해요';
+
+  @override
+  String get growthHeightLabel => '키 (신장)';
+
+  @override
+  String get growthWeightLabel => '몸무게 (체중)';
+
+  @override
+  String get growthWhoReference => 'WHO 성장표준 기준';
+
+  @override
+  String growthCurrentAge(int months) {
+    return '현재 월령: $months개월';
+  }
+
+  @override
+  String get growthNoData => '데이터 없음';
+
+  @override
+  String get growthGoToManage => '아이 정보 입력하기';
 }

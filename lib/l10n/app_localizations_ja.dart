@@ -1098,4 +1098,57 @@ class AppLocalizationsJa extends AppLocalizations {
   String babyAgeMonthsDays(int months, int days) {
     return '$monthsヶ月$days日';
   }
+
+  @override
+  String get currentHeight => '現在の身長';
+
+  @override
+  String get heightHint => '例: 65.5';
+
+  @override
+  String get invalidHeight => '有効な身長を入力してください（1〜150 cm）';
+
+  @override
+  String get growthStatsTitle => '身長・体重';
+
+  @override
+  String get growthStatsEmpty => '赤ちゃん管理画面で身長・体重を登録すると\n平均と比較できます';
+
+  @override
+  String growthPercentileLabel(int p) {
+    return '$pパーセンタイル';
+  }
+
+  @override
+  String growthAboveAverage(String diff) {
+    return '平均より +$diff';
+  }
+
+  @override
+  String growthBelowAverage(String diff) {
+    return '平均より -$diff';
+  }
+
+  @override
+  String get growthOnAverage => '平均付近';
+
+  @override
+  String get growthHeightLabel => '身長';
+
+  @override
+  String get growthWeightLabel => '体重';
+
+  @override
+  String get growthWhoReference => 'WHO 成長基準準拠';
+
+  @override
+  String growthCurrentAge(int months) {
+    return '月齢: $monthsヶ月';
+  }
+
+  @override
+  String get growthNoData => 'データなし';
+
+  @override
+  String get growthGoToManage => '赤ちゃん情報を入力';
 }
