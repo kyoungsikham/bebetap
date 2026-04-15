@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../core/config/ad_config.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/banner_ad_widget.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
@@ -145,14 +143,8 @@ class _LogScreenState extends ConsumerState<LogScreen> {
                     AppSpacing.pagePadding,
                     AppSpacing.pagePadding + 80, // FAB 여백
                   ),
-                  itemCount: entries.length + 1,
+                  itemCount: entries.length,
                   itemBuilder: (context, i) {
-                    if (i == entries.length) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: AppSpacing.md),
-                        child: BannerAdWidget(adUnitId: AdConfig.logBannerId),
-                      );
-                    }
                     return TimelineItemTile(
                       entry: entries[i],
                       isFirst: i == 0,

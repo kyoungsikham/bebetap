@@ -12,8 +12,6 @@ import '../providers/family_provider.dart';
 import '../widgets/invite_code_card.dart';
 import '../widgets/join_family_bottom_sheet.dart';
 import '../widgets/relationship_selector.dart';
-import '../../../../core/config/ad_config.dart';
-import '../../../../shared/widgets/banner_ad_widget.dart';
 
 class FamilyScreen extends ConsumerStatefulWidget {
   const FamilyScreen({super.key});
@@ -168,8 +166,6 @@ class _NoFamilyView extends StatelessWidget {
             side: BorderSide(color: Theme.of(context).dividerColor),
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        BannerAdWidget(adUnitId: AdConfig.familyBannerId),
       ],
     );
   }
@@ -215,8 +211,6 @@ class _FamilyView extends StatelessWidget {
             );
           },
         ),
-        const SizedBox(height: AppSpacing.lg),
-        BannerAdWidget(adUnitId: AdConfig.familyBannerId),
       ],
     );
   }
@@ -230,16 +224,6 @@ class _MemberTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final badgeColor = isMe
-        ? AppColors.success
-        : member.isOwner
-            ? AppColors.primary
-            : cs.onSurface.withValues(alpha: 0.55);
-    final badgeBg = isMe
-        ? AppColors.success.withValues(alpha: 0.12)
-        : member.isOwner
-            ? AppColors.primary.withValues(alpha: 0.1)
-            : cs.surfaceContainerHighest;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -274,34 +258,12 @@ class _MemberTile extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              member.name ?? context.l10n.userLabel,
-              style: AppTypography.bodyMedium.copyWith(
-                fontWeight: isMe ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-          ),
-          if (isMe)
-            Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: Text(
-                context.l10n.me,
-                style: AppTypography.labelSmall.copyWith(
-                  color: AppColors.success,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: badgeBg,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
               member.nickname != null
                   ? localizedRelationPreset(member.nickname!, context.l10n)
                   : (member.isOwner ? context.l10n.caregiverRole : context.l10n.familyRole),
-              style: AppTypography.labelSmall.copyWith(color: badgeColor),
+              style: AppTypography.bodyMedium.copyWith(
+                fontWeight: isMe ? FontWeight.w600 : FontWeight.normal,
+              ),
             ),
           ),
         ],

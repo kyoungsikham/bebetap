@@ -16,6 +16,7 @@ class BannerAdWidget extends ConsumerStatefulWidget {
 class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
   BannerAd? _ad;
   bool _loaded = false;
+  AdSize? _reservedSize;
 
   @override
   void didChangeDependencies() {
@@ -25,8 +26,12 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
 
   Future<void> _loadAd() async {
     final width = MediaQuery.sizeOf(context).width.truncate();
-    final adSize = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(width);
+    final adSize =
+        await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(width);
     if (adSize == null || !mounted) return;
+
+    // 광고가 도착하기 전에 회색 'AD' 플레이스홀더로 영역을 먼저 확보한다.
+    setState(() => _reservedSize = adSize);
 
     final ad = BannerAd(
       adUnitId: widget.adUnitId,
@@ -38,6 +43,7 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
         },
         onAdFailedToLoad: (ad, _) {
           ad.dispose();
+          // 실패 시에도 플레이스홀더는 유지해 레이아웃이 흔들리지 않게 한다.
         },
       ),
     );
@@ -59,12 +65,33 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
   @override
   Widget build(BuildContext context) {
     final adFree = ref.watch(adFreeProvider).valueOrNull ?? false;
-    if (adFree || _ad == null || !_loaded) return const SizedBox.shrink();
+    if (adFree) return const SizedBox.shrink();
+
+    final size = _reservedSize;
+    if (size == null) return const SizedBox.shrink();
+
+    final cs = Theme.of(context).colorScheme;
+    final loaded = _ad != null && _loaded;
 
     return SizedBox(
-      width: _ad!.size.width.toDouble(),
-      height: _ad!.size.height.toDouble(),
-      child: AdWidget(ad: _ad!),
+      width: size.width.toDouble(),
+      height: size.height.toDouble(),
+      child: ColoredBox(
+        color: cs.surfaceContainerHighest,
+        child: loaded
+            ? AdWidget(ad: _ad!)
+            : Center(
+                child: Text(
+                  'AD',
+                  style: TextStyle(
+                    color: cs.onSurfaceVariant,
+                    fontSize: 11,
+                    letterSpacing: 1.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+      ),
     );
   }
 }

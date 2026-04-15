@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/config/ad_config.dart';
 import '../../core/router/app_routes.dart';
 import '../../shared/extensions/l10n_ext.dart';
+import 'banner_ad_widget.dart';
 
 class ScaffoldWithBottomNav extends StatelessWidget {
   const ScaffoldWithBottomNav({super.key, required this.child});
@@ -48,25 +50,44 @@ class ScaffoldWithBottomNav extends StatelessWidget {
       l10n.tabFamily,
     ];
 
+    final adUnitId = switch (currentIndex) {
+      0 => AdConfig.homeBannerId,
+      1 => AdConfig.statsBannerId,
+      2 => AdConfig.logBannerId,
+      _ => AdConfig.familyBannerId,
+    };
+
     return Scaffold(
       body: child,
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Theme.of(context).dividerColor),
-          ),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: currentIndex,
-          onTap: (i) => context.go(_tabPaths[i]),
-          items: List.generate(
-            _tabPaths.length,
-            (i) => BottomNavigationBarItem(
-              icon: Icon(_tabIcons[i]),
-              activeIcon: Icon(_tabActiveIcons[i]),
-              label: tabLabels[i],
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: Theme.of(context).dividerColor),
+                ),
+              ),
+              child: BottomNavigationBar(
+                currentIndex: currentIndex,
+                onTap: (i) => context.go(_tabPaths[i]),
+                items: List.generate(
+                  _tabPaths.length,
+                  (i) => BottomNavigationBarItem(
+                    icon: Icon(_tabIcons[i]),
+                    activeIcon: Icon(_tabActiveIcons[i]),
+                    label: tabLabels[i],
+                  ),
+                ),
+              ),
             ),
-          ),
+            BannerAdWidget(
+              key: ValueKey('tab-banner-$currentIndex'),
+              adUnitId: adUnitId,
+            ),
+          ],
         ),
       ),
     );

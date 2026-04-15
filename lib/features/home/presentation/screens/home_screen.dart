@@ -22,8 +22,6 @@ import '../widgets/baby_selector_sheet.dart';
 import '../widgets/status_card.dart';
 import '../widgets/stats_strip.dart';
 import '../widgets/tracking_grid.dart';
-import '../../../../core/config/ad_config.dart';
-import '../../../../shared/widgets/banner_ad_widget.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -75,8 +73,6 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   const TrackingGrid(),
-                  const SizedBox(height: AppSpacing.lg),
-                  BannerAdWidget(adUnitId: AdConfig.homeBannerId),
                 ]),
               ),
             ),

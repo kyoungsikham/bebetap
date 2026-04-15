@@ -18,8 +18,6 @@ import '../widgets/insight_card.dart';
 import '../widgets/pattern_date_range_bar.dart';
 import '../widgets/stats_nav_card.dart';
 import 'comparison_screen.dart';
-import '../../../../core/config/ad_config.dart';
-import '../../../../shared/widgets/banner_ad_widget.dart';
 
 class StatisticsScreen extends ConsumerStatefulWidget {
   const StatisticsScreen({super.key});
@@ -305,8 +303,6 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 onTap: () => context.push(AppRoutes.growthStats),
               ),
             ),
-          const SizedBox(height: AppSpacing.md),
-          BannerAdWidget(adUnitId: AdConfig.statsBannerId),
         ],
       ),
     );
