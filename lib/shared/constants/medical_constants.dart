@@ -1,7 +1,7 @@
 class MedicalConstants {
   // 분유 수유
   static double formulaDailyTargetMl(double weightKg) => weightKg * 150;
-  static const int formulaPickerMinMl = 10;
+  static const int formulaPickerMinMl = 0;
   static const int formulaPickerMaxMl = 300;
   static const int formulaPickerStepMl = 10;
   static const int formulaDefaultMl = 120;
@@ -16,7 +16,7 @@ class MedicalConstants {
   static const double sixMonthSleepTargetHours = 14.0; // 6-12개월
 
   // 이유식
-  static const int babyFoodPickerMinMl = 10;
+  static const int babyFoodPickerMinMl = 0;
   static const int babyFoodPickerMaxMl = 300;
   static const int babyFoodPickerStepMl = 10;
   static const int babyFoodDefaultMl = 80;

@@ -17,4 +17,6 @@ abstract class AppRoutes {
   static const String emailAuth     = '/email-auth';
   static const String babySetup     = '/baby-setup';
   static const String resetPassword = '/reset-password';
+
+  static const String paywall = '/paywall';
 }

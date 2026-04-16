@@ -18,6 +18,7 @@ import '../../features/statistics/presentation/screens/sleep_stats_screen.dart';
 import '../../features/statistics/presentation/screens/statistics_screen.dart';
 import '../../features/family/presentation/screens/family_screen.dart';
 import '../../features/baby/presentation/screens/baby_manage_screen.dart';
+import '../../features/premium/presentation/screens/paywall_screen.dart';
 import '../../features/settings/presentation/screens/icon_settings_screen.dart';
 import '../../shared/widgets/bottom_nav_bar.dart';
 import '../providers/auth_provider.dart';
@@ -150,6 +151,13 @@ GoRouter appRouter(Ref ref) {
         pageBuilder: (_, s) => _fadePage(
           key: s.pageKey,
           child: const ResetPasswordScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.paywall,
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const PaywallScreen(),
         ),
       ),
 

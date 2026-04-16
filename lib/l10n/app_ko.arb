@@ -586,5 +586,16 @@
     "placeholders": { "months": { "type": "int" } }
   },
   "growthNoData": "데이터 없음",
-  "growthGoToManage": "아이 정보 입력하기"
+  "growthGoToManage": "아이 정보 입력하기",
+
+  "menuRemoveAds": "광고 제거",
+  "removeAdsActive": "적용 중",
+  "removeAdsSubtitle": "일회성 결제 · 영구 제거",
+  "paywallTitle": "광고 제거",
+  "paywallBenefit": "모든 배너·전면 광고가 영원히 사라집니다",
+  "paywallPurchaseCta": "구매하기",
+  "paywallRestoreCta": "구매 복원",
+  "paywallPurchaseSuccess": "광고가 제거되었습니다",
+  "paywallPurchaseFailed": "구매에 실패했습니다",
+  "paywallAlreadyPurchased": "이미 광고가 제거되었습니다"
 }

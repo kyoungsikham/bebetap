@@ -586,5 +586,16 @@
     "placeholders": { "months": { "type": "int" } }
   },
   "growthNoData": "データなし",
-  "growthGoToManage": "赤ちゃん情報を入力"
+  "growthGoToManage": "赤ちゃん情報を入力",
+
+  "menuRemoveAds": "広告を削除",
+  "removeAdsActive": "適用中",
+  "removeAdsSubtitle": "買い切り・永続",
+  "paywallTitle": "広告を削除",
+  "paywallBenefit": "すべての広告が永久に消えます",
+  "paywallPurchaseCta": "購入する",
+  "paywallRestoreCta": "購入を復元",
+  "paywallPurchaseSuccess": "広告を削除しました",
+  "paywallPurchaseFailed": "購入に失敗しました",
+  "paywallAlreadyPurchased": "すでに広告は削除されています"
 }

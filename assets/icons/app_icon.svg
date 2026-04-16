@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#FF8C7A"/>
+      <stop offset="100%" stop-color="#E8507A"/>
+    </linearGradient>
+    <radialGradient id="bgHighlight" cx="30%" cy="25%" r="50%">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="iconShadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="28" result="blur"/>
+      <feOffset dx="0" dy="20" result="offsetBlur"/>
+      <feFlood flood-color="#B03050" flood-opacity="0.40" result="color"/>
+      <feComposite in="color" in2="offsetBlur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="1024" height="1024" rx="230" ry="230" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="230" ry="230" fill="url(#bgHighlight)"/>
+
+  <!-- 아이콘 (원본 형태 그대로 + 그림자) scale(0.62) 으로 크기 축소 -->
+  <g transform="translate(512, 520) scale(0.62)" filter="url(#iconShadow)">
+    <!-- 귀 -->
+    <circle cx="-198" cy="20" r="72" fill="white"/>
+    <circle cx="198"  cy="20" r="72" fill="white"/>
+    <!-- 얼굴 -->
+    <circle cx="0" cy="0" r="210" fill="white"/>
+    <!-- 눈 -->
+    <circle cx="-72" cy="-30" r="26" fill="#E8507A"/>
+    <circle cx="72"  cy="-30" r="26" fill="#E8507A"/>
+    <!-- 미소 -->
+    <path d="M -72,60 Q 0,125 72,60"
+          fill="none" stroke="#E8507A" stroke-width="26"
+          stroke-linecap="round"/>
+  </g>
+</svg>

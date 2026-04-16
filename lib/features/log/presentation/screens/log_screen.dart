@@ -81,12 +81,14 @@ class _LogScreenState extends ConsumerState<LogScreen> {
           ),
           const SizedBox(height: AppSpacing.md),
 
-          // 요약 스트립
+          // 요약 스트립 (탭 시 해당 카테고리 기록 추가)
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.pagePadding,
             ),
-            child: const LogStatsStrip(),
+            child: LogStatsStrip(
+              onTapCategory: (type) => _openAddSheetForType(context, ref, type),
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
 
@@ -141,7 +143,7 @@ class _LogScreenState extends ConsumerState<LogScreen> {
                     AppSpacing.pagePadding,
                     AppSpacing.md,
                     AppSpacing.pagePadding,
-                    AppSpacing.pagePadding + 80, // FAB 여백
+                    AppSpacing.pagePadding,
                   ),
                   itemCount: entries.length,
                   itemBuilder: (context, i) {
@@ -157,13 +159,6 @@ class _LogScreenState extends ConsumerState<LogScreen> {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.onPrimary,
-        shape: const CircleBorder(),
-        onPressed: () => _openAddSheet(context, ref),
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -270,18 +265,16 @@ class _LogScreenState extends ConsumerState<LogScreen> {
         sheet = const TemperatureBottomSheet();
         title = context.l10n.addTemperature;
       default:
-        // 알 수 없는 탭이면 일반 추가 시트 열기
-        _openAddSheet(context, ref);
         return;
     }
     showAppBottomSheet(context: context, child: sheet, title: title);
   }
 
-  Future<void> _openAddSheet(BuildContext context, WidgetRef ref) async {
-    final filter = ref.read(selectedTimelineFilterProvider);
+  Future<void> _openAddSheetForType(
+      BuildContext context, WidgetRef ref, TimelineEntryType type) async {
     late Widget sheet;
     late String title;
-    switch (filter) {
+    switch (type) {
       case TimelineEntryType.formula:
         sheet = const FormulaBottomSheet();
         title = context.l10n.addFormula;

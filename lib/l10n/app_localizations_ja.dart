@@ -1151,4 +1151,34 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get growthGoToManage => '赤ちゃん情報を入力';
+
+  @override
+  String get menuRemoveAds => '広告を削除';
+
+  @override
+  String get removeAdsActive => '適用中';
+
+  @override
+  String get removeAdsSubtitle => '買い切り・永続';
+
+  @override
+  String get paywallTitle => '広告を削除';
+
+  @override
+  String get paywallBenefit => 'すべての広告が永久に消えます';
+
+  @override
+  String get paywallPurchaseCta => '購入する';
+
+  @override
+  String get paywallRestoreCta => '購入を復元';
+
+  @override
+  String get paywallPurchaseSuccess => '広告を削除しました';
+
+  @override
+  String get paywallPurchaseFailed => '購入に失敗しました';
+
+  @override
+  String get paywallAlreadyPurchased => 'すでに広告は削除されています';
 }

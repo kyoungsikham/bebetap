@@ -11,6 +11,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/models/theme_mode_setting.dart';
 import '../../../../shared/models/volume_unit.dart';
+import '../../../../shared/providers/ad_free_provider.dart';
 import '../../../../shared/providers/locale_provider.dart';
 import '../../../../shared/providers/theme_provider.dart';
 import '../../../../shared/providers/volume_unit_provider.dart';
@@ -123,6 +124,7 @@ class _HamburgerMenuPanelState extends ConsumerState<_HamburgerMenuPanel> {
     final themeSetting =
         ref.watch(themeSettingProvider).valueOrNull ?? const ThemeModeSetting();
     final currentUnit = ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
+    final isPremium = ref.watch(adFreeProvider).valueOrNull ?? false;
 
     return Align(
       alignment: Alignment.centerRight,
@@ -280,6 +282,29 @@ class _HamburgerMenuPanelState extends ConsumerState<_HamburgerMenuPanel> {
                       onTap: () => ref.read(volumeUnitProvider.notifier).setUnit(VolumeUnit.oz),
                     ),
                   ],
+                  // 광고 제거 (인앱결제)
+                  ListTile(
+                    leading: Icon(
+                      Icons.block_outlined,
+                      color: isPremium ? AppColors.success : null,
+                    ),
+                    title: Text(l10n.menuRemoveAds),
+                    subtitle: Text(
+                      isPremium ? l10n.removeAdsActive : l10n.removeAdsSubtitle,
+                      style: AppTypography.bodySmall,
+                    ),
+                    trailing: isPremium
+                        ? const Icon(Icons.check_circle,
+                            color: AppColors.success, size: 18)
+                        : const Icon(Icons.chevron_right,
+                            color: AppColors.onSurfaceMuted),
+                    onTap: () {
+                      final router = GoRouter.of(context);
+                      Navigator.of(context, rootNavigator: true).pop();
+                      Future.microtask(
+                          () => router.push(AppRoutes.paywall));
+                    },
+                  ),
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.logout, color: AppColors.error),

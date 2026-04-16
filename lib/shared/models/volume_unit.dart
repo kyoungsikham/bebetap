@@ -15,9 +15,9 @@ extension VolumeUnitX on VolumeUnit {
   /// ml 모드: 10ml 단위, oz 모드: 0.5oz(=15ml) 단위
   List<int> pickerItems({required int minMl, required int maxMl, required int stepMl}) {
     if (this == VolumeUnit.oz) {
-      // 0.5oz = 15ml 단위
+      // 0.5oz = 15ml 단위 (0 포함)
       const ozStepMl = 15;
-      return List.generate(maxMl ~/ ozStepMl, (i) => (i + 1) * ozStepMl);
+      return List.generate(maxMl ~/ ozStepMl + 1, (i) => i * ozStepMl);
     }
     return List.generate(
       (maxMl - minMl) ~/ stepMl + 1,

@@ -2211,6 +2211,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter baby info'**
   String get growthGoToManage;
+
+  /// No description provided for @menuRemoveAds.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Ads'**
+  String get menuRemoveAds;
+
+  /// No description provided for @removeAdsActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get removeAdsActive;
+
+  /// No description provided for @removeAdsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time · forever'**
+  String get removeAdsSubtitle;
+
+  /// No description provided for @paywallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Ads'**
+  String get paywallTitle;
+
+  /// No description provided for @paywallBenefit.
+  ///
+  /// In en, this message translates to:
+  /// **'All banner & interstitial ads disappear forever'**
+  String get paywallBenefit;
+
+  /// No description provided for @paywallPurchaseCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase'**
+  String get paywallPurchaseCta;
+
+  /// No description provided for @paywallRestoreCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Purchase'**
+  String get paywallRestoreCta;
+
+  /// No description provided for @paywallPurchaseSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Ads removed'**
+  String get paywallPurchaseSuccess;
+
+  /// No description provided for @paywallPurchaseFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase failed'**
+  String get paywallPurchaseFailed;
+
+  /// No description provided for @paywallAlreadyPurchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Ads are already removed'**
+  String get paywallAlreadyPurchased;
 }
 
 class _AppLocalizationsDelegate

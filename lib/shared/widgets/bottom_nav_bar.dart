@@ -13,22 +13,22 @@ class ScaffoldWithBottomNav extends StatelessWidget {
 
   static const _tabPaths = [
     AppRoutes.home,
-    AppRoutes.statistics,
     AppRoutes.log,
+    AppRoutes.statistics,
     AppRoutes.family,
   ];
 
   static const _tabIcons = [
     Icons.home_outlined,
-    Icons.bar_chart_outlined,
     Icons.list_alt_outlined,
+    Icons.bar_chart_outlined,
     Icons.people_outline,
   ];
 
   static const _tabActiveIcons = [
     Icons.home,
-    Icons.bar_chart,
     Icons.list_alt,
+    Icons.bar_chart,
     Icons.people,
   ];
 
@@ -45,15 +45,15 @@ class ScaffoldWithBottomNav extends StatelessWidget {
 
     final tabLabels = [
       l10n.tabHome,
-      l10n.tabStatistics,
       l10n.tabLog,
+      l10n.tabStatistics,
       l10n.tabFamily,
     ];
 
     final adUnitId = switch (currentIndex) {
       0 => AdConfig.homeBannerId,
-      1 => AdConfig.statsBannerId,
-      2 => AdConfig.logBannerId,
+      1 => AdConfig.logBannerId,
+      2 => AdConfig.statsBannerId,
       _ => AdConfig.familyBannerId,
     };
 

@@ -20,7 +20,6 @@ class DiaryRepository {
     String? authorNickname,
   }) async {
     final id = _uuid.v4();
-    final date = DateTime.utc(entryDate.year, entryDate.month, entryDate.day);
     await _db.diaryDao.upsertDiary(
       DiaryEntriesTableCompanion(
         id: Value(id),
@@ -29,7 +28,7 @@ class DiaryRepository {
         recordedBy: Value(recordedBy),
         title: Value(title),
         content: Value(content),
-        entryDate: Value(date),
+        entryDate: Value(entryDate),
         authorNickname: Value(authorNickname),
         localId: Value(id),
         syncStatus: const Value('pending_create'),
@@ -41,7 +40,7 @@ class DiaryRepository {
       familyId: familyId,
       title: title,
       content: content,
-      entryDate: date,
+      entryDate: entryDate,
       recordedBy: recordedBy,
       authorNickname: authorNickname,
     );

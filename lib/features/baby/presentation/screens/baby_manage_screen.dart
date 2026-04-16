@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -220,11 +221,37 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
   Future<void> _pickImage() async {
     final picked = await ImagePicker().pickImage(
       source: ImageSource.gallery,
+      imageQuality: 90,
+    );
+    if (picked == null) return;
+    if (!mounted) return;
+
+    final photoSelectLabel = context.l10n.photoSelect;
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    final cropped = await ImageCropper().cropImage(
+      sourcePath: picked.path,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
       maxWidth: 512,
       maxHeight: 512,
-      imageQuality: 85,
+      compressQuality: 85,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: photoSelectLabel,
+          toolbarColor: primaryColor,
+          toolbarWidgetColor: Colors.white,
+          lockAspectRatio: true,
+          cropStyle: CropStyle.circle,
+        ),
+        IOSUiSettings(
+          title: photoSelectLabel,
+          aspectRatioLockEnabled: true,
+          resetAspectRatioEnabled: false,
+          cropStyle: CropStyle.circle,
+        ),
+      ],
     );
-    if (picked != null) setState(() => _imageFile = File(picked.path));
+    if (cropped != null) setState(() => _imageFile = File(cropped.path));
   }
 
   Future<void> _pickBirthDate() async {

@@ -316,8 +316,7 @@ class _BreastBottomSheetState extends ConsumerState<BreastBottomSheet> {
               Expanded(
                 flex: 2,
                 child: ElevatedButton(
-                  onPressed: (isLoading ||
-                          !sw.isActive && sw.totalDuration == Duration.zero)
+                  onPressed: isLoading
                       ? null
                       : () async {
                           ref

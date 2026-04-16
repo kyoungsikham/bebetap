@@ -1151,4 +1151,34 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get growthGoToManage => '아이 정보 입력하기';
+
+  @override
+  String get menuRemoveAds => '광고 제거';
+
+  @override
+  String get removeAdsActive => '적용 중';
+
+  @override
+  String get removeAdsSubtitle => '일회성 결제 · 영구 제거';
+
+  @override
+  String get paywallTitle => '광고 제거';
+
+  @override
+  String get paywallBenefit => '모든 배너·전면 광고가 영원히 사라집니다';
+
+  @override
+  String get paywallPurchaseCta => '구매하기';
+
+  @override
+  String get paywallRestoreCta => '구매 복원';
+
+  @override
+  String get paywallPurchaseSuccess => '광고가 제거되었습니다';
+
+  @override
+  String get paywallPurchaseFailed => '구매에 실패했습니다';
+
+  @override
+  String get paywallAlreadyPurchased => '이미 광고가 제거되었습니다';
 }

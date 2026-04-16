@@ -1162,4 +1162,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get growthGoToManage => 'Enter baby info';
+
+  @override
+  String get menuRemoveAds => 'Remove Ads';
+
+  @override
+  String get removeAdsActive => 'Active';
+
+  @override
+  String get removeAdsSubtitle => 'One-time · forever';
+
+  @override
+  String get paywallTitle => 'Remove Ads';
+
+  @override
+  String get paywallBenefit =>
+      'All banner & interstitial ads disappear forever';
+
+  @override
+  String get paywallPurchaseCta => 'Purchase';
+
+  @override
+  String get paywallRestoreCta => 'Restore Purchase';
+
+  @override
+  String get paywallPurchaseSuccess => 'Ads removed';
+
+  @override
+  String get paywallPurchaseFailed => 'Purchase failed';
+
+  @override
+  String get paywallAlreadyPurchased => 'Ads are already removed';
 }

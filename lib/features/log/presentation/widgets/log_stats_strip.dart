@@ -12,7 +12,13 @@ import '../../domain/models/timeline_entry.dart';
 import '../providers/log_provider.dart';
 
 class LogStatsStrip extends ConsumerStatefulWidget {
-  const LogStatsStrip({super.key});
+  const LogStatsStrip({
+    super.key,
+    required this.onTapCategory,
+  });
+
+  /// 아이콘 탭 시 해당 카테고리의 기록 추가 바텀시트를 열도록 호출
+  final void Function(TimelineEntryType type) onTapCategory;
 
   @override
   ConsumerState<LogStatsStrip> createState() => _LogStatsStripState();
@@ -31,16 +37,8 @@ class _LogStatsStripState extends ConsumerState<LogStatsStrip> {
   @override
   Widget build(BuildContext context) {
     final summaryAsync = ref.watch(logDaySummaryProvider);
-    final filter = ref.watch(selectedTimelineFilterProvider);
     final visibleTypes = ref.watch(visibleCategoriesProvider);
     final unit = ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
-
-    // If current filter is hidden, reset to first visible type
-    if (visibleTypes.isNotEmpty && !visibleTypes.contains(filter)) {
-      Future.microtask(() => ref
-          .read(selectedTimelineFilterProvider.notifier)
-          .setFilter(visibleTypes.first));
-    }
 
     // Keep last known summary to avoid scroll reset during reload
     if (summaryAsync.valueOrNull != null) {
@@ -49,7 +47,6 @@ class _LogStatsStripState extends ConsumerState<LogStatsStrip> {
     final summary = _lastSummary;
 
     if (summary == null) {
-      // First load only
       return _StripSkeleton(count: visibleTypes.length);
     }
 
@@ -90,10 +87,7 @@ class _LogStatsStripState extends ConsumerState<LogStatsStrip> {
               final info = TrackingCategoryInfo.all[type]!;
               return _StatChip(
                 type: type,
-                isSelected: filter == type,
-                onTap: () => ref
-                    .read(selectedTimelineFilterProvider.notifier)
-                    .setFilter(type),
+                onTap: () => widget.onTapCategory(type),
                 icon: info.icon,
                 color: info.color,
                 bgColor: info.bgColor,
@@ -111,7 +105,6 @@ class _LogStatsStripState extends ConsumerState<LogStatsStrip> {
 class _StatChip extends StatelessWidget {
   const _StatChip({
     required this.type,
-    required this.isSelected,
     required this.onTap,
     required this.icon,
     required this.color,
@@ -121,7 +114,6 @@ class _StatChip extends StatelessWidget {
   });
 
   final TimelineEntryType type;
-  final bool isSelected;
   final VoidCallback onTap;
   final IconData icon;
   final Color color;
@@ -133,20 +125,14 @@ class _StatChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+      child: Container(
         width: 80,
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected
-              ? color.withValues(alpha: 0.18)
-              : Theme.of(context).colorScheme.surfaceContainerHighest,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? color
-                : Theme.of(context).dividerColor,
-            width: isSelected ? 2.0 : 1.0,
+            color: Theme.of(context).dividerColor,
           ),
         ),
         child: Column(
@@ -156,7 +142,7 @@ class _StatChip extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: isSelected ? 0.25 : 0.15),
+                color: color.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 18),
@@ -177,14 +163,11 @@ class _StatChip extends StatelessWidget {
             Text(
               label,
               style: AppTypography.labelSmall.copyWith(
-                color: isSelected
-                    ? color
-                    : Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.55),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.55),
                 fontSize: 10,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
           ],

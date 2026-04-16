@@ -596,5 +596,16 @@
     "placeholders": { "months": { "type": "int" } }
   },
   "growthNoData": "No data",
-  "growthGoToManage": "Enter baby info"
+  "growthGoToManage": "Enter baby info",
+
+  "menuRemoveAds": "Remove Ads",
+  "removeAdsActive": "Active",
+  "removeAdsSubtitle": "One-time · forever",
+  "paywallTitle": "Remove Ads",
+  "paywallBenefit": "All banner & interstitial ads disappear forever",
+  "paywallPurchaseCta": "Purchase",
+  "paywallRestoreCta": "Restore Purchase",
+  "paywallPurchaseSuccess": "Ads removed",
+  "paywallPurchaseFailed": "Purchase failed",
+  "paywallAlreadyPurchased": "Ads are already removed"
 }

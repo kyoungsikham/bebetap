@@ -53,13 +53,11 @@ class SelectedTimelineFilter extends _$SelectedTimelineFilter {
   void setFilter(TimelineEntryType type) => state = type;
 }
 
-// ─── 필터 적용된 타임라인 ─────────────────────────────────────────────────────
+// ─── 필터 적용된 타임라인 (전체 표시) ────────────────────────────────────────
 
 @riverpod
 Future<List<TimelineEntry>> filteredLogTimeline(Ref ref) async {
-  final entries = await ref.watch(logTimelineProvider.future);
-  final filter = ref.watch(selectedTimelineFilterProvider);
-  return entries.where((e) => e.type == filter).toList();
+  return ref.watch(logTimelineProvider.future);
 }
 
 // ─── 요약 (타임라인 변경 시 자동 재조회) ─────────────────────────────────────
