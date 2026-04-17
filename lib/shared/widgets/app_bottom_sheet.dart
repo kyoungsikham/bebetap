@@ -56,7 +56,7 @@ class _AppBottomSheetWrapper extends StatelessWidget {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Text(title!, style: AppTypography.titleMedium),
+                    Text(title!, style: AppTypography.headlineMedium),
                     if (titleTrailing != null)
                       Positioned(right: AppSpacing.pagePadding, child: titleTrailing!),
                   ],

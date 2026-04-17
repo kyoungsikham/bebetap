@@ -86,7 +86,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get breast => '모유';
 
   @override
-  String get pumped => '유축수유';
+  String get pumped => '유축';
 
   @override
   String get babyFood => '이유식';
@@ -119,19 +119,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tapToRecord => '탭해서 기록';
 
   @override
-  String get formulaBottomSheetTitle => '분유 수유';
+  String get formulaBottomSheetTitle => '분유';
 
   @override
-  String get breastBottomSheetTitle => '모유 수유';
+  String get breastBottomSheetTitle => '모유';
 
   @override
-  String get pumpedBottomSheetTitle => '유축 수유';
+  String get pumpedBottomSheetTitle => '유축';
 
   @override
-  String get babyFoodBottomSheetTitle => '이유식 기록';
+  String get babyFoodBottomSheetTitle => '이유식';
 
   @override
-  String get temperatureRecordTitle => '체온 기록';
+  String get temperatureRecordTitle => '체온';
 
   @override
   String get diaryWriteTitle => '일기 쓰기';
@@ -161,7 +161,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get typeBreastFeeding => '모유 수유';
 
   @override
-  String get typePumpedFeeding => '유축 수유';
+  String get typePumpedFeeding => '유축';
 
   @override
   String get typeBabyFood => '이유식';
@@ -833,16 +833,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get diaryLog => '일기';
 
   @override
-  String get addFormula => '분유 수유';
+  String get addFormula => '분유';
 
   @override
-  String get addPumped => '유축 수유';
+  String get addPumped => '유축';
 
   @override
-  String get addBabyFood => '이유식 기록';
+  String get addBabyFood => '이유식';
 
   @override
-  String get addBreast => '모유 수유';
+  String get addBreast => '모유';
 
   @override
   String get addDiaper => '기저귀';
@@ -851,7 +851,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get addSleep => '수면';
 
   @override
-  String get addTemperature => '체온 기록';
+  String get addTemperature => '체온';
 
   @override
   String get editDiary => '일기 수정';

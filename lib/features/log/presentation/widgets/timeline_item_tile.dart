@@ -76,8 +76,8 @@ class TimelineItemTile extends ConsumerWidget {
                           ? Colors.white
                           : Theme.of(context).colorScheme.surfaceContainerHigh,
                       border: Border(
-                        left: BorderSide(color: Theme.of(context).dividerColor),
-                        bottom: BorderSide(color: Theme.of(context).dividerColor),
+                        left: BorderSide(color: entry.color),
+                        bottom: BorderSide(color: entry.color.withValues(alpha: 0.15)),
                       ),
                     ),
                     child: IntrinsicHeight(
@@ -124,10 +124,7 @@ class TimelineItemTile extends ConsumerWidget {
                                   Icon(
                                     Icons.chevron_right,
                                     size: 18,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.4),
+                                    color: entry.color.withValues(alpha: 0.4),
                                   ),
                                 ],
                               ),
