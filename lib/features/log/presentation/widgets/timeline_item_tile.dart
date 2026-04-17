@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
@@ -51,42 +50,12 @@ class TimelineItemTile extends ConsumerWidget {
               child: Text(
                 _formatTime(entry.occurredAt),
                 style: AppTypography.bodySmall.copyWith(
-                  color: AppColors.primary,
+                  color: entry.color,
                   fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.right,
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-
-          // 세로선 + 점
-          Column(
-            children: [
-              SizedBox(
-                width: 2,
-                height: 16,
-                child: ColoredBox(
-                  color: isFirst ? Colors.transparent : AppColors.primary,
-                ),
-              ),
-              Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: entry.color,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              Expanded(
-                child: SizedBox(
-                  width: 2,
-                  child: ColoredBox(
-                    color: isLast ? Colors.transparent : AppColors.primary,
-                  ),
-                ),
-              ),
-            ],
           ),
           const SizedBox(width: 12),
 
@@ -99,60 +68,70 @@ class TimelineItemTile extends ConsumerWidget {
               ),
               child: GestureDetector(
                 onTap: onTap,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.sm,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Theme.of(context).dividerColor),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: entry.color.withValues(alpha: 0.12),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(entry.icon, color: entry.color, size: 16),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              entry.localizedTitle(context.l10n),
-                              style: AppTypography.labelLarge.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                    ),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // 왼쪽 컬러 액센트 바
+                          Container(
+                            width: 4,
+                            color: entry.color,
+                          ),
+                          // 카드 내용
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.md,
+                                vertical: AppSpacing.sm,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          entry.localizedTitle(context.l10n),
+                                          style: AppTypography.labelLarge.copyWith(
+                                            color: Theme.of(context).colorScheme.onSurface,
+                                          ),
+                                        ),
+                                        Text(
+                                          subtitle,
+                                          style: AppTypography.bodySmall.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withValues(alpha: 0.55),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    size: 18,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.4),
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              subtitle,
-                              style: AppTypography.bodySmall.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withValues(alpha: 0.55),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      Icon(
-                        Icons.chevron_right,
-                        size: 18,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.4),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),

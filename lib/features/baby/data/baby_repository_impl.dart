@@ -70,7 +70,8 @@ class BabyRepository {
           fileOptions: const FileOptions(upsert: true),
         );
 
-    return _client.storage.from('baby-photos').getPublicUrl(path);
+    final publicUrl = _client.storage.from('baby-photos').getPublicUrl(path);
+    return '$publicUrl?t=${DateTime.now().millisecondsSinceEpoch}';
   }
 
   /// 새 가족을 생성하고 아기를 등록합니다 (온보딩 최초 1회).
