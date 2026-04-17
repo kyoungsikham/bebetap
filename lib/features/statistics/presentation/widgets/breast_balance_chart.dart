@@ -38,7 +38,7 @@ class BreastBalanceChart extends StatelessWidget {
                   ),
                   PieChartSectionData(
                     value: 1 - leftRatio,
-                    color: const Color(0xFFE91E8C),
+                    color: const Color(0xFFD81B60),
                     radius: 20,
                     showTitle: false,
                   ),
@@ -58,7 +58,7 @@ class BreastBalanceChart extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               _LegendItem(
-                color: const Color(0xFFE91E8C),
+                color: const Color(0xFFD81B60),
                 label: l10n.rightBreast,
                 value: '$rightPercent%',
               ),

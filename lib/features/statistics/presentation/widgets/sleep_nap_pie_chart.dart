@@ -41,7 +41,7 @@ class SleepNapPieChart extends StatelessWidget {
                   ),
                   PieChartSectionData(
                     value: nightMinutes.toDouble(),
-                    color: const Color(0xFF7B68EE),
+                    color: const Color(0xFF5C6BC0),
                     radius: 24,
                     showTitle: false,
                   ),
@@ -61,7 +61,7 @@ class SleepNapPieChart extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               _LegendItem(
-                color: const Color(0xFF7B68EE),
+                color: const Color(0xFF5C6BC0),
                 label: l10n.nightSleep,
                 value: '$nightPercent%',
               ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/models/tracking_category.dart';
@@ -83,7 +82,7 @@ class TrackingGrid extends ConsumerWidget {
             icon: info.icon,
             label: info.localizedLabel(l10n),
             sublabel: formulaSublabel,
-            color: AppColors.primary,
+            color: info.color,
             onTap: () => showAppBottomSheet(
               context: context,
               child: const FormulaBottomSheet(),

@@ -66,7 +66,7 @@ class _DailySleepBarChart extends StatelessWidget {
               barRods: [
                 BarChartRodData(
                   toY: hours,
-                  color: const Color(0xFF7B68EE),
+                  color: const Color(0xFF5C6BC0),
                   width: barWidth,
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(4),
@@ -169,7 +169,7 @@ class _WeeklySleepBarChart extends StatelessWidget {
               barRods: [
                 BarChartRodData(
                   toY: entry.value.avgHours,
-                  color: const Color(0xFF7B68EE),
+                  color: const Color(0xFF5C6BC0),
                   width: barWidth,
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(4),

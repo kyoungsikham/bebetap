@@ -10,9 +10,9 @@ class ActivityHeatmapWidget extends StatelessWidget {
 
   final HeatmapData data;
 
-  static const _sleepColor = Color(0xFF7B68EE);
-  static const _feedingColor = Color(0xFF5B7FFF);
-  static const _diaperColor = Color(0xFF52B788);
+  static const _sleepColor = Color(0xFF5C6BC0);
+  static const _feedingColor = Color(0xFF4A90E2);
+  static const _diaperColor = Color(0xFF00BFA5);
 
   @override
   Widget build(BuildContext context) {

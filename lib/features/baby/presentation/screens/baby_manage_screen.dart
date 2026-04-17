@@ -219,39 +219,51 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
   }
 
   Future<void> _pickImage() async {
-    final picked = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 90,
-    );
-    if (picked == null) return;
-    if (!mounted) return;
+    try {
+      final picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+        maxWidth: 1024,
+        maxHeight: 1024,
+      );
+      if (picked == null) return;
+      if (!mounted) return;
 
-    final photoSelectLabel = context.l10n.photoSelect;
-    final primaryColor = Theme.of(context).colorScheme.primary;
+      final photoSelectLabel = context.l10n.photoSelect;
+      final primaryColor = Theme.of(context).colorScheme.primary;
 
-    final cropped = await ImageCropper().cropImage(
-      sourcePath: picked.path,
-      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-      maxWidth: 512,
-      maxHeight: 512,
-      compressQuality: 85,
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: photoSelectLabel,
-          toolbarColor: primaryColor,
-          toolbarWidgetColor: Colors.white,
-          lockAspectRatio: true,
-          cropStyle: CropStyle.circle,
-        ),
-        IOSUiSettings(
-          title: photoSelectLabel,
-          aspectRatioLockEnabled: true,
-          resetAspectRatioEnabled: false,
-          cropStyle: CropStyle.circle,
-        ),
-      ],
-    );
-    if (cropped != null) setState(() => _imageFile = File(cropped.path));
+      final cropped = await ImageCropper().cropImage(
+        sourcePath: picked.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        maxWidth: 512,
+        maxHeight: 512,
+        compressQuality: 85,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: photoSelectLabel,
+            toolbarColor: primaryColor,
+            toolbarWidgetColor: Colors.white,
+            lockAspectRatio: true,
+            cropStyle: CropStyle.circle,
+          ),
+          IOSUiSettings(
+            title: photoSelectLabel,
+            aspectRatioLockEnabled: true,
+            resetAspectRatioEnabled: false,
+            cropStyle: CropStyle.circle,
+          ),
+        ],
+      );
+      if (cropped != null && mounted) {
+        setState(() => _imageFile = File(cropped.path));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.saveFailed(e.toString()))),
+        );
+      }
+    }
   }
 
   Future<void> _pickBirthDate() async {
@@ -289,7 +301,14 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
     String? photoUrl = widget.editBaby?.photoUrl;
     if (_imageFile != null) {
       final babyId = widget.editBaby?.id ?? DateTime.now().millisecondsSinceEpoch.toString();
-      photoUrl = await repo.uploadBabyPhoto(babyId, _imageFile!);
+      try {
+        photoUrl = await repo.uploadBabyPhoto(babyId, _imageFile!);
+      } catch (e) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.saveFailed(e.toString()))),
+        );
+        return;
+      }
     }
 
     if (widget.editBaby != null) {

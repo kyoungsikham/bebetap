@@ -57,7 +57,11 @@ class BabyRepository {
 
   /// 아기 사진을 Supabase Storage에 업로드하고 public URL을 반환합니다.
   Future<String> uploadBabyPhoto(String babyId, File imageFile) async {
-    final ext = imageFile.path.split('.').last.toLowerCase();
+    if (!imageFile.existsSync()) {
+      throw Exception('이미지 파일을 찾을 수 없습니다. 다시 선택해 주세요.');
+    }
+    final parts = imageFile.path.split('.');
+    final ext = parts.length > 1 ? parts.last.toLowerCase() : 'jpg';
     final path = '$babyId.$ext';
 
     await _client.storage.from('baby-photos').upload(

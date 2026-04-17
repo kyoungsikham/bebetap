@@ -109,7 +109,7 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF42A5F5).withValues(alpha: 0.12),
+                      color: const Color(0xFF03A9F4).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -237,7 +237,7 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
                         if (context.mounted) Navigator.of(context).pop();
                       },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF42A5F5),
+                  backgroundColor: const Color(0xFF03A9F4),
                   foregroundColor: AppColors.onPrimary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(

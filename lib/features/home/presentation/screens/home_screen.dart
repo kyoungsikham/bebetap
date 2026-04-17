@@ -678,10 +678,11 @@ class _HomeHeader extends ConsumerWidget {
                     Text(
                       ref.watch(dailyMessageProvider),
                       style: AppTypography.bodyMedium.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.55),
+                        color: ref.watch(
+                          dailyMessageColorProvider(
+                            isDark ? Brightness.dark : Brightness.light,
+                          ),
+                        ),
                       ),
                     ),
                   ],

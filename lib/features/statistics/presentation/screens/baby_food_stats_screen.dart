@@ -99,7 +99,7 @@ class _BabyFoodContent extends StatelessWidget {
             icon: Icons.restaurant,
             label: l10n.babyFoodStatsTitle,
             value: l10n.noBabyFoodRecord,
-            color: const Color(0xFFFF9800),
+            color: const Color(0xFFFFA000),
           ),
         ],
       );
@@ -126,7 +126,7 @@ class _BabyFoodContent extends StatelessWidget {
           icon: Icons.restaurant,
           label: l10n.totalBabyFood,
           value: unit.formatAmount(stats.totalBabyFoodMl),
-          color: const Color(0xFFFF9800),
+          color: const Color(0xFFFFA000),
         ),
         const SizedBox(height: AppSpacing.sm),
 
@@ -135,7 +135,7 @@ class _BabyFoodContent extends StatelessWidget {
           icon: Icons.calendar_today,
           label: l10n.babyFoodCount,
           value: l10n.timesCount(babyFoodCount),
-          color: const Color(0xFFFF9800),
+          color: const Color(0xFFFFA000),
         ),
         const SizedBox(height: AppSpacing.sm),
 
@@ -175,7 +175,7 @@ class _BabyFoodTrendChart extends StatelessWidget {
 
   final List<DailyFeedingEntry> entries;
 
-  static const _color = Color(0xFFFF9800);
+  static const _color = Color(0xFFFFA000);
 
   @override
   Widget build(BuildContext context) {

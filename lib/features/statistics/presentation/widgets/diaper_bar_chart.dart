@@ -101,7 +101,7 @@ class DiaperBarChart extends StatelessWidget {
           children: [
             _Legend(color: AppColors.primary, label: l10n.wetDiaper),
             const SizedBox(width: 12),
-            _Legend(color: const Color(0xFF52B788), label: l10n.soiledDiaper),
+            _Legend(color: const Color(0xFF00BFA5), label: l10n.soiledDiaper),
             const SizedBox(width: 12),
             _Legend(color: AppColors.warning, label: l10n.bothDiaper),
           ],
@@ -120,7 +120,7 @@ class DiaperBarChart extends StatelessWidget {
     }
     if (d.soiled > 0) {
       items.add(BarChartRodStackItem(
-          from, from + d.soiled, const Color(0xFF52B788)));
+          from, from + d.soiled, const Color(0xFF00BFA5)));
       from += d.soiled;
     }
     if (d.both > 0) {

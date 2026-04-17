@@ -26,7 +26,7 @@ class SleepConsistencyChart extends StatelessWidget {
           minY: 0, // midnight
           maxY: 24, // midnight next day
           scatterSpots: [
-            ..._buildSpots(bedtimes, const Color(0xFF7B68EE), 0),
+            ..._buildSpots(bedtimes, const Color(0xFF5C6BC0), 0),
             ..._buildSpots(waketimes, const Color(0xFFFFD166), bedtimes.length.toDouble()),
           ],
           titlesData: FlTitlesData(

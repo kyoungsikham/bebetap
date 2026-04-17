@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 흰 배경 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF"/>
+            <corners android:radius="16dp"/>
+        </shape>
+    </item>
+    <!-- 상단 앱 이름 영역 (회색 바) -->
+    <item
+        android:left="14dp"
+        android:top="14dp"
+        android:right="200dp"
+        android:bottom="148dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E8"/>
+            <corners android:radius="4dp"/>
+        </shape>
+    </item>
+    <!-- 헤더 텍스트 영역 -->
+    <item
+        android:left="14dp"
+        android:top="36dp"
+        android:right="80dp"
+        android:bottom="124dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#222222"/>
+            <corners android:radius="4dp"/>
+        </shape>
+    </item>
+    <!-- 기록 행 1 -->
+    <item
+        android:left="14dp"
+        android:top="80dp"
+        android:right="40dp"
+        android:bottom="102dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E8"/>
+            <corners android:radius="3dp"/>
+        </shape>
+    </item>
+    <!-- 기록 행 2 -->
+    <item
+        android:left="14dp"
+        android:top="108dp"
+        android:right="60dp"
+        android:bottom="130dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E8"/>
+            <corners android:radius="3dp"/>
+        </shape>
+    </item>
+    <!-- 기록 행 3 -->
+    <item
+        android:left="14dp"
+        android:top="136dp"
+        android:right="50dp"
+        android:bottom="158dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E8"/>
+            <corners android:radius="3dp"/>
+        </shape>
+    </item>
+</layer-list>

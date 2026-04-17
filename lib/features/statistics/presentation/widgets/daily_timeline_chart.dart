@@ -19,13 +19,13 @@ class DailyTimelineChart extends StatelessWidget {
   static const _yAxisWidth = 28.0;
   static const _yAxisGap = 4.0;
 
-  // Colors
-  static const _sleepColor = Color(0xFF80CBC4);
-  static const _formulaColor = Color(0xFFEF9A9A);
-  static const _breastColor = Color(0xFFF48FB1);
-  static const _pumpedColor = Color(0xFFCE93D8);
-  static const _babyFoodColor = Color(0xFFFFCC80);
-  static const _diaperColor = Color(0xFF8D6E63);
+  // Colors — must match icon colors in TimelineEntry (timeline_entry.dart)
+  static const _sleepColor = Color(0xFF5C6BC0);
+  static const _formulaColor = Color(0xFF4A90E2);
+  static const _breastColor = Color(0xFFD81B60);
+  static const _pumpedColor = Color(0xFF9C27B0);
+  static const _babyFoodColor = Color(0xFFFFA000);
+  static const _diaperColor = Color(0xFF00BFA5);
 
   static Color colorFor(TimelineEventType type) {
     return switch (type) {

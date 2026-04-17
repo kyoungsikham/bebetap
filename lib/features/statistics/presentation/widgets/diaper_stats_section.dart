@@ -39,7 +39,7 @@ class DiaperStatsSection extends StatelessWidget {
           label: l10n.diaperChangeLabel,
           value: l10n.timesCount(stats.totalCount),
           deltaPercent: stats.deltaPercent,
-          color: const Color(0xFF52B788),
+          color: const Color(0xFF00BFA5),
           subtitle: _buildSubtitle(context),
         ),
         const SizedBox(height: AppSpacing.sm),

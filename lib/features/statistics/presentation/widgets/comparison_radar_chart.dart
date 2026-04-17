@@ -13,8 +13,8 @@ class ComparisonRadarChart extends StatelessWidget {
 
   static const _colors = [
     AppColors.primary,
-    Color(0xFFE91E8C),
-    Color(0xFF52B788),
+    Color(0xFFD81B60),
+    Color(0xFF00BFA5),
     Color(0xFFFFD166),
   ];
 

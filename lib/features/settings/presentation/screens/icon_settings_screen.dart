@@ -35,7 +35,6 @@ class IconSettingsScreen extends ConsumerWidget {
               ),
             ),
           ),
-          BannerAdWidget(adUnitId: AdConfig.iconSettingsBannerId),
           Expanded(
             child: ReorderableListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -61,6 +60,7 @@ class IconSettingsScreen extends ConsumerWidget {
               },
             ),
           ),
+          BannerAdWidget(adUnitId: AdConfig.iconSettingsBannerId),
         ],
       ),
     );

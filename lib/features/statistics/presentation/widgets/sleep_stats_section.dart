@@ -43,7 +43,7 @@ class SleepStatsSection extends StatelessWidget {
           label: l10n.totalSleep,
           value: stats.totalDuration.formatHhMm(),
           deltaPercent: stats.deltaPercent,
-          color: const Color(0xFF7B68EE),
+          color: const Color(0xFF5C6BC0),
         ),
         const SizedBox(height: AppSpacing.sm),
 
@@ -130,7 +130,7 @@ class SleepStatsSection extends StatelessWidget {
             icon: Icons.hotel,
             label: l10n.longestSleep,
             value: stats.longestConsecutive.formatHhMm(),
-            color: const Color(0xFF7B68EE),
+            color: const Color(0xFF5C6BC0),
           ),
         if (stats.longestConsecutive.inMinutes > 0)
           const SizedBox(height: AppSpacing.sm),

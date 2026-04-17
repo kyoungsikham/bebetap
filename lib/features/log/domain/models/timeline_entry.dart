@@ -65,7 +65,7 @@ class TimelineEntry {
           title: '모유',
           subtitle: dur.formatKorean(),
           icon: Icons.favorite_outline,
-          color: const Color(0xFFE91E8C),
+          color: const Color(0xFFD81B60),
           rawDurationLeftSec: leftSec,
           rawDurationRightSec: rightSec,
         );
@@ -77,7 +77,7 @@ class TimelineEntry {
           title: '유축',
           subtitle: '${row.amountMl ?? 0}ml',
           icon: Icons.water_drop_outlined,
-          color: const Color(0xFF8E24AA),
+          color: const Color(0xFF9C27B0),
           rawAmountMl: row.amountMl,
         );
       case 'baby_food':
@@ -88,7 +88,7 @@ class TimelineEntry {
           title: '이유식',
           subtitle: '${row.amountMl ?? 0}ml',
           icon: Icons.restaurant,
-          color: const Color(0xFFFF9800),
+          color: const Color(0xFFFFA000),
           rawAmountMl: row.amountMl,
         );
       default: // formula
@@ -117,7 +117,7 @@ class TimelineEntry {
       title: '수면',
       subtitle: isActive ? '자는 중' : dur.formatKorean(),
       icon: Icons.bedtime,
-      color: const Color(0xFF7B68EE),
+      color: const Color(0xFF5C6BC0),
       rawEndedAt: row.endedAt,
     );
   }
@@ -143,7 +143,7 @@ class TimelineEntry {
       title: '기저귀',
       subtitle: typeLabel,
       icon: Icons.baby_changing_station,
-      color: const Color(0xFF52B788),
+      color: const Color(0xFF00BFA5),
       rawDiaperType: row.type,
     );
   }
@@ -170,7 +170,7 @@ class TimelineEntry {
       title: row.title,
       subtitle: row.authorNickname ?? '작성자',
       icon: Icons.auto_stories,
-      color: const Color(0xFF42A5F5),
+      color: const Color(0xFF03A9F4),
       rawTitle: row.title,
       rawContent: row.content,
       rawRecordedBy: row.recordedBy,

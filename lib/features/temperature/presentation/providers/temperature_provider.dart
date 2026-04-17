@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/providers/database_provider.dart';
 import '../../../../core/providers/sync_provider.dart';
-import '../../../../core/widget/widget_sync_service.dart';
+import '../../../../core/widget/widget_refresh_helper.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../home/presentation/providers/home_provider.dart';
 import '../../../log/presentation/providers/log_provider.dart';
@@ -60,10 +60,7 @@ class TemperatureNotifier extends _$TemperatureNotifier {
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
-      unawaited(WidgetSyncService.pushTemperature(
-        celsius: celsius,
-        time: DateTime.now(),
-      ));
+      unawaited(refreshWidget(ref));
     });
   }
 }

@@ -42,58 +42,28 @@
                 <data android:scheme="bebetap"/>
             </intent-filter>
         </activity>
-        <!-- 개별 위젯 7종 -->
-        <receiver android:name=".glance.FormulaWidgetReceiver" android:exported="true">
+        <!-- BebeTap 위젯 (단일) -->
+        <receiver android:name=".glance.BebeTapWidgetReceiver" android:exported="true"
+            android:permission="android.permission.BIND_APPWIDGET">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/formula_widget_info" />
-        </receiver>
-        <receiver android:name=".glance.BreastWidgetReceiver" android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/breast_widget_info" />
-        </receiver>
-        <receiver android:name=".glance.PumpedWidgetReceiver" android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/pumped_widget_info" />
-        </receiver>
-        <receiver android:name=".glance.DiaperWidgetReceiver" android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/diaper_widget_info" />
-        </receiver>
-        <receiver android:name=".glance.SleepWidgetReceiver" android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/sleep_widget_info" />
-        </receiver>
-        <receiver android:name=".glance.TemperatureWidgetReceiver" android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/temperature_widget_info" />
-        </receiver>
-        <receiver android:name=".glance.BabyFoodWidgetReceiver" android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/baby_food_widget_info" />
-        </receiver>
-
-        <!-- 묶음 위젯 4종 -->
-        <receiver android:name=".glance.AllInOneWidgetReceiver" android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/all_in_one_widget_info" />
-        </receiver>
-        <receiver android:name=".glance.EssentialWidgetReceiver" android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/essential_widget_info" />
-        </receiver>
-        <receiver android:name=".glance.NewbornWidgetReceiver" android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/newborn_widget_info" />
-        </receiver>
-        <receiver android:name=".glance.BabyFoodStageWidgetReceiver" android:exported="true">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/baby_food_stage_widget_info" />
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/bebetap_widget_info" />
         </receiver>
 
         <!-- AdMob App ID (테스트용 ID - 출시 전 실제 ID로 교체 필요) -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713"/>
+
+        <!-- image_cropper / image_picker FileProvider (Android 필수) -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

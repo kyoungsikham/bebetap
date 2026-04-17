@@ -19,3 +19,13 @@
 # Flutter / General
 -keep class io.flutter.** { *; }
 -keep class com.google.** { *; }
+
+# Glance AppWidget - 릴리스 빌드에서 위젯 클래스가 제거/난독화되지 않도록 보호
+-keep class androidx.glance.** { *; }
+-keep class * extends androidx.glance.appwidget.GlanceAppWidget { *; }
+-keep class * extends androidx.glance.appwidget.GlanceAppWidgetReceiver { *; }
+-keep class com.bebetap.app.glance.** { *; }
+
+# UCrop (image_cropper 내부 라이브러리) - R8 난독화로 Activity 제거 방지
+-keep class com.yalantis.ucrop.** { *; }
+-dontwarn com.yalantis.ucrop.**

@@ -42,6 +42,10 @@ class _DateTimeWheelPickerContentState
   late int _hour;
   late int _minute;
 
+  static const _loopMultiplier = 1000;
+  static const _hourCount = 24;
+  static const _minuteCount = 60;
+
   late final FixedExtentScrollController _dateCtrl;
   late final FixedExtentScrollController _hourCtrl;
   late final FixedExtentScrollController _minCtrl;
@@ -71,8 +75,13 @@ class _DateTimeWheelPickerContentState
     _minute = widget.initial.minute;
 
     _dateCtrl = FixedExtentScrollController(initialItem: _dateIdx);
-    _hourCtrl = FixedExtentScrollController(initialItem: _hour);
-    _minCtrl = FixedExtentScrollController(initialItem: _minute);
+    // 루프 시작 위치: 중간 지점 + 실제 값
+    _hourCtrl = FixedExtentScrollController(
+      initialItem: _hourCount * (_loopMultiplier ~/ 2) + _hour,
+    );
+    _minCtrl = FixedExtentScrollController(
+      initialItem: _minuteCount * (_loopMultiplier ~/ 2) + _minute,
+    );
   }
 
   @override
@@ -109,7 +118,9 @@ class _DateTimeWheelPickerContentState
     required int selectedIdx,
     required ValueChanged<int> onChanged,
     int flex = 2,
+    bool loop = false,
   }) {
+    final totalCount = loop ? itemCount * _loopMultiplier : itemCount;
     return Expanded(
       flex: flex,
       child: Stack(
@@ -130,13 +141,14 @@ class _DateTimeWheelPickerContentState
             diameterRatio: 1.6,
             physics: const FixedExtentScrollPhysics(),
             onSelectedItemChanged: (i) {
-              setState(() => onChanged(i));
+              setState(() => onChanged(loop ? i % itemCount : i));
             },
             childDelegate: ListWheelChildBuilderDelegate(
-              childCount: itemCount,
+              childCount: totalCount,
               builder: (_, i) {
-                final isSelected = i == selectedIdx;
-                final label = labelOf(i);
+                final realIdx = loop ? i % itemCount : i;
+                final isSelected = realIdx == selectedIdx;
+                final label = labelOf(realIdx);
                 final textStyle = (isSelected
                         ? AppTypography.titleMedium
                         : AppTypography.bodyMedium)
@@ -207,21 +219,23 @@ class _DateTimeWheelPickerContentState
                 // 시 열
                 _buildWheelColumn(
                   controller: _hourCtrl,
-                  itemCount: 24,
+                  itemCount: _hourCount,
                   labelOf: (i) => i.toString().padLeft(2, '0'),
                   unit: context.l10n.pickerHour,
                   selectedIdx: _hour,
                   onChanged: (i) => _hour = i,
+                  loop: true,
                 ),
                 const SizedBox(width: 4),
                 // 분 열
                 _buildWheelColumn(
                   controller: _minCtrl,
-                  itemCount: 60,
+                  itemCount: _minuteCount,
                   labelOf: (i) => i.toString().padLeft(2, '0'),
                   unit: context.l10n.pickerMinute,
                   selectedIdx: _minute,
                   onChanged: (i) => _minute = i,
+                  loop: true,
                 ),
               ],
             ),

@@ -279,7 +279,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
               child: StatsNavCard(
                 icon: Icons.restaurant,
                 title: l10n.babyFoodStatsTitle,
-                color: const Color(0xFFFF9800),
+                color: const Color(0xFFFFA000),
                 onTap: () => context.push(AppRoutes.babyFoodStats),
               ),
             ),
@@ -289,7 +289,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
               child: StatsNavCard(
                 icon: Icons.bedtime,
                 title: l10n.sleepStatsTitle,
-                color: const Color(0xFF7B68EE),
+                color: const Color(0xFF5C6BC0),
                 onTap: () => context.push(AppRoutes.sleepStats),
               ),
             ),

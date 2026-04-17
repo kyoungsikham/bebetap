@@ -31,7 +31,7 @@ class DiaryEntry {
         title: title,
         subtitle: authorNickname ?? '작성자',
         icon: Icons.auto_stories,
-        color: const Color(0xFF42A5F5),
+        color: const Color(0xFF03A9F4),
         rawTitle: title,
         rawContent: content,
         rawRecordedBy: recordedBy,

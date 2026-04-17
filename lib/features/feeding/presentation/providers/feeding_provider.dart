@@ -6,7 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/providers/database_provider.dart';
 import '../../../../core/providers/sync_provider.dart';
-import '../../../../core/widget/widget_sync_service.dart';
+import '../../../../core/widget/widget_refresh_helper.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../home/presentation/providers/home_provider.dart';
 import '../../../log/presentation/providers/log_provider.dart';
@@ -68,23 +68,18 @@ class FeedingNotifier extends _$FeedingNotifier {
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final repo = ref.read(feedingRepositoryProvider);
-      await repo.saveFormulaFeeding(
-        babyId: baby.id,
-        familyId: baby.familyId,
-        amountMl: amountMl,
-        startedAt: startedAt,
-      );
+      await ref.read(feedingRepositoryProvider).saveFormulaFeeding(
+            babyId: baby.id,
+            familyId: baby.familyId,
+            amountMl: amountMl,
+            startedAt: startedAt,
+          );
       ref.invalidate(todayFeedingsProvider);
       ref.invalidate(dailyFormulaTotalProvider);
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
-      final total = await repo.getDailyFormulaTotalMl(baby.id, DateTime.now());
-      unawaited(WidgetSyncService.pushFormula(
-        time: startedAt ?? DateTime.now(),
-        totalMl: total,
-      ));
+      unawaited(refreshWidget(ref));
     });
   }
 
@@ -97,23 +92,18 @@ class FeedingNotifier extends _$FeedingNotifier {
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final repo = ref.read(feedingRepositoryProvider);
-      await repo.savePumpedFeeding(
-        babyId: baby.id,
-        familyId: baby.familyId,
-        amountMl: amountMl,
-        startedAt: startedAt,
-      );
+      await ref.read(feedingRepositoryProvider).savePumpedFeeding(
+            babyId: baby.id,
+            familyId: baby.familyId,
+            amountMl: amountMl,
+            startedAt: startedAt,
+          );
       ref.invalidate(todayFeedingsProvider);
       ref.invalidate(dailyPumpedTotalProvider);
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
-      final total = await repo.getDailyPumpedTotalMl(baby.id, DateTime.now());
-      unawaited(WidgetSyncService.pushPumped(
-        time: startedAt ?? DateTime.now(),
-        totalMl: total,
-      ));
+      unawaited(refreshWidget(ref));
     });
   }
 
@@ -126,24 +116,18 @@ class FeedingNotifier extends _$FeedingNotifier {
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final repo = ref.read(feedingRepositoryProvider);
-      await repo.saveBabyFoodFeeding(
-        babyId: baby.id,
-        familyId: baby.familyId,
-        amountMl: amountMl,
-        startedAt: startedAt,
-      );
+      await ref.read(feedingRepositoryProvider).saveBabyFoodFeeding(
+            babyId: baby.id,
+            familyId: baby.familyId,
+            amountMl: amountMl,
+            startedAt: startedAt,
+          );
       ref.invalidate(todayFeedingsProvider);
       ref.invalidate(dailyBabyFoodTotalProvider);
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
-      final total =
-          await repo.getDailyBabyFoodTotalMl(baby.id, DateTime.now());
-      unawaited(WidgetSyncService.pushBabyFood(
-        time: startedAt ?? DateTime.now(),
-        totalMl: total,
-      ));
+      unawaited(refreshWidget(ref));
     });
   }
 
@@ -170,7 +154,7 @@ class FeedingNotifier extends _$FeedingNotifier {
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(logTimelineProvider);
       ref.read(syncEngineProvider).trigger();
-      unawaited(WidgetSyncService.pushBreast(time: startedAt));
+      unawaited(refreshWidget(ref));
     });
   }
 
@@ -254,5 +238,4 @@ class FeedingNotifier extends _$FeedingNotifier {
       ref.read(syncEngineProvider).trigger();
     });
   }
-
 }

@@ -83,7 +83,7 @@ class FeedingStatsSection extends StatelessWidget {
             value: stats.totalBreastDuration.formatHhMm(),
             subtitle: l10n.timesCount(stats.totalBreastCount),
             deltaPercent: stats.breastDeltaPercent,
-            color: const Color(0xFFE91E8C),
+            color: const Color(0xFFD81B60),
           ),
         if (stats.totalBreastSec > 0) const SizedBox(height: AppSpacing.sm),
 
