@@ -63,8 +63,8 @@ class TimelineItemTile extends ConsumerWidget {
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(
-                top: AppSpacing.sm,
-                bottom: isLast ? AppSpacing.sm : AppSpacing.md,
+                top: 1,
+                bottom: isLast ? 1 : 2,
               ),
               child: GestureDetector(
                 onTap: onTap,
@@ -72,9 +72,13 @@ class TimelineItemTile extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Theme.of(context).dividerColor),
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.surfaceContainerHigh,
+                      border: Border(
+                        left: BorderSide(color: Theme.of(context).dividerColor),
+                        bottom: BorderSide(color: Theme.of(context).dividerColor),
+                      ),
                     ),
                     child: IntrinsicHeight(
                       child: Row(
@@ -90,7 +94,7 @@ class TimelineItemTile extends ConsumerWidget {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: AppSpacing.md,
-                                vertical: AppSpacing.sm,
+                                vertical: 14,
                               ),
                               child: Row(
                                 children: [
