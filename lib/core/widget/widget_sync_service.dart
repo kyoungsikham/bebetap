@@ -22,7 +22,7 @@ class WidgetSyncService {
   WidgetSyncService._();
 
   static const _iosKind = 'BebeTapWidget';
-  static const _androidReceiver = 'BebeTapWidgetReceiver';
+  static const _androidReceiver = 'com.bebetap.app.glance.BebeTapWidgetReceiver';
 
   /// 위젯 데이터 전체를 한 번에 저장하고 위젯을 갱신한다.
   static Future<void> push({

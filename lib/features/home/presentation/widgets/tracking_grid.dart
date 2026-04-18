@@ -22,12 +22,37 @@ import '../providers/home_provider.dart';
 import 'tracking_tile.dart';
 import '../../../log/domain/models/timeline_entry.dart';
 
-class TrackingGrid extends ConsumerWidget {
+class TrackingGrid extends ConsumerStatefulWidget {
   const TrackingGrid({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // 1분마다 재빌드 (경과 시간 갱신)
+  ConsumerState<TrackingGrid> createState() => _TrackingGridState();
+}
+
+class _TrackingGridState extends ConsumerState<TrackingGrid>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      ref.invalidate(minuteTickerProvider);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // 1초마다 재빌드 (경과 시간 갱신)
     ref.watch(minuteTickerProvider);
     final summaryAsync = ref.watch(homeSummaryProvider);
     final activeSleep = ref.watch(activeSleepProvider).valueOrNull;

@@ -21,7 +21,7 @@ Future<HomeSummary> homeSummary(Ref ref) async {
       .getSummary(baby.id, babyWeightKg: baby.weightKg);
 }
 
-/// 1분마다 틱 — elapsed time 표시를 위해 UI 위젯이 구독
+/// 1초마다 틱 — elapsed time 표시를 위해 UI 위젯이 구독
 @riverpod
 Stream<int> minuteTicker(Ref ref) =>
-    Stream.periodic(const Duration(minutes: 1), (i) => i);
+    Stream.periodic(const Duration(seconds: 1), (i) => i);

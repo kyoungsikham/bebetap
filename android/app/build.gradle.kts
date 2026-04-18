@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("org.jetbrains.kotlin.plugin.compose")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -17,6 +18,10 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     defaultConfig {
@@ -50,4 +55,10 @@ flutter {
 
 dependencies {
     implementation("androidx.glance:glance-appwidget:1.1.1")
+
+    // Compose BOM으로 runtime/ui 버전 정렬 (Glance가 내부적으로 사용)
+    implementation(platform("androidx.compose:compose-bom:2025.05.01"))
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.ui:ui-unit")
+    implementation("androidx.compose.ui:ui-graphics")
 }

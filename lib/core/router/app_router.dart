@@ -22,6 +22,7 @@ import '../../features/premium/presentation/screens/paywall_screen.dart';
 import '../../features/settings/presentation/screens/icon_settings_screen.dart';
 import '../../shared/widgets/bottom_nav_bar.dart';
 import '../providers/auth_provider.dart';
+import '../widget/widget_action_handler.dart';
 import 'app_routes.dart';
 
 part 'app_router.g.dart';
@@ -68,12 +69,22 @@ GoRouter appRouter(Ref ref) {
       final babiesLoaded = babiesAsync.hasValue && !babiesAsync.isLoading;
       final loc = state.matchedLocation;
 
-      // 0. 위젯 딥링크(bebetap://...)는 WidgetActionHandler가 처리하므로
-      //    GoRouter에서는 홈으로 리다이렉트.
-      if (state.uri.scheme == 'bebetap' ||
-          loc.startsWith('bebetap://') ||
-          loc.startsWith('/log/') ||
-          loc.startsWith('/action/')) {
+      // 0. 위젯 딥링크(bebetap://...) 처리.
+      //    FlutterActivity.onNewIntent 이 pushRoute로 bebetap:// URI를 전달하는 경우,
+      //    bebetap://log/* → /log 로 이동하고 pendingWidgetTabProvider를 설정한다.
+      //    bebetap://action/* 등 나머지는 홈으로 리다이렉트 (WidgetActionHandler가 처리).
+      if (state.uri.scheme == 'bebetap') {
+        final segs = state.uri.pathSegments;
+        if (segs.isNotEmpty && segs.first == 'log') {
+          final tab = segs.length > 1 ? segs[1] : null;
+          if (tab != null) {
+            ref.read(pendingWidgetTabProvider.notifier).state = tab;
+          }
+          return AppRoutes.log;
+        }
+        return AppRoutes.home;
+      }
+      if (loc.startsWith('/log/') || loc.startsWith('/action/')) {
         return AppRoutes.home;
       }
 

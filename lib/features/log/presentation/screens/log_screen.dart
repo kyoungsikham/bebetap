@@ -260,7 +260,7 @@ class _LogScreenState extends ConsumerState<LogScreen> {
   }
 
   /// 위젯 딥링크 탭 이름으로 바텀 시트 열기.
-  /// tab: 'formula' | 'breast' | 'pumped' | 'baby_food' | 'temperature'
+  /// tab: 'formula' | 'breast' | 'pumped' | 'baby_food' | 'temperature' | 'sleep' | 'diaper'
   void _openAddSheetForTab(String tab) {
     if (!mounted) return;
     late Widget sheet;
@@ -281,6 +281,12 @@ class _LogScreenState extends ConsumerState<LogScreen> {
       case 'temperature':
         sheet = const TemperatureBottomSheet();
         title = context.l10n.addTemperature;
+      case 'sleep':
+        sheet = const SleepBottomSheet();
+        title = context.l10n.addSleep;
+      case 'diaper':
+        sheet = const DiaperBottomSheet();
+        title = context.l10n.addDiaper;
       default:
         return;
     }

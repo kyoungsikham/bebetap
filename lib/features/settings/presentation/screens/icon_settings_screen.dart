@@ -39,6 +39,10 @@ class IconSettingsScreen extends ConsumerWidget {
             child: ReorderableListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: categories.length,
+              footer: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
+                child: BannerAdWidget(adUnitId: AdConfig.iconSettingsBannerId),
+              ),
               // onReorderItem provides already-adjusted newIndex (no need for newIndex--)
               onReorderItem: (oldIndex, newIndex) {
                 ref
@@ -60,7 +64,6 @@ class IconSettingsScreen extends ConsumerWidget {
               },
             ),
           ),
-          BannerAdWidget(adUnitId: AdConfig.iconSettingsBannerId),
         ],
       ),
     );
