@@ -1181,4 +1181,35 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get paywallAlreadyPurchased => 'すでに広告は削除されています';
+
+  @override
+  String statsSleepInRange(String hours) {
+    return '1日平均$hours時間睡眠 · 推奨範囲内';
+  }
+
+  @override
+  String statsSleepBelow(String hours, String diff) {
+    return '1日平均$hours時間睡眠 · 推奨より$diff時間不足';
+  }
+
+  @override
+  String statsSleepAbove(String hours, String diff) {
+    return '1日平均$hours時間睡眠 · 推奨より$diff時間多い';
+  }
+
+  @override
+  String statsFeedingUp(String percent) {
+    return '授乳量が前回より$percent%増えました';
+  }
+
+  @override
+  String statsFeedingDown(String percent) {
+    return '授乳量が前回より$percent%減りました';
+  }
+
+  @override
+  String get statsFeedingSame => '授乳量は前回とほぼ同じです';
+
+  @override
+  String get statsSummaryTitle => 'サマリー';
 }

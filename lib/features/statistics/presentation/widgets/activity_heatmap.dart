@@ -10,7 +10,8 @@ class ActivityHeatmapWidget extends StatelessWidget {
 
   final HeatmapData data;
 
-  static const _sleepColor = Color(0xFF5C6BC0);
+  static const _sleepColorLight = Color(0xFF607D8B);
+  static const _sleepColorDark = Color(0xFF607D8B);
   static const _feedingColor = Color(0xFF4A90E2);
   static const _diaperColor = Color(0xFF00BFA5);
 
@@ -18,6 +19,9 @@ class ActivityHeatmapWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
+    final sleepColor = Theme.of(context).brightness == Brightness.dark
+        ? _sleepColorDark
+        : _sleepColorLight;
 
     // Find max values for normalization
     double maxSleep = 0;
@@ -52,7 +56,7 @@ class ActivityHeatmapWidget extends StatelessWidget {
         // Rows
         _HeatmapRow(
           label: l10n.sleepSection,
-          color: _sleepColor,
+          color: sleepColor,
           values: data.hours.map((h) => maxSleep > 0 ? h.sleepMinutes / maxSleep : 0.0).toList(),
         ),
         const SizedBox(height: 3),

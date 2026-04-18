@@ -62,10 +62,10 @@
   "formulaTotal": "분유 총량",
   "noRecord": "아직 기록이 없어요",
   "startRecordingHint": "수유 타일을 눌러 시작하세요",
-  "typeBreastFeeding": "모유 수유",
+  "typeBreastFeeding": "모유",
   "typePumpedFeeding": "유축",
   "typeBabyFood": "이유식",
-  "typeFormulaFeeding": "분유 수유",
+  "typeFormulaFeeding": "분유",
 
   "today": "오늘",
   "yesterday": "어제",
@@ -597,5 +597,28 @@
   "paywallRestoreCta": "구매 복원",
   "paywallPurchaseSuccess": "광고가 제거되었습니다",
   "paywallPurchaseFailed": "구매에 실패했습니다",
-  "paywallAlreadyPurchased": "이미 광고가 제거되었습니다"
+  "paywallAlreadyPurchased": "이미 광고가 제거되었습니다",
+
+  "statsSleepInRange": "하루 평균 {hours}시간 수면 · 권장 범위 내",
+  "@statsSleepInRange": {
+    "placeholders": { "hours": { "type": "String" } }
+  },
+  "statsSleepBelow": "하루 평균 {hours}시간 수면 · 권장보다 {diff}시간 부족",
+  "@statsSleepBelow": {
+    "placeholders": { "hours": { "type": "String" }, "diff": { "type": "String" } }
+  },
+  "statsSleepAbove": "하루 평균 {hours}시간 수면 · 권장보다 {diff}시간 많음",
+  "@statsSleepAbove": {
+    "placeholders": { "hours": { "type": "String" }, "diff": { "type": "String" } }
+  },
+  "statsFeedingUp": "수유량이 이전보다 {percent}% 늘었어요",
+  "@statsFeedingUp": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "statsFeedingDown": "수유량이 이전보다 {percent}% 줄었어요",
+  "@statsFeedingDown": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "statsFeedingSame": "수유량이 이전과 비슷해요",
+  "statsSummaryTitle": "요약"
 }

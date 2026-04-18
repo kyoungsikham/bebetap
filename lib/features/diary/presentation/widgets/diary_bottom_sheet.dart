@@ -8,6 +8,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../family/presentation/providers/family_provider.dart';
+import '../../../family/presentation/widgets/relationship_selector.dart';
 import '../../../log/domain/models/timeline_entry.dart';
 import '../providers/diary_provider.dart';
 
@@ -50,12 +51,13 @@ class _DiaryBottomSheetState extends ConsumerState<DiaryBottomSheet> {
   String _resolveNickname(List members) {
     final userId = Supabase.instance.client.auth.currentUser?.id;
     try {
-      return members
-              .cast<dynamic>()
-              .where((m) => m.userId == userId)
-              .firstOrNull
-              ?.nickname ??
-          context.l10n.diaryAuthorLabel;
+      final nickname = members
+          .cast<dynamic>()
+          .where((m) => m.userId == userId)
+          .firstOrNull
+          ?.nickname as String?;
+      if (nickname == null) return context.l10n.diaryAuthorLabel;
+      return localizedRelationPreset(nickname, context.l10n);
     } catch (_) {
       return context.l10n.diaryAuthorLabel;
     }

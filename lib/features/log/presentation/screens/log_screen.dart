@@ -138,6 +138,22 @@ class _LogScreenState extends ConsumerState<LogScreen> {
                     ),
                   );
                 }
+                // 분유·모유·유축·이유식 중 가장 최근 기록된 단 하나의 항목 ID
+                // (entries는 최신순 정렬 → 4개 타입 중 첫 번째로 나오는 항목)
+                const feedingTypes = {
+                  TimelineEntryType.formula,
+                  TimelineEntryType.breast,
+                  TimelineEntryType.pumped,
+                  TimelineEntryType.babyFood,
+                };
+                final lastFeedingId = entries
+                    .where((e) => feedingTypes.contains(e.type))
+                    .map((e) => e.id)
+                    .firstOrNull;
+
+                final selectedDate = ref.watch(selectedLogDateProvider);
+                final isToday = DateUtils.isSameDay(selectedDate, DateTime.now());
+
                 return ListView.builder(
                   padding: const EdgeInsets.fromLTRB(
                     AppSpacing.pagePadding,
@@ -151,6 +167,7 @@ class _LogScreenState extends ConsumerState<LogScreen> {
                       entry: entries[i],
                       isFirst: i == 0,
                       isLast: i == entries.length - 1,
+                      showElapsed: isToday && lastFeedingId == entries[i].id,
                       onTap: () => _openEditSheet(context, ref, entries[i]),
                     );
                   },

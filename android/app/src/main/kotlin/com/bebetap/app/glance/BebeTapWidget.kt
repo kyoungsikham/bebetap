@@ -3,6 +3,10 @@ package com.bebetap.app.glance
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.glance.*
 import androidx.glance.action.*
 import androidx.glance.appwidget.*
@@ -10,13 +14,8 @@ import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.layout.*
 import androidx.glance.text.*
 import androidx.glance.unit.ColorProvider
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 class BebeTapWidget : GlanceAppWidget() {
-
-    override val errorUiLayout: Int = 0
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val data = try {

@@ -158,7 +158,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get startRecordingHint => '수유 타일을 눌러 시작하세요';
 
   @override
-  String get typeBreastFeeding => '모유 수유';
+  String get typeBreastFeeding => '모유';
 
   @override
   String get typePumpedFeeding => '유축';
@@ -167,7 +167,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get typeBabyFood => '이유식';
 
   @override
-  String get typeFormulaFeeding => '분유 수유';
+  String get typeFormulaFeeding => '분유';
 
   @override
   String get today => '오늘';
@@ -1181,4 +1181,35 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get paywallAlreadyPurchased => '이미 광고가 제거되었습니다';
+
+  @override
+  String statsSleepInRange(String hours) {
+    return '하루 평균 $hours시간 수면 · 권장 범위 내';
+  }
+
+  @override
+  String statsSleepBelow(String hours, String diff) {
+    return '하루 평균 $hours시간 수면 · 권장보다 $diff시간 부족';
+  }
+
+  @override
+  String statsSleepAbove(String hours, String diff) {
+    return '하루 평균 $hours시간 수면 · 권장보다 $diff시간 많음';
+  }
+
+  @override
+  String statsFeedingUp(String percent) {
+    return '수유량이 이전보다 $percent% 늘었어요';
+  }
+
+  @override
+  String statsFeedingDown(String percent) {
+    return '수유량이 이전보다 $percent% 줄었어요';
+  }
+
+  @override
+  String get statsFeedingSame => '수유량이 이전과 비슷해요';
+
+  @override
+  String get statsSummaryTitle => '요약';
 }

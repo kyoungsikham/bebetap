@@ -38,27 +38,21 @@ class InsightCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm + 2,
+        vertical: AppSpacing.xs + 2,
+      ),
       decoration: BoxDecoration(
         color: insight.color.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: insight.color.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              color: insight.color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(7),
-            ),
-            child: Icon(insight.icon, color: insight.color, size: 15),
-          ),
-          const SizedBox(width: AppSpacing.sm),
+          Icon(insight.icon, color: insight.color, size: 14),
+          const SizedBox(width: 6),
           Expanded(
             child: Text(
               resolvedBody,

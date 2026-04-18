@@ -117,7 +117,7 @@ class TimelineEntry {
       title: '수면',
       subtitle: isActive ? '자는 중' : dur.formatKorean(),
       icon: Icons.bedtime,
-      color: const Color(0xFF5C6BC0),
+      color: const Color(0xFF607D8B),
       rawEndedAt: row.endedAt,
     );
   }

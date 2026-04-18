@@ -52,7 +52,9 @@ class StatsStrip extends ConsumerWidget {
                   icon: Icons.bedtime_outlined,
                   value: summary.todaySleepTotal.formatHhMm(),
                   label: context.l10n.statsSleepLabel,
-                  color: const Color(0xFF5C6BC0),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF607D8B)
+                      : const Color(0xFF607D8B),
                 ),
               ),
               _Divider(),

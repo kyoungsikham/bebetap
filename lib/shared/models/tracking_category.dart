@@ -62,8 +62,8 @@ class TrackingCategoryInfo {
       type: TimelineEntryType.sleep,
       icon: Icons.bedtime,
       label: '수면',
-      color: Color(0xFF5C6BC0),
-      bgColor: Color(0xFFE8EAF6),
+      color: Color(0xFF607D8B),
+      bgColor: Color(0xFFECEFF1),
     ),
     TimelineEntryType.temperature: TrackingCategoryInfo(
       type: TimelineEntryType.temperature,

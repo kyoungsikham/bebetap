@@ -20,8 +20,9 @@ import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../daily_message/presentation/providers/daily_message_provider.dart';
 import '../../../family/presentation/providers/family_provider.dart';
 import '../widgets/baby_selector_sheet.dart';
-import '../widgets/status_card.dart';
 import '../widgets/stats_strip.dart';
+import '../../../statistics/presentation/providers/statistics_provider.dart';
+import '../../../statistics/presentation/widgets/insight_card.dart';
 import '../widgets/tracking_grid.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -62,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
                 delegate: SliverChildListDelegate([
                   _TodayLabel(),
                   const SizedBox(height: AppSpacing.md),
-                  const StatusCard(),
+                  const _ExpandableInsights(),
                   const SizedBox(height: AppSpacing.md),
                   const StatsStrip(),
                   const SizedBox(height: AppSpacing.lg),
@@ -748,6 +749,97 @@ class _HomeHeader extends ConsumerWidget {
   }
 }
 
+
+class _ExpandableInsights extends ConsumerStatefulWidget {
+  const _ExpandableInsights();
+
+  @override
+  ConsumerState<_ExpandableInsights> createState() =>
+      _ExpandableInsightsState();
+}
+
+class _ExpandableInsightsState extends ConsumerState<_ExpandableInsights> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final insightsAsync = ref.watch(parentInsightsProvider);
+    return insightsAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (insights) {
+        if (insights.isEmpty) return const SizedBox.shrink();
+        final l10n = context.l10n;
+        final first = insights.first;
+        final firstBody = resolveInsightBody(l10n, first);
+        final hasMore = insights.length > 1;
+
+        return Column(
+          children: [
+            // 첫 번째 인사이트 (접힌 상태에서도 항상 표시)
+            GestureDetector(
+              onTap: () => setState(() => _expanded = !_expanded),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm + 2,
+                  vertical: AppSpacing.xs + 2,
+                ),
+                decoration: BoxDecoration(
+                  color: first.color.withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: first.color.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(first.icon, color: first.color, size: 14),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        firstBody,
+                        style: AppTypography.bodySmall.copyWith(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.8),
+                          height: 1.4,
+                        ),
+                        maxLines: _expanded ? null : 1,
+                        overflow:
+                            _expanded ? null : TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (hasMore || firstBody.length > 20)
+                      Icon(
+                        _expanded
+                            ? Icons.expand_less
+                            : Icons.expand_more,
+                        size: 16,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.4),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            // 나머지 인사이트 (펼침 상태에서만 표시)
+            if (_expanded && hasMore)
+              for (final insight in insights.skip(1)) ...[
+                const SizedBox(height: AppSpacing.xs),
+                InsightCard(
+                  insight: insight,
+                  resolvedBody: resolveInsightBody(l10n, insight),
+                ),
+              ],
+          ],
+        );
+      },
+    );
+  }
+}
 
 class _TodayLabel extends StatelessWidget {
   @override

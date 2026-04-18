@@ -2271,6 +2271,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ads are already removed'**
   String get paywallAlreadyPurchased;
+
+  /// No description provided for @statsSleepInRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg {hours}h sleep/day · within recommended range'**
+  String statsSleepInRange(String hours);
+
+  /// No description provided for @statsSleepBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg {hours}h sleep/day · {diff}h below recommended'**
+  String statsSleepBelow(String hours, String diff);
+
+  /// No description provided for @statsSleepAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg {hours}h sleep/day · {diff}h above recommended'**
+  String statsSleepAbove(String hours, String diff);
+
+  /// No description provided for @statsFeedingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Feeding intake up {percent}% from last period'**
+  String statsFeedingUp(String percent);
+
+  /// No description provided for @statsFeedingDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Feeding intake down {percent}% from last period'**
+  String statsFeedingDown(String percent);
+
+  /// No description provided for @statsFeedingSame.
+  ///
+  /// In en, this message translates to:
+  /// **'Feeding intake similar to last period'**
+  String get statsFeedingSame;
+
+  /// No description provided for @statsSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get statsSummaryTitle;
 }
 
 class _AppLocalizationsDelegate

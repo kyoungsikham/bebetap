@@ -597,5 +597,28 @@
   "paywallRestoreCta": "購入を復元",
   "paywallPurchaseSuccess": "広告を削除しました",
   "paywallPurchaseFailed": "購入に失敗しました",
-  "paywallAlreadyPurchased": "すでに広告は削除されています"
+  "paywallAlreadyPurchased": "すでに広告は削除されています",
+
+  "statsSleepInRange": "1日平均{hours}時間睡眠 · 推奨範囲内",
+  "@statsSleepInRange": {
+    "placeholders": { "hours": { "type": "String" } }
+  },
+  "statsSleepBelow": "1日平均{hours}時間睡眠 · 推奨より{diff}時間不足",
+  "@statsSleepBelow": {
+    "placeholders": { "hours": { "type": "String" }, "diff": { "type": "String" } }
+  },
+  "statsSleepAbove": "1日平均{hours}時間睡眠 · 推奨より{diff}時間多い",
+  "@statsSleepAbove": {
+    "placeholders": { "hours": { "type": "String" }, "diff": { "type": "String" } }
+  },
+  "statsFeedingUp": "授乳量が前回より{percent}%増えました",
+  "@statsFeedingUp": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "statsFeedingDown": "授乳量が前回より{percent}%減りました",
+  "@statsFeedingDown": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "statsFeedingSame": "授乳量は前回とほぼ同じです",
+  "statsSummaryTitle": "サマリー"
 }

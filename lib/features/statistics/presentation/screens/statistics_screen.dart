@@ -12,11 +12,12 @@ import '../../../../shared/widgets/baby_avatar_widget.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../log/domain/models/timeline_entry.dart';
 import '../../domain/models/daily_timeline.dart';
+import '../../domain/models/date_range_selection.dart';
 import '../providers/statistics_provider.dart';
 import '../widgets/daily_timeline_chart.dart';
-import '../widgets/insight_card.dart';
 import '../widgets/pattern_date_range_bar.dart';
 import '../widgets/stats_nav_card.dart';
+import '../widgets/stats_summary_card.dart';
 import 'comparison_screen.dart';
 
 class StatisticsScreen extends ConsumerStatefulWidget {
@@ -226,41 +227,11 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
               );
             },
           ),
-          const SizedBox(height: AppSpacing.xxl),
+          const SizedBox(height: AppSpacing.lg),
 
-          // Insights
-          Builder(
-            builder: (context) {
-              final insightsAsync = ref.watch(parentInsightsProvider);
-              return insightsAsync.when(
-                loading: () => const SizedBox.shrink(),
-                error: (_, _) => const SizedBox.shrink(),
-                data: (insights) {
-                  if (insights.isEmpty) return const SizedBox.shrink();
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.insightsTitle,
-                        style: AppTypography.titleMedium.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      for (final insight in insights) ...[
-                        InsightCard(
-                          insight: insight,
-                          resolvedBody: resolveInsightBody(l10n, insight),
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                      ],
-                      const SizedBox(height: AppSpacing.lg),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
+          // Summary cards
+          _SummarySection(range: range),
+          const SizedBox(height: AppSpacing.lg),
 
           // Navigation cards to sub-pages
           if (hasFeedingTypes)
@@ -305,6 +276,92 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             ),
         ],
       ),
+    );
+  }
+}
+
+class _SummarySection extends ConsumerWidget {
+  const _SummarySection({required this.range});
+  final DateRangeSelection range;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final sleepAsync = ref.watch(sleepStatsProvider(range));
+    final feedingAsync = ref.watch(feedingStatsProvider(range));
+
+    final cards = <Widget>[];
+
+    // Sleep summary
+    sleepAsync.whenData((sleep) {
+      final avg = sleep.avgDailyHours;
+      final min = sleep.ageRecommendedMin;
+      final max = sleep.ageRecommendedMax;
+      if (avg <= 0 || min == null || max == null) return;
+
+      final hoursStr = avg.toStringAsFixed(1);
+      String text;
+      Color color;
+      if (avg >= min && avg <= max) {
+        text = l10n.statsSleepInRange(hoursStr);
+        color = const Color(0xFF26A69A);
+      } else if (avg < min) {
+        final diff = (min - avg).toStringAsFixed(1);
+        text = l10n.statsSleepBelow(hoursStr, diff);
+        color = const Color(0xFFFFA000);
+      } else {
+        final diff = (avg - max).toStringAsFixed(1);
+        text = l10n.statsSleepAbove(hoursStr, diff);
+        color = const Color(0xFFFFA000);
+      }
+      cards.add(StatsSummaryCard(
+        icon: Icons.bedtime,
+        text: text,
+        color: color,
+      ));
+    });
+
+    // Feeding summary
+    feedingAsync.whenData((feeding) {
+      final delta = feeding.formulaDeltaPercent ?? feeding.breastDeltaPercent;
+      if (delta == null) return;
+
+      String text;
+      Color color;
+      if (delta.abs() < 5) {
+        text = l10n.statsFeedingSame;
+        color = const Color(0xFF26A69A);
+      } else if (delta > 0) {
+        text = l10n.statsFeedingUp(delta.abs().toStringAsFixed(0));
+        color = const Color(0xFF5B7FFF);
+      } else {
+        text = l10n.statsFeedingDown(delta.abs().toStringAsFixed(0));
+        color = const Color(0xFFFFA000);
+      }
+      cards.add(StatsSummaryCard(
+        icon: Icons.local_drink,
+        text: text,
+        color: color,
+      ));
+    });
+
+    if (cards.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.statsSummaryTitle,
+          style: AppTypography.titleMedium.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        ...cards.map((card) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+              child: card,
+            )),
+      ],
     );
   }
 }

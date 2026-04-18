@@ -20,16 +20,20 @@ class DailyTimelineChart extends StatelessWidget {
   static const _yAxisGap = 4.0;
 
   // Colors — must match icon colors in TimelineEntry (timeline_entry.dart)
-  static const _sleepColor = Color(0xFF5C6BC0);
+  static const _sleepColorLight = Color(0xFF607D8B);
+  static const _sleepColorDark = Color(0xFF607D8B);
   static const _formulaColor = Color(0xFF4A90E2);
   static const _breastColor = Color(0xFFD81B60);
   static const _pumpedColor = Color(0xFF9C27B0);
   static const _babyFoodColor = Color(0xFFFFA000);
   static const _diaperColor = Color(0xFF00BFA5);
 
-  static Color colorFor(TimelineEventType type) {
+  static Color colorFor(TimelineEventType type,
+      {Brightness brightness = Brightness.light}) {
     return switch (type) {
-      TimelineEventType.sleep => _sleepColor,
+      TimelineEventType.sleep => brightness == Brightness.dark
+          ? _sleepColorDark
+          : _sleepColorLight,
       TimelineEventType.formula => _formulaColor,
       TimelineEventType.breast => _breastColor,
       TimelineEventType.pumped => _pumpedColor,
@@ -233,7 +237,8 @@ class _DayColumn extends StatelessWidget {
       );
     }
 
-    final color = DailyTimelineChart.colorFor(event.type);
+    final color = DailyTimelineChart.colorFor(event.type,
+        brightness: Theme.of(context).brightness);
     final minHeight =
         event.type == TimelineEventType.sleep ? 1.0 : 3.0;
 
@@ -300,7 +305,8 @@ class TimelineFilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final color = DailyTimelineChart.colorFor(type);
+    final color = DailyTimelineChart.colorFor(type,
+        brightness: Theme.of(context).brightness);
     return GestureDetector(
       onTap: () => onSelected(!selected),
       child: Container(

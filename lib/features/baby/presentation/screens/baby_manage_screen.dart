@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../core/config/ad_config.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -226,37 +227,52 @@ class _BabyFormSheetState extends ConsumerState<_BabyFormSheet> {
         maxWidth: 1024,
         maxHeight: 1024,
       );
-      if (picked == null) return;
+      if (picked == null || !mounted) return;
+
+      // 캐시 디렉토리에 복사하여 파일 경로 안정성 확보 (Android 실기기 크래시 방지)
+      final tempDir = await getTemporaryDirectory();
+      final tempFile = File(
+        '${tempDir.path}/pick_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+      await File(picked.path).copy(tempFile.path);
+
       if (!mounted) return;
 
       final photoSelectLabel = context.l10n.photoSelect;
       final primaryColor = Theme.of(context).colorScheme.primary;
 
-      final cropped = await ImageCropper().cropImage(
-        sourcePath: picked.path,
-        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-        maxWidth: 512,
-        maxHeight: 512,
-        compressQuality: 85,
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: photoSelectLabel,
-            toolbarColor: primaryColor,
-            toolbarWidgetColor: Colors.white,
-            lockAspectRatio: true,
-            cropStyle: CropStyle.circle,
-          ),
-          IOSUiSettings(
-            title: photoSelectLabel,
-            aspectRatioLockEnabled: true,
-            resetAspectRatioEnabled: false,
-            cropStyle: CropStyle.circle,
-          ),
-        ],
-      );
-      if (cropped != null && mounted) {
-        setState(() => _imageFile = File(cropped.path));
+      CroppedFile? cropped;
+      try {
+        cropped = await ImageCropper().cropImage(
+          sourcePath: tempFile.path,
+          aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+          maxWidth: 512,
+          maxHeight: 512,
+          compressQuality: 85,
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: photoSelectLabel,
+              toolbarColor: primaryColor,
+              toolbarWidgetColor: Colors.white,
+              lockAspectRatio: true,
+              cropStyle: CropStyle.circle,
+            ),
+            IOSUiSettings(
+              title: photoSelectLabel,
+              aspectRatioLockEnabled: true,
+              resetAspectRatioEnabled: false,
+              cropStyle: CropStyle.circle,
+            ),
+          ],
+        );
+      } catch (_) {
+        // crop 실패 시 원본 이미지를 fallback으로 사용
       }
+
+      if (!mounted) return;
+      setState(() {
+        _imageFile = cropped != null ? File(cropped.path) : tempFile;
+      });
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

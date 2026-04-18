@@ -1193,4 +1193,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paywallAlreadyPurchased => 'Ads are already removed';
+
+  @override
+  String statsSleepInRange(String hours) {
+    return 'Avg ${hours}h sleep/day · within recommended range';
+  }
+
+  @override
+  String statsSleepBelow(String hours, String diff) {
+    return 'Avg ${hours}h sleep/day · ${diff}h below recommended';
+  }
+
+  @override
+  String statsSleepAbove(String hours, String diff) {
+    return 'Avg ${hours}h sleep/day · ${diff}h above recommended';
+  }
+
+  @override
+  String statsFeedingUp(String percent) {
+    return 'Feeding intake up $percent% from last period';
+  }
+
+  @override
+  String statsFeedingDown(String percent) {
+    return 'Feeding intake down $percent% from last period';
+  }
+
+  @override
+  String get statsFeedingSame => 'Feeding intake similar to last period';
+
+  @override
+  String get statsSummaryTitle => 'Summary';
 }

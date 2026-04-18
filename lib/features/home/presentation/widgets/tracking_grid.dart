@@ -129,7 +129,9 @@ class TrackingGrid extends ConsumerWidget {
             icon: info.icon,
             label: info.localizedLabel(l10n),
             sublabel: sleepLabel,
-            color: info.color,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF607D8B)
+                : info.color,
             isActive: activeSleep != null,
             onTap: () => showAppBottomSheet(
               context: context,

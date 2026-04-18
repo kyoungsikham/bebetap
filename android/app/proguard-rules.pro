@@ -1,7 +1,8 @@
 # OkHttp / Conscrypt / OpenJSSE (R8 missing class 오류 방지)
+-keep class okhttp3.** { *; }
+-dontwarn okhttp3.**
 -dontwarn org.conscrypt.**
 -dontwarn org.openjsse.**
--dontwarn okhttp3.internal.platform.**
 
 # Google Play Core (Flutter deferred components)
 -dontwarn com.google.android.play.core.splitcompat.SplitCompatApplication

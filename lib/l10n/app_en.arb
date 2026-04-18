@@ -607,5 +607,28 @@
   "paywallRestoreCta": "Restore Purchase",
   "paywallPurchaseSuccess": "Ads removed",
   "paywallPurchaseFailed": "Purchase failed",
-  "paywallAlreadyPurchased": "Ads are already removed"
+  "paywallAlreadyPurchased": "Ads are already removed",
+
+  "statsSleepInRange": "Avg {hours}h sleep/day · within recommended range",
+  "@statsSleepInRange": {
+    "placeholders": { "hours": { "type": "String" } }
+  },
+  "statsSleepBelow": "Avg {hours}h sleep/day · {diff}h below recommended",
+  "@statsSleepBelow": {
+    "placeholders": { "hours": { "type": "String" }, "diff": { "type": "String" } }
+  },
+  "statsSleepAbove": "Avg {hours}h sleep/day · {diff}h above recommended",
+  "@statsSleepAbove": {
+    "placeholders": { "hours": { "type": "String" }, "diff": { "type": "String" } }
+  },
+  "statsFeedingUp": "Feeding intake up {percent}% from last period",
+  "@statsFeedingUp": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "statsFeedingDown": "Feeding intake down {percent}% from last period",
+  "@statsFeedingDown": {
+    "placeholders": { "percent": { "type": "String" } }
+  },
+  "statsFeedingSame": "Feeding intake similar to last period",
+  "statsSummaryTitle": "Summary"
 }
