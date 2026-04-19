@@ -8,16 +8,13 @@ import '../../../../shared/models/tracking_category.dart';
 import '../../../../shared/models/volume_unit.dart';
 import '../../../../shared/providers/icon_settings_provider.dart';
 import '../../../../shared/providers/volume_unit_provider.dart';
-import '../../../../shared/widgets/app_bottom_sheet.dart';
-import '../../../diaper/presentation/widgets/diaper_bottom_sheet.dart';
-import '../../../feeding/presentation/widgets/baby_food_bottom_sheet.dart';
-import '../../../feeding/presentation/widgets/breast_bottom_sheet.dart';
-import '../../../feeding/presentation/widgets/formula_bottom_sheet.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/widget/widget_action_handler.dart';
+import '../../../../shared/utils/quick_record.dart';
 import '../../../sleep/presentation/providers/sleep_provider.dart';
-import '../../../sleep/presentation/widgets/sleep_bottom_sheet.dart';
-import '../../../temperature/presentation/widgets/temperature_bottom_sheet.dart';
 import '../../../diary/presentation/providers/diary_provider.dart';
-import '../../../diary/presentation/widgets/diary_bottom_sheet.dart';
 import '../providers/home_provider.dart';
 import 'tracking_tile.dart';
 import '../../../log/domain/models/timeline_entry.dart';
@@ -108,11 +105,10 @@ class _TrackingGridState extends ConsumerState<TrackingGrid>
             label: info.localizedLabel(l10n),
             sublabel: formulaSublabel,
             color: info.color,
-            onTap: () => showAppBottomSheet(
-              context: context,
-              child: const FormulaBottomSheet(),
-              title: l10n.formulaBottomSheetTitle,
-            ),
+            onTap: () async {
+              await quickAddRecord(context, ref, TimelineEntryType.formula);
+              if (context.mounted) context.go(AppRoutes.log);
+            },
           );
         case TimelineEntryType.breast:
           return TrackingTile(
@@ -120,11 +116,10 @@ class _TrackingGridState extends ConsumerState<TrackingGrid>
             label: info.localizedLabel(l10n),
             sublabel: breastSublabel,
             color: info.color,
-            onTap: () => showAppBottomSheet(
-              context: context,
-              child: const BreastBottomSheet(),
-              title: l10n.breastBottomSheetTitle,
-            ),
+            onTap: () async {
+              await quickAddRecord(context, ref, TimelineEntryType.breast);
+              if (context.mounted) context.go(AppRoutes.log);
+            },
           );
         case TimelineEntryType.pumped:
           return TrackingTile(
@@ -132,11 +127,10 @@ class _TrackingGridState extends ConsumerState<TrackingGrid>
             label: info.localizedLabel(l10n),
             sublabel: pumpedSublabel,
             color: info.color,
-            onTap: () => showAppBottomSheet(
-              context: context,
-              child: const FormulaBottomSheet(feedingType: MlFeedingType.pumped),
-              title: l10n.pumpedBottomSheetTitle,
-            ),
+            onTap: () async {
+              await quickAddRecord(context, ref, TimelineEntryType.pumped);
+              if (context.mounted) context.go(AppRoutes.log);
+            },
           );
         case TimelineEntryType.diaper:
           return TrackingTile(
@@ -144,10 +138,10 @@ class _TrackingGridState extends ConsumerState<TrackingGrid>
             label: info.localizedLabel(l10n),
             sublabel: diaperLabel,
             color: info.color,
-            onTap: () => showAppBottomSheet(
-              context: context,
-              child: const DiaperBottomSheet(),
-            ),
+            onTap: () async {
+              await quickAddRecord(context, ref, TimelineEntryType.diaper);
+              if (context.mounted) context.go(AppRoutes.log);
+            },
           );
         case TimelineEntryType.sleep:
           return TrackingTile(
@@ -158,23 +152,10 @@ class _TrackingGridState extends ConsumerState<TrackingGrid>
                 ? const Color(0xFF607D8B)
                 : info.color,
             isActive: activeSleep != null,
-            onTap: () => showAppBottomSheet(
-              context: context,
-              child: const SleepBottomSheet(),
-              title: l10n.sleep,
-            ),
-          );
-        case TimelineEntryType.temperature:
-          return TrackingTile(
-            icon: info.icon,
-            label: info.localizedLabel(l10n),
-            sublabel: l10n.tapToRecord,
-            color: info.color,
-            onTap: () => showAppBottomSheet(
-              context: context,
-              child: const TemperatureBottomSheet(),
-              title: l10n.temperatureRecordTitle,
-            ),
+            onTap: () async {
+              await quickAddRecord(context, ref, TimelineEntryType.sleep);
+              if (context.mounted) context.go(AppRoutes.log);
+            },
           );
         case TimelineEntryType.babyFood:
           return TrackingTile(
@@ -184,11 +165,21 @@ class _TrackingGridState extends ConsumerState<TrackingGrid>
                 ? l10n.todayAmount(unit.formatAmount(summary.todayBabyFoodTotalMl))
                 : l10n.tapToRecord,
             color: info.color,
-            onTap: () => showAppBottomSheet(
-              context: context,
-              child: const BabyFoodBottomSheet(),
-              title: l10n.babyFoodBottomSheetTitle,
-            ),
+            onTap: () async {
+              await quickAddRecord(context, ref, TimelineEntryType.babyFood);
+              if (context.mounted) context.go(AppRoutes.log);
+            },
+          );
+        case TimelineEntryType.temperature:
+          return TrackingTile(
+            icon: info.icon,
+            label: info.localizedLabel(l10n),
+            sublabel: l10n.tapToRecord,
+            color: info.color,
+            onTap: () {
+              ref.read(pendingWidgetTabProvider.notifier).state = 'temperature';
+              context.go(AppRoutes.log);
+            },
           );
         case TimelineEntryType.diary:
           return Consumer(
@@ -201,19 +192,9 @@ class _TrackingGridState extends ConsumerState<TrackingGrid>
                 label: info.localizedLabel(innerL10n),
                 sublabel: hasDiary ? innerL10n.diaryDoneToday : innerL10n.tapToRecord,
                 color: info.color,
-                onTap: () async {
-                  final existing =
-                      await ref.read(todayDiaryForCurrentUserProvider.future);
-                  if (!context.mounted) return;
-                  showAppBottomSheet(
-                    context: context,
-                    child: existing != null
-                        ? DiaryBottomSheet(editEntry: existing.toTimelineEntry())
-                        : const DiaryBottomSheet(),
-                    title: existing != null
-                        ? context.l10n.diaryEditTitle
-                        : context.l10n.diaryWriteTitle,
-                  );
+                onTap: () {
+                  ref.read(pendingWidgetTabProvider.notifier).state = 'diary';
+                  context.go(AppRoutes.log);
                 },
               );
             },

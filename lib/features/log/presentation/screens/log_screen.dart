@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
+import '../../../../shared/utils/quick_record.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../../core/widget/widget_action_handler.dart';
 import '../../../diaper/presentation/widgets/diaper_bottom_sheet.dart';
@@ -259,76 +260,68 @@ class _LogScreenState extends ConsumerState<LogScreen> {
     if (context.mounted) Navigator.of(context).pop();
   }
 
-  /// 위젯 딥링크 탭 이름으로 바텀 시트 열기.
+  /// 위젯 딥링크 탭 이름으로 즉시 기록 or 바텀시트 열기.
   /// tab: 'formula' | 'breast' | 'pumped' | 'baby_food' | 'temperature' | 'sleep' | 'diaper'
-  void _openAddSheetForTab(String tab) {
+  Future<void> _openAddSheetForTab(String tab) async {
     if (!mounted) return;
-    late Widget sheet;
-    late String title;
     switch (tab) {
       case 'formula':
-        sheet = const FormulaBottomSheet();
-        title = context.l10n.addFormula;
+        await quickAddRecord(context, ref, TimelineEntryType.formula);
       case 'breast':
-        sheet = const BreastBottomSheet();
-        title = context.l10n.addBreast;
+        await quickAddRecord(context, ref, TimelineEntryType.breast);
       case 'pumped':
-        sheet = const FormulaBottomSheet(feedingType: MlFeedingType.pumped);
-        title = context.l10n.addPumped;
+        await quickAddRecord(context, ref, TimelineEntryType.pumped);
       case 'baby_food':
-        sheet = const BabyFoodBottomSheet();
-        title = context.l10n.addBabyFood;
-      case 'temperature':
-        sheet = const TemperatureBottomSheet();
-        title = context.l10n.addTemperature;
+        await quickAddRecord(context, ref, TimelineEntryType.babyFood);
       case 'sleep':
-        sheet = const SleepBottomSheet();
-        title = context.l10n.addSleep;
+        await quickAddRecord(context, ref, TimelineEntryType.sleep);
       case 'diaper':
-        sheet = const DiaperBottomSheet();
-        title = context.l10n.addDiaper;
+        await quickAddRecord(context, ref, TimelineEntryType.diaper);
+      case 'temperature':
+        if (!mounted) return;
+        showAppBottomSheet(
+          context: context,
+          child: const TemperatureBottomSheet(),
+          title: context.l10n.addTemperature,
+        );
+      case 'diary':
+        final existing = await ref.read(todayDiaryForCurrentUserProvider.future);
+        if (!mounted) return;
+        showAppBottomSheet(
+          context: context,
+          child: existing != null
+              ? DiaryBottomSheet(editEntry: existing.toTimelineEntry())
+              : const DiaryBottomSheet(),
+          title: existing != null ? context.l10n.editDiary : context.l10n.writeDiary,
+        );
       default:
         return;
     }
-    showAppBottomSheet(context: context, child: sheet, title: title);
   }
 
   Future<void> _openAddSheetForType(
       BuildContext context, WidgetRef ref, TimelineEntryType type) async {
-    late Widget sheet;
-    late String title;
-    switch (type) {
-      case TimelineEntryType.formula:
-        sheet = const FormulaBottomSheet();
-        title = context.l10n.addFormula;
-      case TimelineEntryType.pumped:
-        sheet = const FormulaBottomSheet(feedingType: MlFeedingType.pumped);
-        title = context.l10n.addPumped;
-      case TimelineEntryType.babyFood:
-        sheet = const BabyFoodBottomSheet();
-        title = context.l10n.addBabyFood;
-      case TimelineEntryType.breast:
-        sheet = const BreastBottomSheet();
-        title = context.l10n.addBreast;
-      case TimelineEntryType.diaper:
-        sheet = const DiaperBottomSheet();
-        title = context.l10n.addDiaper;
-      case TimelineEntryType.sleep:
-        sheet = const SleepBottomSheet();
-        title = context.l10n.addSleep;
-      case TimelineEntryType.temperature:
-        sheet = const TemperatureBottomSheet();
-        title = context.l10n.addTemperature;
-      case TimelineEntryType.diary:
-        final existing =
-            await ref.read(todayDiaryForCurrentUserProvider.future);
+    if (needsBottomSheet(type)) {
+      if (type == TimelineEntryType.temperature) {
+        showAppBottomSheet(
+          context: context,
+          child: const TemperatureBottomSheet(),
+          title: context.l10n.addTemperature,
+        );
+      } else {
+        // diary
+        final existing = await ref.read(todayDiaryForCurrentUserProvider.future);
         if (!context.mounted) return;
-        sheet = existing != null
-            ? DiaryBottomSheet(editEntry: existing.toTimelineEntry())
-            : const DiaryBottomSheet();
-        title = existing != null ? context.l10n.editDiary : context.l10n.writeDiary;
+        showAppBottomSheet(
+          context: context,
+          child: existing != null
+              ? DiaryBottomSheet(editEntry: existing.toTimelineEntry())
+              : const DiaryBottomSheet(),
+          title: existing != null ? context.l10n.editDiary : context.l10n.writeDiary,
+        );
+      }
+      return;
     }
-    if (!context.mounted) return;
-    showAppBottomSheet(context: context, child: sheet, title: title);
+    await quickAddRecord(context, ref, type);
   }
 }
