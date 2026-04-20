@@ -6,9 +6,13 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
+import '../../../../shared/utils/baby_age.dart';
 import '../../../../shared/utils/quick_record.dart';
 import '../../../../shared/widgets/app_bottom_sheet.dart';
+import '../../../../shared/widgets/baby_avatar_widget.dart';
+import '../../../../shared/widgets/hamburger_menu_panel.dart';
 import '../../../../core/widget/widget_action_handler.dart';
+import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../diaper/presentation/widgets/diaper_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/baby_food_bottom_sheet.dart';
 import '../../../feeding/presentation/widgets/breast_bottom_sheet.dart';
@@ -68,7 +72,52 @@ class _LogScreenState extends ConsumerState<LogScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text(context.l10n.logTitle, style: AppTypography.titleLarge),
+        title: Builder(builder: (context) {
+          final baby = ref.watch(selectedBabyProvider).valueOrNull;
+          final babies = ref.watch(babiesProvider).valueOrNull ?? [];
+          final colorIndex = baby != null
+              ? babies.indexWhere((b) => b.id == baby.id)
+              : -1;
+          final ageLabel =
+              baby != null ? babyAgeLabel(context, baby.birthDate) : null;
+
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (baby != null) ...[
+                BabyAvatarWidget(
+                  photoUrl: baby.photoUrl,
+                  gender: baby.gender,
+                  colorIndex: colorIndex >= 0 ? colorIndex : null,
+                  size: 32,
+                ),
+                const SizedBox(width: 8),
+              ],
+              Text(
+                baby?.name ?? context.l10n.logTitle,
+                style: AppTypography.titleLarge,
+              ),
+              if (ageLabel != null) ...[
+                const SizedBox(width: 8),
+                Text(
+                  ageLabel,
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.6),
+                  ),
+                ),
+              ],
+            ],
+          );
+        }),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => showHamburgerMenu(context, ref),
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
