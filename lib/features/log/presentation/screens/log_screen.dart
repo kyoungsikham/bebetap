@@ -67,61 +67,10 @@ class _LogScreenState extends ConsumerState<LogScreen> {
     final timelineAsync = ref.watch(filteredLogTimelineProvider);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Builder(builder: (context) {
-          final baby = ref.watch(selectedBabyProvider).valueOrNull;
-          final babies = ref.watch(babiesProvider).valueOrNull ?? [];
-          final colorIndex = baby != null
-              ? babies.indexWhere((b) => b.id == baby.id)
-              : -1;
-          final ageLabel =
-              baby != null ? babyAgeLabel(context, baby.birthDate) : null;
-
-          return Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (baby != null) ...[
-                BabyAvatarWidget(
-                  photoUrl: baby.photoUrl,
-                  gender: baby.gender,
-                  colorIndex: colorIndex >= 0 ? colorIndex : null,
-                  size: 32,
-                ),
-                const SizedBox(width: 8),
-              ],
-              Text(
-                baby?.name ?? context.l10n.logTitle,
-                style: AppTypography.titleLarge,
-              ),
-              if (ageLabel != null) ...[
-                const SizedBox(width: 8),
-                Text(
-                  ageLabel,
-                  style: AppTypography.bodyMedium.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
-            ],
-          );
-        }),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => showHamburgerMenu(context, ref),
-          ),
-        ],
-      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _LogHeader(onMenuTap: () => showHamburgerMenu(context, ref)),
           // 날짜 네비게이터
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -372,5 +321,87 @@ class _LogScreenState extends ConsumerState<LogScreen> {
       return;
     }
     await quickAddRecord(context, ref, type);
+  }
+}
+
+class _LogHeader extends ConsumerWidget {
+  const _LogHeader({this.onMenuTap});
+
+  final VoidCallback? onMenuTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final baby = ref.watch(selectedBabyProvider).valueOrNull;
+    final babies = ref.watch(babiesProvider).valueOrNull ?? [];
+    final colorIndex =
+        baby != null ? babies.indexWhere((b) => b.id == baby.id) : -1;
+    final ageLabel =
+        baby != null ? babyAgeLabel(context, baby.birthDate) : null;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? const [
+                  Color(0xFF1A1020),
+                  Color(0xFF161520),
+                  Color(0xFF121218),
+                ]
+              : const [
+                  Color(0xFFFFEEF0),
+                  Color(0xFFFFF5F6),
+                  Color(0xFFFFFFFF),
+                ],
+          stops: const [0.0, 0.6, 1.0],
+        ),
+      ),
+      padding: EdgeInsets.only(
+        top: topPadding + AppSpacing.sm,
+        bottom: AppSpacing.md,
+        left: AppSpacing.pagePadding,
+        right: AppSpacing.pagePadding,
+      ),
+      child: Row(
+        children: [
+          if (baby != null) ...[
+            BabyAvatarWidget(
+              photoUrl: baby.photoUrl,
+              gender: baby.gender,
+              colorIndex: colorIndex >= 0 ? colorIndex : null,
+              size: 32,
+            ),
+            const SizedBox(width: 8),
+          ],
+          Text(
+            baby?.name ?? context.l10n.logTitle,
+            style: AppTypography.titleLarge,
+          ),
+          if (ageLabel != null) ...[
+            const SizedBox(width: 8),
+            Text(
+              ageLabel,
+              style: AppTypography.bodyMedium.copyWith(
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.6),
+              ),
+            ),
+          ],
+          const Spacer(),
+          IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: onMenuTap,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      ),
+    );
   }
 }

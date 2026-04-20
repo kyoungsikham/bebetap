@@ -268,6 +268,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get volumeUnitOz => 'Ounce (oz)';
 
   @override
+  String get menuDefaultLanding => 'Default Starting Screen';
+
+  @override
+  String get menuDefaultLandingHome => 'Home';
+
+  @override
+  String get menuDefaultLandingLog => 'Log';
+
+  @override
   String todayCount(int count) {
     return 'Today $count times';
   }

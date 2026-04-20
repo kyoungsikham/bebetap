@@ -20,6 +20,7 @@ import '../../features/family/presentation/screens/family_screen.dart';
 import '../../features/baby/presentation/screens/baby_manage_screen.dart';
 import '../../features/premium/presentation/screens/paywall_screen.dart';
 import '../../features/settings/presentation/screens/icon_settings_screen.dart';
+import '../../shared/providers/default_landing_provider.dart';
 import '../../shared/widgets/bottom_nav_bar.dart';
 import '../providers/auth_provider.dart';
 import '../widget/widget_action_handler.dart';
@@ -57,7 +58,7 @@ GoRouter appRouter(Ref ref) {
   ref.onDispose(notifier.dispose);
 
   return GoRouter(
-    initialLocation: AppRoutes.home,
+    initialLocation: defaultLandingPreloadedOrFallback().path,
     refreshListenable: notifier,
     redirect: (context, state) {
       final authAsync = ref.read(authStateProvider);
@@ -100,9 +101,10 @@ GoRouter appRouter(Ref ref) {
         return publicRoutes.contains(loc) ? null : AppRoutes.login;
       }
 
-      // 3. 로그인/이메일인증 화면에서 인증됨 → 홈으로 이동
+      // 3. 로그인/이메일인증 화면에서 인증됨 → 이동 대상 결정
       if (loc == AppRoutes.login || loc == AppRoutes.emailAuth) {
-        return AppRoutes.home;
+        if (babiesLoaded && !hasBaby) return AppRoutes.babySetup;
+        return defaultLandingPreloadedOrFallback().path;
       }
 
       // 4. babies 로딩 중이면 현재 위치 유지 (섣부른 리다이렉트 방지)

@@ -268,6 +268,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get volumeUnitOz => '온스 (oz)';
 
   @override
+  String get menuDefaultLanding => '기본 시작 화면';
+
+  @override
+  String get menuDefaultLandingHome => '홈';
+
+  @override
+  String get menuDefaultLandingLog => '기록';
+
+  @override
   String todayCount(int count) {
     return '오늘 $count회';
   }

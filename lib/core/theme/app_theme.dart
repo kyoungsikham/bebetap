@@ -33,7 +33,7 @@ abstract class AppTheme {
       // BottomNavigationBar
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.background,
-        selectedItemColor: AppColors.primary,
+        selectedItemColor: AppColors.bottomNavActive,
         unselectedItemColor: AppColors.onSurfaceMuted,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
@@ -169,7 +169,7 @@ abstract class AppTheme {
       // BottomNavigationBar
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.darkBackground,
-        selectedItemColor: AppColors.primary,
+        selectedItemColor: AppColors.bottomNavActive,
         unselectedItemColor: AppColors.darkOnSurfaceMuted,
         elevation: 0,
         type: BottomNavigationBarType.fixed,

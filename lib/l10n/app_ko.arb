@@ -137,6 +137,9 @@
   "menuVolumeUnit": "단위 설정",
   "volumeUnitMl": "밀리리터 (ml)",
   "volumeUnitOz": "온스 (oz)",
+  "menuDefaultLanding": "기본 시작 화면",
+  "menuDefaultLandingHome": "홈",
+  "menuDefaultLandingLog": "기록",
   "todayCount": "오늘 {count}회",
   "@todayCount": {
     "placeholders": {

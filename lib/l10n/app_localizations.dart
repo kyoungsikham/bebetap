@@ -586,6 +586,24 @@ abstract class AppLocalizations {
   /// **'Ounce (oz)'**
   String get volumeUnitOz;
 
+  /// No description provided for @menuDefaultLanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Starting Screen'**
+  String get menuDefaultLanding;
+
+  /// No description provided for @menuDefaultLandingHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get menuDefaultLandingHome;
+
+  /// No description provided for @menuDefaultLandingLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Log'**
+  String get menuDefaultLandingLog;
+
   /// No description provided for @todayCount.
   ///
   /// In en, this message translates to:

@@ -137,6 +137,9 @@
   "menuVolumeUnit": "Volume Unit",
   "volumeUnitMl": "Milliliter (ml)",
   "volumeUnitOz": "Ounce (oz)",
+  "menuDefaultLanding": "Default Starting Screen",
+  "menuDefaultLandingHome": "Home",
+  "menuDefaultLandingLog": "Log",
   "todayCount": "Today {count} times",
   "@todayCount": {
     "placeholders": {

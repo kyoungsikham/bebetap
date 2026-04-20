@@ -88,40 +88,18 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
     final hasSleep = visibleCategories.contains(TimelineEntryType.sleep);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (baby != null) ...[
-              BabyAvatarWidget(
-                photoUrl: baby.photoUrl,
-                gender: baby.gender,
-                colorIndex: colorIndex >= 0 ? colorIndex : null,
-                size: 32,
-              ),
-              const SizedBox(width: 8),
-            ],
-            Text(baby?.name ?? l10n.statistics, style: AppTypography.titleLarge),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.compare_arrows, size: 22),
-            tooltip: l10n.babyComparison,
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const ComparisonScreen(),
-              ),
+      body: Column(
+        children: [
+          _StatisticsHeader(
+            baby: baby,
+            colorIndex: colorIndex,
+            onCompareTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ComparisonScreen()),
             ),
           ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(
           AppSpacing.pagePadding,
           AppSpacing.md,
           AppSpacing.pagePadding,
@@ -274,6 +252,72 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                 onTap: () => context.push(AppRoutes.growthStats),
               ),
             ),
+        ],
+      ),
+    ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatisticsHeader extends StatelessWidget {
+  const _StatisticsHeader({
+    required this.baby,
+    required this.colorIndex,
+    required this.onCompareTap,
+  });
+
+  final dynamic baby;
+  final int colorIndex;
+  final VoidCallback onCompareTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = context.l10n;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? const [Color(0xFF1A1020), Color(0xFF161520), Color(0xFF121218)]
+              : const [Color(0xFFFFEEF0), Color(0xFFFFF5F6), Color(0xFFFFFFFF)],
+          stops: const [0.0, 0.6, 1.0],
+        ),
+      ),
+      padding: EdgeInsets.only(
+        top: topPadding + AppSpacing.sm,
+        bottom: AppSpacing.md,
+        left: AppSpacing.pagePadding,
+        right: AppSpacing.pagePadding,
+      ),
+      child: Row(
+        children: [
+          if (baby != null) ...[
+            BabyAvatarWidget(
+              photoUrl: baby.photoUrl,
+              gender: baby.gender,
+              colorIndex: colorIndex >= 0 ? colorIndex : null,
+              size: 32,
+            ),
+            const SizedBox(width: 8),
+          ],
+          Text(
+            baby?.name ?? l10n.statistics,
+            style: AppTypography.titleLarge,
+          ),
+          const Spacer(),
+          IconButton(
+            icon: const Icon(Icons.compare_arrows, size: 22),
+            tooltip: l10n.babyComparison,
+            onPressed: onCompareTap,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
         ],
       ),
     );

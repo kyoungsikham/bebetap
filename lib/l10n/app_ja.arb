@@ -137,6 +137,9 @@
   "menuVolumeUnit": "単位設定",
   "volumeUnitMl": "ミリリットル (ml)",
   "volumeUnitOz": "オンス (oz)",
+  "menuDefaultLanding": "起動時の画面",
+  "menuDefaultLandingHome": "ホーム",
+  "menuDefaultLandingLog": "記録",
   "todayCount": "今日 {count}回",
   "@todayCount": {
     "placeholders": {

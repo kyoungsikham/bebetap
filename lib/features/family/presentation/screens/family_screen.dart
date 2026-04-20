@@ -79,14 +79,11 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
     final membersAsync = ref.watch(familyMembersProvider);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text(context.l10n.familyTitle, style: AppTypography.titleLarge),
-      ),
-      body: familyAsync.when(
+      body: Column(
+        children: [
+          _FamilyHeader(),
+          Expanded(
+            child: familyAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => Center(
           child: Text(
@@ -106,6 +103,43 @@ class _FamilyScreenState extends ConsumerState<FamilyScreen> {
           }
           return _FamilyView(family: family, membersAsync: membersAsync);
         },
+      ),
+    ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FamilyHeader extends StatelessWidget {
+  const _FamilyHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? const [Color(0xFF1A1020), Color(0xFF161520), Color(0xFF121218)]
+              : const [Color(0xFFFFEEF0), Color(0xFFFFF5F6), Color(0xFFFFFFFF)],
+          stops: const [0.0, 0.6, 1.0],
+        ),
+      ),
+      padding: EdgeInsets.only(
+        top: topPadding + AppSpacing.sm,
+        bottom: AppSpacing.md,
+        left: AppSpacing.pagePadding,
+        right: AppSpacing.pagePadding,
+      ),
+      child: Row(
+        children: [
+          Text(context.l10n.familyTitle, style: AppTypography.titleLarge),
+        ],
       ),
     );
   }

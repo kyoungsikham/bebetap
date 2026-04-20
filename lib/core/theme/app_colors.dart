@@ -25,6 +25,9 @@ abstract class AppColors {
   // White / on-primary
   static const Color onPrimary = Color(0xFFFFFFFF);
 
+  // Bottom nav 활성 색상 (헤더 그라디언트와 어울리는 따뜻한 코랄)
+  static const Color bottomNavActive = Color(0xFFE85D7A);
+
   // ── Dark mode ────────────────────────────────────────────────
   static const Color darkBackground = Color(0xFF121218);
   static const Color darkSurface = Color(0xFF1E1E26);

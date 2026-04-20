@@ -9,6 +9,7 @@ import 'core/config/ad_initializer.dart';
 import 'core/config/app_config.dart';
 import 'features/premium/data/iap_service.dart';
 import 'features/premium/presentation/providers/iap_provider.dart';
+import 'shared/providers/default_landing_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +31,8 @@ Future<void> main() async {
 
   // 홈 위젯 App Group 설정 (iOS)
   await HomeWidget.setAppGroupId('group.com.bebetap.app');
+
+  await preloadDefaultLanding();
 
   runApp(
     ProviderScope(
