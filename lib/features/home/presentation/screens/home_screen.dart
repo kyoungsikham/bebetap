@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
@@ -10,10 +11,14 @@ import '../../../../shared/widgets/hamburger_menu_panel.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../daily_message/presentation/providers/daily_message_provider.dart';
 import '../../../family/presentation/providers/family_provider.dart';
-import '../widgets/stats_strip.dart';
+import '../../../log/domain/models/timeline_entry.dart';
+import '../../../log/presentation/providers/log_provider.dart';
+import '../../../log/presentation/utils/log_sheet_actions.dart';
+import '../../../log/presentation/widgets/date_navigator.dart';
+import '../../../log/presentation/widgets/log_stats_strip.dart';
+import '../../../log/presentation/widgets/timeline_item_tile.dart';
 import '../../../statistics/presentation/providers/statistics_provider.dart';
 import '../../../statistics/presentation/widgets/insight_card.dart';
-import '../widgets/tracking_grid.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -29,6 +34,10 @@ class HomeScreen extends ConsumerWidget {
         body: Center(child: CircularProgressIndicator()),
       );
     }
+
+    final timelineAsync = ref.watch(filteredLogTimelineProvider);
+    final selectedDate = ref.watch(selectedLogDateProvider);
+    final isToday = DateUtils.isSameDay(selectedDate, DateTime.now());
 
     return Scaffold(
       body: RefreshIndicator(
@@ -47,31 +56,125 @@ class HomeScreen extends ConsumerWidget {
                 AppSpacing.pagePadding,
                 AppSpacing.xs,
                 AppSpacing.pagePadding,
-                AppSpacing.pagePadding,
+                0,
               ),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   const _ExpandableInsights(),
                   const SizedBox(height: AppSpacing.md),
-                  const StatsStrip(),
-                  const SizedBox(height: AppSpacing.lg),
-                  Text(
-                    context.l10n.sectionRecord,
-                    style: AppTypography.titleMedium.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  const TrackingGrid(),
                 ]),
               ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.pagePadding - 4,
+                ),
+                child: const DateNavigator(),
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.pagePadding,
+                ),
+                child: LogStatsStrip(
+                  onTapCategory: (type) =>
+                      openAddSheetForType(context, ref, type),
+                ),
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
+            const SliverToBoxAdapter(
+              child: Divider(height: 1, color: Color(0xFFDDDDDD)),
+            ),
+            timelineAsync.when(
+              loading: () => const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (e, _) => SliverFillRemaining(
+                child: Center(
+                  child: Text(
+                    context.l10n.logLoadFailed,
+                    style: AppTypography.bodyMedium.copyWith(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.55),
+                    ),
+                  ),
+                ),
+              ),
+              data: (entries) {
+                if (entries.isEmpty) {
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.event_note_outlined,
+                            size: 48,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.3),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          Text(
+                            context.l10n.noLogForDay,
+                            style: AppTypography.bodyMedium
+                                .copyWith(color: AppColors.onSurfaceMuted),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          Text(
+                            context.l10n.addLogHint,
+                            style: AppTypography.bodySmall
+                                .copyWith(color: AppColors.onSurfaceMuted),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                // 분유·모유·유축·이유식 중 가장 최근 기록된 단 하나의 항목 ID
+                const feedingTypes = {
+                  TimelineEntryType.formula,
+                  TimelineEntryType.breast,
+                  TimelineEntryType.pumped,
+                  TimelineEntryType.babyFood,
+                };
+                final lastFeedingId = entries
+                    .where((e) => feedingTypes.contains(e.type))
+                    .map((e) => e.id)
+                    .firstOrNull;
+
+                return SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.pagePadding,
+                    AppSpacing.md,
+                    AppSpacing.pagePadding,
+                    AppSpacing.pagePadding,
+                  ),
+                  sliver: SliverList.builder(
+                    itemCount: entries.length,
+                    itemBuilder: (context, i) => TimelineItemTile(
+                      entry: entries[i],
+                      isFirst: i == 0,
+                      isLast: i == entries.length - 1,
+                      showElapsed: isToday && lastFeedingId == entries[i].id,
+                      onTap: () => openEditSheet(context, ref, entries[i]),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
     );
   }
-
 }
 
 class _HomeHeader extends ConsumerStatefulWidget {
@@ -444,4 +547,3 @@ class _DailyMessageTextState extends State<_DailyMessageText>
     );
   }
 }
-

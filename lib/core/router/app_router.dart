@@ -204,7 +204,7 @@ GoRouter appRouter(Ref ref) {
         ),
       ),
 
-      // 메인 ShellRoute (5탭 바텀 네비)
+      // 메인 ShellRoute (3탭 바텀 네비: 홈·통계·가족, 기록 탭은 딥링크 전용)
       ShellRoute(
         builder: (context, state, child) =>
             ScaffoldWithBottomNav(child: child),
