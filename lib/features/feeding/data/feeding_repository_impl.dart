@@ -33,6 +33,9 @@ class FeedingRepository {
   Future<int> getDailyPumpedTotalMl(String babyId, DateTime date) =>
       _db.feedingDao.getDailyPumpedTotalMl(babyId, date);
 
+  Future<int> getDailyBreastTotalSec(String babyId, DateTime date) =>
+      _db.feedingDao.getDailyBreastTotalSec(babyId, date);
+
   Future<FeedingEntry> saveFormulaFeeding({
     required String babyId,
     required String familyId,

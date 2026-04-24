@@ -91,7 +91,7 @@ class _LogScreenState extends ConsumerState<LogScreen> {
           ),
           const SizedBox(height: AppSpacing.md),
 
-          const Divider(height: 1),
+          const Divider(height: 1, color: Color(0xFFDDDDDD)),
 
           // 타임라인
           Expanded(

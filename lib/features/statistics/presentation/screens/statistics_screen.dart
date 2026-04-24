@@ -8,6 +8,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/models/tracking_category.dart';
 import '../../../../shared/providers/icon_settings_provider.dart';
+import '../../../../shared/utils/baby_age.dart';
 import '../../../../shared/widgets/baby_avatar_widget.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../log/domain/models/timeline_entry.dart';
@@ -73,10 +74,6 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
         .toList();
 
     final baby = ref.watch(selectedBabyProvider).valueOrNull;
-    final babies = ref.watch(babiesProvider).valueOrNull ?? [];
-    final colorIndex = baby != null
-        ? babies.indexWhere((b) => b.id == baby.id)
-        : -1;
 
     // Determine which nav cards to show
     final hasFeedingTypes = visibleCategories.any((t) =>
@@ -91,8 +88,6 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
       body: Column(
         children: [
           _StatisticsHeader(
-            baby: baby,
-            colorIndex: colorIndex,
             onCompareTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const ComparisonScreen()),
             ),
@@ -261,22 +256,88 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   }
 }
 
-class _StatisticsHeader extends StatelessWidget {
-  const _StatisticsHeader({
-    required this.baby,
-    required this.colorIndex,
-    required this.onCompareTap,
-  });
+class _StatisticsHeader extends ConsumerStatefulWidget {
+  const _StatisticsHeader({required this.onCompareTap});
 
-  final dynamic baby;
-  final int colorIndex;
   final VoidCallback onCompareTap;
+
+  @override
+  ConsumerState<_StatisticsHeader> createState() => _StatisticsHeaderState();
+}
+
+class _StatisticsHeaderState extends ConsumerState<_StatisticsHeader> {
+  final _avatarKey = GlobalKey();
+
+  void _showBabyPopup(List babies, String? currentId) {
+    final box =
+        _avatarKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null) return;
+    final pos = box.localToGlobal(Offset.zero);
+    final size = box.size;
+
+    showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        pos.dx,
+        pos.dy + size.height + 6,
+        pos.dx + size.width,
+        pos.dy + size.height + 6,
+      ),
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      items: babies.asMap().entries.map<PopupMenuEntry<String>>((entry) {
+        final index = entry.key;
+        final baby = entry.value;
+        final isSelected = baby.id == currentId;
+        return PopupMenuItem<String>(
+          value: baby.id,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              BabyAvatarWidget(
+                photoUrl: baby.photoUrl,
+                gender: baby.gender,
+                colorIndex: index,
+                size: 36,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                baby.name,
+                style: AppTypography.bodyMedium.copyWith(
+                  fontWeight:
+                      isSelected ? FontWeight.w700 : FontWeight.normal,
+                ),
+              ),
+              if (isSelected) ...[
+                const SizedBox(width: 6),
+                const Icon(Icons.check, size: 16),
+              ],
+            ],
+          ),
+        );
+      }).toList(),
+    ).then((selectedId) {
+      if (selectedId != null) {
+        ref.read(selectedBabyIdProvider.notifier).select(selectedId);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = context.l10n;
+
+    final baby = ref.watch(selectedBabyProvider).valueOrNull;
+    final babies = ref.watch(babiesProvider).valueOrNull ?? [];
+    final selectedId = ref.watch(selectedBabyIdProvider);
+    final name = baby?.name ?? l10n.statistics;
+    final ageLabel = baby != null ? babyAgeLabel(context, baby.birthDate) : null;
+    final babyColorIndex =
+        baby != null ? babies.indexWhere((b) => b.id == baby.id) : 0;
+    final canSwitch = babies.isNotEmpty;
 
     return Container(
       decoration: BoxDecoration(
@@ -290,31 +351,73 @@ class _StatisticsHeader extends StatelessWidget {
         ),
       ),
       padding: EdgeInsets.only(
-        top: topPadding + AppSpacing.sm,
-        bottom: AppSpacing.md,
+        top: topPadding + AppSpacing.xs,
+        bottom: AppSpacing.xs,
         left: AppSpacing.pagePadding,
         right: AppSpacing.pagePadding,
       ),
       child: Row(
         children: [
-          if (baby != null) ...[
-            BabyAvatarWidget(
-              photoUrl: baby.photoUrl,
-              gender: baby.gender,
-              colorIndex: colorIndex >= 0 ? colorIndex : null,
-              size: 32,
-            ),
-            const SizedBox(width: 8),
-          ],
-          Text(
-            baby?.name ?? l10n.statistics,
-            style: AppTypography.titleLarge,
+          Stack(
+            key: _avatarKey,
+            clipBehavior: Clip.none,
+            children: [
+              BabyAvatarWidget(
+                photoUrl: baby?.photoUrl,
+                gender: baby?.gender,
+                colorIndex: babyColorIndex >= 0 ? babyColorIndex : null,
+                size: 48,
+                onTap: canSwitch
+                    ? () => _showBabyPopup(babies, selectedId)
+                    : null,
+              ),
+              if (babies.length > 1)
+                Positioned(
+                  bottom: -2,
+                  right: -2,
+                  child: GestureDetector(
+                    onTap: () => _showBabyPopup(babies, selectedId),
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Theme.of(context)
+                              .scaffoldBackgroundColor
+                              .withValues(alpha: 0.7),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.expand_more,
+                        color: Colors.white,
+                        size: 12,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
+          const SizedBox(width: 8),
+          Text(name, style: AppTypography.titleLarge),
+          if (ageLabel != null) ...[
+            const SizedBox(width: 8),
+            Text(
+              ageLabel,
+              style: AppTypography.bodyMedium.copyWith(
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.6),
+              ),
+            ),
+          ],
           const Spacer(),
           IconButton(
             icon: const Icon(Icons.compare_arrows, size: 22),
             tooltip: l10n.babyComparison,
-            onPressed: onCompareTap,
+            onPressed: widget.onCompareTap,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
           ),

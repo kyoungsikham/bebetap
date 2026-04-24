@@ -24,7 +24,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabFamily => 'Family';
 
   @override
-  String get menuBabyManage => 'Baby Management';
+  String get menuBabyManage => 'Our Little One';
 
   @override
   String get menuWidgetAdd => 'Add Widget';
@@ -512,13 +512,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get next => 'Next';
 
   @override
-  String get babyManageTitle => 'Baby Management';
+  String get babyManageTitle => 'Our Little One';
 
   @override
   String get registeredBabies => 'Registered babies';
 
   @override
-  String get addNewBaby => 'Add new baby';
+  String get addNewBaby => 'Add a precious one';
 
   @override
   String get babyName => 'Baby Name *';

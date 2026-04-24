@@ -24,7 +24,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tabFamily => '가족';
 
   @override
-  String get menuBabyManage => '아이 관리';
+  String get menuBabyManage => '우리 아이';
 
   @override
   String get menuWidgetAdd => '위젯 추가';
@@ -508,13 +508,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get next => '다음';
 
   @override
-  String get babyManageTitle => '아이 관리';
+  String get babyManageTitle => '우리 아이';
 
   @override
   String get registeredBabies => '등록된 아이';
 
   @override
-  String get addNewBaby => '새 아이 추가';
+  String get addNewBaby => '소중한 아이 추가';
 
   @override
   String get babyName => '아기 이름 *';

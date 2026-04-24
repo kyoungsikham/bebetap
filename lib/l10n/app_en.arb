@@ -8,7 +8,7 @@
   "tabLog": "Log",
   "tabFamily": "Family",
 
-  "menuBabyManage": "Baby Management",
+  "menuBabyManage": "Our Little One",
   "menuWidgetAdd": "Add Widget",
   "menuIconSettings": "Icon Settings",
   "menuTheme": "Theme",
@@ -263,9 +263,9 @@
   },
   "next": "Next",
 
-  "babyManageTitle": "Baby Management",
+  "babyManageTitle": "Our Little One",
   "registeredBabies": "Registered babies",
-  "addNewBaby": "Add new baby",
+  "addNewBaby": "Add a precious one",
   "babyName": "Baby Name *",
   "birthDate": "Birth Date *",
   "genderOptional": "Gender (optional)",

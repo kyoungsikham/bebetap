@@ -133,7 +133,7 @@ abstract class AppLocalizations {
   /// No description provided for @menuBabyManage.
   ///
   /// In en, this message translates to:
-  /// **'Baby Management'**
+  /// **'Our Little One'**
   String get menuBabyManage;
 
   /// No description provided for @menuWidgetAdd.
@@ -1033,7 +1033,7 @@ abstract class AppLocalizations {
   /// No description provided for @babyManageTitle.
   ///
   /// In en, this message translates to:
-  /// **'Baby Management'**
+  /// **'Our Little One'**
   String get babyManageTitle;
 
   /// No description provided for @registeredBabies.
@@ -1045,7 +1045,7 @@ abstract class AppLocalizations {
   /// No description provided for @addNewBaby.
   ///
   /// In en, this message translates to:
-  /// **'Add new baby'**
+  /// **'Add a precious one'**
   String get addNewBaby;
 
   /// No description provided for @babyName.

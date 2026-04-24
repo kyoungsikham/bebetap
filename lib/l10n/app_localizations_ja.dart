@@ -24,7 +24,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tabFamily => '家族';
 
   @override
-  String get menuBabyManage => '赤ちゃん管理';
+  String get menuBabyManage => 'うちの子';
 
   @override
   String get menuWidgetAdd => 'ウィジェット追加';
@@ -508,13 +508,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get next => '次へ';
 
   @override
-  String get babyManageTitle => '赤ちゃん管理';
+  String get babyManageTitle => 'うちの子';
 
   @override
   String get registeredBabies => '登録された赤ちゃん';
 
   @override
-  String get addNewBaby => '新しい赤ちゃんを追加';
+  String get addNewBaby => '大切な子を追加';
 
   @override
   String get babyName => '赤ちゃんの名前 *';

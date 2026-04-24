@@ -8,7 +8,7 @@
   "tabLog": "記録",
   "tabFamily": "家族",
 
-  "menuBabyManage": "赤ちゃん管理",
+  "menuBabyManage": "うちの子",
   "menuWidgetAdd": "ウィジェット追加",
   "menuIconSettings": "アイコン設定",
   "menuTheme": "テーマ設定",
@@ -263,9 +263,9 @@
   },
   "next": "次へ",
 
-  "babyManageTitle": "赤ちゃん管理",
+  "babyManageTitle": "うちの子",
   "registeredBabies": "登録された赤ちゃん",
-  "addNewBaby": "新しい赤ちゃんを追加",
+  "addNewBaby": "大切な子を追加",
   "babyName": "赤ちゃんの名前 *",
   "birthDate": "生年月日 *",
   "genderOptional": "性別（任意）",

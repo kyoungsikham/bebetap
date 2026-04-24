@@ -126,8 +126,8 @@ class _StatChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 80,
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        width: 62,
+        padding: const EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
@@ -139,13 +139,13 @@ class _StatChip extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 36,
-              height: 36,
+              width: 26,
+              height: 26,
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: color, size: 18),
+              child: Icon(icon, color: color, size: 14),
             ),
             const SizedBox(height: 6),
             Text(
@@ -193,8 +193,8 @@ class _StripSkeleton extends StatelessWidget {
           (i) => Padding(
             padding: EdgeInsets.only(right: i < count - 1 ? 10 : 0),
             child: Container(
-              width: 80,
-              height: 86,
+              width: 62,
+              height: 68,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),

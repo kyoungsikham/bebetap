@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
@@ -11,7 +10,6 @@ import '../../../../shared/widgets/hamburger_menu_panel.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../daily_message/presentation/providers/daily_message_provider.dart';
 import '../../../family/presentation/providers/family_provider.dart';
-import '../widgets/baby_selector_sheet.dart';
 import '../widgets/stats_strip.dart';
 import '../../../statistics/presentation/providers/statistics_provider.dart';
 import '../../../statistics/presentation/widgets/insight_card.dart';
@@ -47,14 +45,12 @@ class HomeScreen extends ConsumerWidget {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.pagePadding,
-                AppSpacing.md,
+                AppSpacing.xs,
                 AppSpacing.pagePadding,
                 AppSpacing.pagePadding,
               ),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  _TodayLabel(),
-                  const SizedBox(height: AppSpacing.md),
                   const _ExpandableInsights(),
                   const SizedBox(height: AppSpacing.md),
                   const StatsStrip(),
@@ -78,21 +74,86 @@ class HomeScreen extends ConsumerWidget {
 
 }
 
-class _HomeHeader extends ConsumerWidget {
+class _HomeHeader extends ConsumerStatefulWidget {
   const _HomeHeader({this.onMenuTap});
 
   final VoidCallback? onMenuTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_HomeHeader> createState() => _HomeHeaderState();
+}
+
+class _HomeHeaderState extends ConsumerState<_HomeHeader> {
+  final _avatarKey = GlobalKey();
+
+  void _showBabyPopup(List babies, String? currentId) {
+    final box =
+        _avatarKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null) return;
+    final pos = box.localToGlobal(Offset.zero);
+    final size = box.size;
+
+    showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        pos.dx,
+        pos.dy + size.height + 6,
+        pos.dx + size.width,
+        pos.dy + size.height + 6,
+      ),
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      items: babies.asMap().entries.map<PopupMenuEntry<String>>((entry) {
+        final index = entry.key;
+        final baby = entry.value;
+        final isSelected = baby.id == currentId;
+        return PopupMenuItem<String>(
+          value: baby.id,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              BabyAvatarWidget(
+                photoUrl: baby.photoUrl,
+                gender: baby.gender,
+                colorIndex: index,
+                size: 36,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                baby.name,
+                style: AppTypography.bodyMedium.copyWith(
+                  fontWeight:
+                      isSelected ? FontWeight.w700 : FontWeight.normal,
+                ),
+              ),
+              if (isSelected) ...[
+                const SizedBox(width: 6),
+                const Icon(Icons.check, size: 16),
+              ],
+            ],
+          ),
+        );
+      }).toList(),
+    ).then((selectedId) {
+      if (selectedId != null) {
+        ref.read(selectedBabyIdProvider.notifier).select(selectedId);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
     final baby = ref.watch(selectedBabyProvider).valueOrNull;
     final babies = ref.watch(babiesProvider).valueOrNull ?? [];
     final name = baby?.name ?? context.l10n.userLabel;
-    final canSwitch = babies.length > 1;
-    final ageLabel = baby != null ? babyAgeLabel(context, baby.birthDate) : null;
+    final canSwitch = babies.isNotEmpty;
+    final ageLabel =
+        baby != null ? babyAgeLabel(context, baby.birthDate) : null;
     final babyColorIndex =
         baby != null ? babies.indexWhere((b) => b.id == baby.id) : 0;
+    final selectedId = ref.watch(selectedBabyIdProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
@@ -115,121 +176,98 @@ class _HomeHeader extends ConsumerWidget {
         ),
       ),
       padding: EdgeInsets.only(
-        top: topPadding + AppSpacing.sm,
-        bottom: AppSpacing.lg,
+        top: topPadding + AppSpacing.xs,
+        bottom: AppSpacing.xs,
         left: AppSpacing.pagePadding,
         right: AppSpacing.pagePadding,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 상단 바: BebeTap 로고 + 햄버거 메뉴
+          // 상단 바: 아바타 + 이름 + 개월수 + 햄버거 메뉴
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'BebeTap',
-                style: AppTypography.titleLarge.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: onMenuTap,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          // 인사 영역: 텍스트(좌) + 아바타(우)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        Text(
-                          name,
-                          style: AppTypography.headlineMedium,
-                        ),
-                        if (ageLabel != null) ...[
-                          const SizedBox(width: 8),
-                          Text(
-                            ageLabel,
-                            style: AppTypography.bodyMedium.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.6),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      ref.watch(dailyMessageProvider),
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: ref.watch(
-                          dailyMessageColorProvider(
-                            isDark ? Brightness.dark : Brightness.light,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
               Stack(
+                key: _avatarKey,
                 clipBehavior: Clip.none,
                 children: [
                   BabyAvatarWidget(
                     photoUrl: baby?.photoUrl,
                     gender: baby?.gender,
                     colorIndex: babyColorIndex >= 0 ? babyColorIndex : null,
+                    size: 48,
                     onTap: canSwitch
-                        ? () => showBabySelectorSheet(context, ref)
+                        ? () => _showBabyPopup(babies, selectedId)
                         : null,
                   ),
-                  if (canSwitch)
+                  if (babies.length > 1)
                     Positioned(
                       bottom: -2,
-                      left: 0,
-                      right: 0,
-                      child: Center(
+                      right: -2,
+                      child: GestureDetector(
+                        onTap: () => _showBabyPopup(babies, selectedId),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 1,
-                          ),
+                          padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.black.withValues(alpha: 0.55),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Theme.of(context)
+                                  .scaffoldBackgroundColor
+                                  .withValues(alpha: 0.7),
+                              width: 1.5,
+                            ),
                           ),
                           child: const Icon(
                             Icons.expand_more,
                             color: Colors.white,
-                            size: 14,
+                            size: 12,
                           ),
                         ),
                       ),
                     ),
                 ],
               ),
+              const SizedBox(width: 8),
+              Text(
+                name,
+                style: AppTypography.titleLarge,
+              ),
+              if (ageLabel != null) ...[
+                const SizedBox(width: 8),
+                Text(
+                  ageLabel,
+                  style: AppTypography.bodyMedium.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.6),
+                  ),
+                ),
+              ],
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: widget.onMenuTap,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
             ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          // 일일 메시지 (부드러운 페이드인 + 살짝 위로)
+          _DailyMessageText(
+            message: ref.watch(dailyMessageProvider),
+            color: ref.watch(
+              dailyMessageColorProvider(
+                isDark ? Brightness.dark : Brightness.light,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
-
 }
 
 
@@ -324,25 +362,86 @@ class _ExpandableInsightsState extends ConsumerState<_ExpandableInsights> {
   }
 }
 
-class _TodayLabel extends StatelessWidget {
+/// 일일 메시지: 최초 등장 시 페이드인 + 살짝 위로 슬라이드,
+/// 메시지 변경 시 크로스페이드, 평상시 아주 느린 호흡 같은 투명도 변화.
+class _DailyMessageText extends StatefulWidget {
+  const _DailyMessageText({required this.message, required this.color});
+
+  final String message;
+  final Color color;
+
+  @override
+  State<_DailyMessageText> createState() => _DailyMessageTextState();
+}
+
+class _DailyMessageTextState extends State<_DailyMessageText>
+    with TickerProviderStateMixin {
+  late final AnimationController _entryController;
+  late final AnimationController _breathController;
+  late final Animation<double> _entryOpacity;
+  late final Animation<double> _entrySlide;
+  late final Animation<double> _breath;
+
+  @override
+  void initState() {
+    super.initState();
+    _entryController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _entryOpacity = CurvedAnimation(
+      parent: _entryController,
+      curve: Curves.easeOutCubic,
+    );
+    _entrySlide = Tween<double>(begin: 4, end: 0).animate(
+      CurvedAnimation(parent: _entryController, curve: Curves.easeOutCubic),
+    );
+
+    _breathController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2600),
+    );
+    _breath = Tween<double>(begin: 1.0, end: 0.72).animate(
+      CurvedAnimation(parent: _breathController, curve: Curves.easeInOut),
+    );
+
+    _entryController.forward().then((_) {
+      if (mounted) _breathController.repeat(reverse: true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _entryController.dispose();
+    _breathController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final now = DateTime.now();
-    final weekdays = [
-      l10n.weekdayMon,
-      l10n.weekdayTue,
-      l10n.weekdayWed,
-      l10n.weekdayThu,
-      l10n.weekdayFri,
-      l10n.weekdaySat,
-      l10n.weekdaySun,
-    ];
-    final weekday = weekdays[now.weekday - 1];
-    return Text(
-      l10n.dateFormatFull(now.month, now.day, weekday),
-      style:
-          AppTypography.bodySmall.copyWith(color: AppColors.onSurfaceMuted),
+    return AnimatedBuilder(
+      animation: Listenable.merge([_entryController, _breathController]),
+      builder: (context, child) {
+        final opacity = _entryOpacity.value * _breath.value;
+        return Opacity(
+          opacity: opacity,
+          child: Transform.translate(
+            offset: Offset(0, _entrySlide.value),
+            child: child,
+          ),
+        );
+      },
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
+        switchInCurve: Curves.easeOut,
+        switchOutCurve: Curves.easeIn,
+        child: Text(
+          widget.message,
+          key: ValueKey(widget.message),
+          style: AppTypography.bodySmall.copyWith(color: widget.color),
+        ),
+      ),
     );
   }
 }
+

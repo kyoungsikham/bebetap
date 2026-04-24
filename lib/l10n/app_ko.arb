@@ -8,7 +8,7 @@
   "tabLog": "기록",
   "tabFamily": "가족",
 
-  "menuBabyManage": "아이 관리",
+  "menuBabyManage": "우리 아이",
   "menuWidgetAdd": "위젯 추가",
   "menuIconSettings": "아이콘 설정",
   "menuTheme": "테마 설정",
@@ -263,9 +263,9 @@
   },
   "next": "다음",
 
-  "babyManageTitle": "아이 관리",
+  "babyManageTitle": "우리 아이",
   "registeredBabies": "등록된 아이",
-  "addNewBaby": "새 아이 추가",
+  "addNewBaby": "소중한 아이 추가",
   "babyName": "아기 이름 *",
   "birthDate": "생년월일 *",
   "genderOptional": "성별 (선택)",

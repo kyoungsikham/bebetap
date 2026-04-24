@@ -69,6 +69,17 @@ extension DurationExt on Duration {
     return '${h}h ${m}m';
   }
 
+  /// "3h30m" 형식 — 공백 없는 컴팩트 버전 (1분 미만은 "17s")
+  String formatCompact() {
+    final h = inHours;
+    final m = inMinutes % 60;
+    final s = inSeconds % 60;
+    if (h == 0 && m == 0) return '${s}s';
+    if (h == 0) return '${m}m';
+    if (m == 0) return '${h}h';
+    return '${h}h${m}m';
+  }
+
   /// "03:30" 형식 (스탑워치용)
   String formatMmSs() {
     final m = inMinutes;

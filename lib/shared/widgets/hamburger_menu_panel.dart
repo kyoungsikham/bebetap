@@ -45,11 +45,16 @@ class HamburgerMenuPanel extends ConsumerStatefulWidget {
   ConsumerState<HamburgerMenuPanel> createState() => _HamburgerMenuPanelState();
 }
 
+enum _ExpandedSection { none, theme, language, unit, defaultLanding }
+
 class _HamburgerMenuPanelState extends ConsumerState<HamburgerMenuPanel> {
-  bool _themeExpanded = false;
-  bool _languageExpanded = false;
-  bool _unitExpanded = false;
-  bool _defaultLandingExpanded = false;
+  _ExpandedSection _expanded = _ExpandedSection.none;
+
+  void _toggle(_ExpandedSection section) {
+    setState(() {
+      _expanded = _expanded == section ? _ExpandedSection.none : section;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +68,16 @@ class _HamburgerMenuPanelState extends ConsumerState<HamburgerMenuPanel> {
         ref.watch(defaultLandingProvider).valueOrNull ?? DefaultLanding.log;
     final isPremium = ref.watch(adFreeProvider).valueOrNull ?? false;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final panelColor =
+        isDark ? const Color(0xFF1E1B2E) : const Color(0xFFF4F4F6);
+    final submenuColor =
+        isDark ? const Color(0xFF161324) : const Color(0xFFE8E8EC);
+
     return Align(
       alignment: Alignment.centerRight,
       child: Material(
-        color: Theme.of(context).colorScheme.surface,
+        color: panelColor,
         borderRadius: const BorderRadius.horizontal(
           left: Radius.circular(20),
         ),
@@ -74,11 +85,41 @@ class _HamburgerMenuPanelState extends ConsumerState<HamburgerMenuPanel> {
           child: SizedBox(
             width: 280,
             height: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // BebeTap 로고 헤더
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.pagePadding,
+                      AppSpacing.lg,
+                      AppSpacing.pagePadding,
+                      AppSpacing.lg,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(
+                        alpha: isDark ? 0.14 : 0.08,
+                      ),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: AppColors.primary.withValues(alpha: 0.25),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      'BebeTap',
+                      style: AppTypography.titleLarge.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primary,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
                   ListTile(
                     leading: const Icon(Icons.child_care),
                     title: Text(l10n.menuBabyManage),
@@ -104,155 +145,183 @@ class _HamburgerMenuPanelState extends ConsumerState<HamburgerMenuPanel> {
                     leading: const Icon(Icons.brightness_6_outlined),
                     title: Text(l10n.menuTheme),
                     trailing: Icon(
-                      _themeExpanded
+                      _expanded == _ExpandedSection.theme
                           ? Icons.expand_less
                           : Icons.expand_more,
                       color: AppColors.onSurfaceMuted,
                     ),
-                    onTap: () =>
-                        setState(() => _themeExpanded = !_themeExpanded),
+                    onTap: () => _toggle(_ExpandedSection.theme),
                   ),
-                  if (_themeExpanded) ...[
-                    _ThemeOption(
-                      label: l10n.themeLight,
-                      mode: AppThemeMode.light,
-                      isSelected: themeSetting.mode == AppThemeMode.light,
-                      onTap: () => _changeTheme(AppThemeMode.light),
-                    ),
-                    _ThemeOption(
-                      label: l10n.themeDark,
-                      mode: AppThemeMode.dark,
-                      isSelected: themeSetting.mode == AppThemeMode.dark,
-                      onTap: () => _changeTheme(AppThemeMode.dark),
-                    ),
-                    _ThemeOption(
-                      label: l10n.themeSystem,
-                      mode: AppThemeMode.system,
-                      isSelected: themeSetting.mode == AppThemeMode.system,
-                      onTap: () => _changeTheme(AppThemeMode.system),
-                    ),
-                    _ThemeOption(
-                      label: l10n.themeScheduled,
-                      mode: AppThemeMode.scheduled,
-                      isSelected: themeSetting.mode == AppThemeMode.scheduled,
-                      onTap: () => _changeTheme(AppThemeMode.scheduled),
-                    ),
-                    if (themeSetting.mode == AppThemeMode.scheduled) ...[
-                      _ScheduleTimeTile(
-                        label: l10n.themeScheduleStart,
-                        hour: themeSetting.darkStartHour,
-                        minute: themeSetting.darkStartMinute,
-                        onTap: () => _pickTime(
-                          context,
-                          initialHour: themeSetting.darkStartHour,
-                          initialMinute: themeSetting.darkStartMinute,
-                          isStart: true,
-                          setting: themeSetting,
-                        ),
+                  if (_expanded == _ExpandedSection.theme)
+                    Container(
+                      color: submenuColor,
+                      child: Column(
+                        children: [
+                          _ThemeOption(
+                            label: l10n.themeLight,
+                            mode: AppThemeMode.light,
+                            isSelected: themeSetting.mode == AppThemeMode.light,
+                            onTap: () => _changeTheme(AppThemeMode.light),
+                          ),
+                          _ThemeOption(
+                            label: l10n.themeDark,
+                            mode: AppThemeMode.dark,
+                            isSelected: themeSetting.mode == AppThemeMode.dark,
+                            onTap: () => _changeTheme(AppThemeMode.dark),
+                          ),
+                          _ThemeOption(
+                            label: l10n.themeSystem,
+                            mode: AppThemeMode.system,
+                            isSelected:
+                                themeSetting.mode == AppThemeMode.system,
+                            onTap: () => _changeTheme(AppThemeMode.system),
+                          ),
+                          _ThemeOption(
+                            label: l10n.themeScheduled,
+                            mode: AppThemeMode.scheduled,
+                            isSelected:
+                                themeSetting.mode == AppThemeMode.scheduled,
+                            onTap: () => _changeTheme(AppThemeMode.scheduled),
+                          ),
+                          if (themeSetting.mode == AppThemeMode.scheduled) ...[
+                            _ScheduleTimeTile(
+                              label: l10n.themeScheduleStart,
+                              hour: themeSetting.darkStartHour,
+                              minute: themeSetting.darkStartMinute,
+                              onTap: () => _pickTime(
+                                context,
+                                initialHour: themeSetting.darkStartHour,
+                                initialMinute: themeSetting.darkStartMinute,
+                                isStart: true,
+                                setting: themeSetting,
+                              ),
+                            ),
+                            _ScheduleTimeTile(
+                              label: l10n.themeScheduleEnd,
+                              hour: themeSetting.darkEndHour,
+                              minute: themeSetting.darkEndMinute,
+                              onTap: () => _pickTime(
+                                context,
+                                initialHour: themeSetting.darkEndHour,
+                                initialMinute: themeSetting.darkEndMinute,
+                                isStart: false,
+                                setting: themeSetting,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
-                      _ScheduleTimeTile(
-                        label: l10n.themeScheduleEnd,
-                        hour: themeSetting.darkEndHour,
-                        minute: themeSetting.darkEndMinute,
-                        onTap: () => _pickTime(
-                          context,
-                          initialHour: themeSetting.darkEndHour,
-                          initialMinute: themeSetting.darkEndMinute,
-                          isStart: false,
-                          setting: themeSetting,
-                        ),
-                      ),
-                    ],
-                  ],
+                    ),
                   // 언어 설정
                   ListTile(
                     leading: const Icon(Icons.language),
                     title: Text(l10n.menuLanguage),
                     trailing: Icon(
-                      _languageExpanded
+                      _expanded == _ExpandedSection.language
                           ? Icons.expand_less
                           : Icons.expand_more,
                       color: AppColors.onSurfaceMuted,
                     ),
-                    onTap: () =>
-                        setState(() => _languageExpanded = !_languageExpanded),
+                    onTap: () => _toggle(_ExpandedSection.language),
                   ),
-                  if (_languageExpanded) ...[
-                    _LanguageOption(
-                      label: '한국어',
-                      locale: const Locale('ko'),
-                      isSelected: currentLocale?.languageCode == 'ko',
-                      onTap: () => _changeLocale(const Locale('ko')),
+                  if (_expanded == _ExpandedSection.language)
+                    Container(
+                      color: submenuColor,
+                      child: Column(
+                        children: [
+                          _LanguageOption(
+                            label: '한국어',
+                            locale: const Locale('ko'),
+                            isSelected: currentLocale?.languageCode == 'ko',
+                            onTap: () => _changeLocale(const Locale('ko')),
+                          ),
+                          _LanguageOption(
+                            label: 'English',
+                            locale: const Locale('en'),
+                            isSelected: currentLocale?.languageCode == 'en',
+                            onTap: () => _changeLocale(const Locale('en')),
+                          ),
+                          _LanguageOption(
+                            label: '日本語',
+                            locale: const Locale('ja'),
+                            isSelected: currentLocale?.languageCode == 'ja',
+                            onTap: () => _changeLocale(const Locale('ja')),
+                          ),
+                        ],
+                      ),
                     ),
-                    _LanguageOption(
-                      label: 'English',
-                      locale: const Locale('en'),
-                      isSelected: currentLocale?.languageCode == 'en',
-                      onTap: () => _changeLocale(const Locale('en')),
-                    ),
-                    _LanguageOption(
-                      label: '日本語',
-                      locale: const Locale('ja'),
-                      isSelected: currentLocale?.languageCode == 'ja',
-                      onTap: () => _changeLocale(const Locale('ja')),
-                    ),
-                  ],
                   // 단위 설정
                   ListTile(
                     leading: const Icon(Icons.straighten_outlined),
                     title: Text(l10n.menuVolumeUnit),
                     trailing: Icon(
-                      _unitExpanded ? Icons.expand_less : Icons.expand_more,
+                      _expanded == _ExpandedSection.unit
+                          ? Icons.expand_less
+                          : Icons.expand_more,
                       color: AppColors.onSurfaceMuted,
                     ),
-                    onTap: () =>
-                        setState(() => _unitExpanded = !_unitExpanded),
+                    onTap: () => _toggle(_ExpandedSection.unit),
                   ),
-                  if (_unitExpanded) ...[
-                    _UnitOption(
-                      label: l10n.volumeUnitMl,
-                      isSelected: currentUnit == VolumeUnit.ml,
-                      onTap: () => ref
-                          .read(volumeUnitProvider.notifier)
-                          .setUnit(VolumeUnit.ml),
+                  if (_expanded == _ExpandedSection.unit)
+                    Container(
+                      color: submenuColor,
+                      child: Column(
+                        children: [
+                          _UnitOption(
+                            label: l10n.volumeUnitMl,
+                            isSelected: currentUnit == VolumeUnit.ml,
+                            icon: Icons.water_drop_outlined,
+                            onTap: () => ref
+                                .read(volumeUnitProvider.notifier)
+                                .setUnit(VolumeUnit.ml),
+                          ),
+                          _UnitOption(
+                            label: l10n.volumeUnitOz,
+                            isSelected: currentUnit == VolumeUnit.oz,
+                            icon: Icons.scale_outlined,
+                            onTap: () => ref
+                                .read(volumeUnitProvider.notifier)
+                                .setUnit(VolumeUnit.oz),
+                          ),
+                        ],
+                      ),
                     ),
-                    _UnitOption(
-                      label: l10n.volumeUnitOz,
-                      isSelected: currentUnit == VolumeUnit.oz,
-                      onTap: () => ref
-                          .read(volumeUnitProvider.notifier)
-                          .setUnit(VolumeUnit.oz),
-                    ),
-                  ],
                   // 기본 시작 화면
                   ListTile(
                     leading: const Icon(Icons.flag_outlined),
                     title: Text(l10n.menuDefaultLanding),
                     trailing: Icon(
-                      _defaultLandingExpanded
+                      _expanded == _ExpandedSection.defaultLanding
                           ? Icons.expand_less
                           : Icons.expand_more,
                       color: AppColors.onSurfaceMuted,
                     ),
-                    onTap: () => setState(() =>
-                        _defaultLandingExpanded = !_defaultLandingExpanded),
+                    onTap: () => _toggle(_ExpandedSection.defaultLanding),
                   ),
-                  if (_defaultLandingExpanded) ...[
-                    _DefaultLandingOption(
-                      label: l10n.menuDefaultLandingHome,
-                      isSelected: currentLanding == DefaultLanding.home,
-                      onTap: () => ref
-                          .read(defaultLandingProvider.notifier)
-                          .setLanding(DefaultLanding.home),
+                  if (_expanded == _ExpandedSection.defaultLanding)
+                    Container(
+                      color: submenuColor,
+                      child: Column(
+                        children: [
+                          _DefaultLandingOption(
+                            label: l10n.menuDefaultLandingHome,
+                            isSelected: currentLanding == DefaultLanding.home,
+                            icon: Icons.home_outlined,
+                            onTap: () => ref
+                                .read(defaultLandingProvider.notifier)
+                                .setLanding(DefaultLanding.home),
+                          ),
+                          _DefaultLandingOption(
+                            label: l10n.menuDefaultLandingLog,
+                            isSelected: currentLanding == DefaultLanding.log,
+                            icon: Icons.list_alt_outlined,
+                            onTap: () => ref
+                                .read(defaultLandingProvider.notifier)
+                                .setLanding(DefaultLanding.log),
+                          ),
+                        ],
+                      ),
                     ),
-                    _DefaultLandingOption(
-                      label: l10n.menuDefaultLandingLog,
-                      isSelected: currentLanding == DefaultLanding.log,
-                      onTap: () => ref
-                          .read(defaultLandingProvider.notifier)
-                          .setLanding(DefaultLanding.log),
-                    ),
-                  ],
                   // 광고 제거 (인앱결제)
                   ListTile(
                     leading: Icon(
@@ -380,9 +449,17 @@ class _LanguageOption extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
+  String get _code => switch (locale.languageCode) {
+        'ko' => 'KO',
+        'en' => 'EN',
+        'ja' => 'JA',
+        _ => '??',
+      };
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final color = isSelected ? AppColors.primary : colorScheme.onSurface.withValues(alpha: 0.6);
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -392,7 +469,26 @@ class _LanguageOption extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const SizedBox(width: 40 + AppSpacing.md),
+            const SizedBox(width: AppSpacing.md),
+            Container(
+              width: 26,
+              height: 18,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                border: Border.all(color: color, width: 1.2),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Text(
+                _code,
+                style: TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
             Text(
               label,
               style: AppTypography.bodyMedium.copyWith(
@@ -415,15 +511,18 @@ class _UnitOption extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.onTap,
+    required this.icon,
   });
 
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final color = isSelected ? AppColors.primary : colorScheme.onSurface.withValues(alpha: 0.6);
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -433,7 +532,9 @@ class _UnitOption extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const SizedBox(width: 40 + AppSpacing.md),
+            const SizedBox(width: AppSpacing.md),
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: AppSpacing.md),
             Text(
               label,
               style: AppTypography.bodyMedium.copyWith(
@@ -456,15 +557,18 @@ class _DefaultLandingOption extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.onTap,
+    required this.icon,
   });
 
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final color = isSelected ? AppColors.primary : colorScheme.onSurface.withValues(alpha: 0.6);
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -474,7 +578,9 @@ class _DefaultLandingOption extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const SizedBox(width: 40 + AppSpacing.md),
+            const SizedBox(width: AppSpacing.md),
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: AppSpacing.md),
             Text(
               label,
               style: AppTypography.bodyMedium.copyWith(
@@ -505,9 +611,17 @@ class _ThemeOption extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
+  IconData get _icon => switch (mode) {
+        AppThemeMode.light => Icons.wb_sunny_outlined,
+        AppThemeMode.dark => Icons.nights_stay_outlined,
+        AppThemeMode.system => Icons.phone_android_outlined,
+        AppThemeMode.scheduled => Icons.schedule_outlined,
+      };
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final color = isSelected ? AppColors.primary : colorScheme.onSurface.withValues(alpha: 0.6);
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -517,7 +631,9 @@ class _ThemeOption extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const SizedBox(width: 40 + AppSpacing.md),
+            const SizedBox(width: AppSpacing.md),
+            Icon(_icon, size: 18, color: color),
+            const SizedBox(width: AppSpacing.md),
             Text(
               label,
               style: AppTypography.bodyMedium.copyWith(
