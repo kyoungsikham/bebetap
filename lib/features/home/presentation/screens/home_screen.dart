@@ -17,8 +17,13 @@ import '../../../log/presentation/utils/log_sheet_actions.dart';
 import '../../../log/presentation/widgets/date_navigator.dart';
 import '../../../log/presentation/widgets/log_stats_strip.dart';
 import '../../../log/presentation/widgets/timeline_item_tile.dart';
+import '../../../../core/providers/sync_provider.dart';
+import '../../../diary/presentation/providers/diary_provider.dart';
+import '../../../feeding/presentation/providers/feeding_provider.dart';
+import '../../../sleep/presentation/providers/sleep_provider.dart';
 import '../../../statistics/presentation/providers/statistics_provider.dart';
 import '../../../statistics/presentation/widgets/insight_card.dart';
+import '../providers/home_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -38,142 +43,173 @@ class HomeScreen extends ConsumerWidget {
     final timelineAsync = ref.watch(filteredLogTimelineProvider);
     final selectedDate = ref.watch(selectedLogDateProvider);
     final isToday = DateUtils.isSameDay(selectedDate, DateTime.now());
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async {
-          ref.invalidate(selectedBabyProvider);
-        },
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: _HomeHeader(
-                onMenuTap: () => showHamburgerMenu(context, ref),
-              ),
+      backgroundColor:
+          isDark ? const Color(0xFF1A1020) : const Color(0xFFFFEEF0),
+      body: SafeArea(
+        bottom: false,
+        child: NestedScrollView(
+        headerSliverBuilder: (ctx, _) => [
+          SliverToBoxAdapter(
+            child: _HomeHeader(
+              onMenuTap: () => showHamburgerMenu(context, ref),
             ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.pagePadding,
-                AppSpacing.xs,
-                AppSpacing.pagePadding,
-                0,
-              ),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  const _ExpandableInsights(),
-                  const SizedBox(height: AppSpacing.md),
-                ]),
-              ),
-            ),
-            SliverToBoxAdapter(
+          ),
+          SliverToBoxAdapter(
+            child: ColoredBox(
+              color: isDark ? const Color(0xFF121218) : Colors.white,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.pagePadding - 4,
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.pagePadding,
+                  AppSpacing.xs,
+                  AppSpacing.pagePadding,
+                  AppSpacing.md,
                 ),
-                child: const DateNavigator(),
+                child: const _ExpandableInsights(),
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.pagePadding,
-                ),
-                child: LogStatsStrip(
-                  onTapCategory: (type) =>
-                      openAddSheetForType(context, ref, type),
-                ),
+          ),
+        ],
+        body: ColoredBox(
+          color: isDark ? const Color(0xFF121218) : Colors.white,
+          child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.pagePadding - 4,
+              ),
+              child: const DateNavigator(),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.pagePadding,
+              ),
+              child: LogStatsStrip(
+                onTapCategory: (type) =>
+                    openAddSheetForType(context, ref, type),
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
-            const SliverToBoxAdapter(
-              child: Divider(height: 1, color: Color(0xFFDDDDDD)),
-            ),
-            timelineAsync.when(
-              loading: () => const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              error: (e, _) => SliverFillRemaining(
-                child: Center(
-                  child: Text(
-                    context.l10n.logLoadFailed,
-                    style: AppTypography.bodyMedium.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withValues(alpha: 0.55),
-                    ),
+            const SizedBox(height: AppSpacing.xs),
+            const Divider(height: 1, color: Color(0xFFDDDDDD)),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => _onRefresh(context, ref),
+                child: timelineAsync.when(
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(),
                   ),
-                ),
-              ),
-              data: (entries) {
-                if (entries.isEmpty) {
-                  return SliverFillRemaining(
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.event_note_outlined,
-                            size: 48,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.3),
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          Text(
-                            context.l10n.noLogForDay,
-                            style: AppTypography.bodyMedium
-                                .copyWith(color: AppColors.onSurfaceMuted),
-                          ),
-                          const SizedBox(height: AppSpacing.sm),
-                          Text(
-                            context.l10n.addLogHint,
-                            style: AppTypography.bodySmall
-                                .copyWith(color: AppColors.onSurfaceMuted),
-                          ),
-                        ],
+                  error: (e, _) => Center(
+                    child: Text(
+                      context.l10n.logLoadFailed,
+                      style: AppTypography.bodyMedium.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.55),
                       ),
                     ),
-                  );
-                }
-                // 분유·모유·유축·이유식 중 가장 최근 기록된 단 하나의 항목 ID
-                const feedingTypes = {
-                  TimelineEntryType.formula,
-                  TimelineEntryType.breast,
-                  TimelineEntryType.pumped,
-                  TimelineEntryType.babyFood,
-                };
-                final lastFeedingId = entries
-                    .where((e) => feedingTypes.contains(e.type))
-                    .map((e) => e.id)
-                    .firstOrNull;
+                  ),
+                  data: (entries) {
+                    if (entries.isEmpty) {
+                      return ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(AppSpacing.xxxl),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.event_note_outlined,
+                                  size: 48,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.3),
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                Text(
+                                  context.l10n.noLogForDay,
+                                  style: AppTypography.bodyMedium
+                                      .copyWith(color: AppColors.onSurfaceMuted),
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                Text(
+                                  context.l10n.addLogHint,
+                                  style: AppTypography.bodySmall
+                                      .copyWith(color: AppColors.onSurfaceMuted),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    // 분유·모유·유축·이유식 중 가장 최근 기록된 단 하나의 항목 ID
+                    const feedingTypes = {
+                      TimelineEntryType.formula,
+                      TimelineEntryType.breast,
+                      TimelineEntryType.pumped,
+                      TimelineEntryType.babyFood,
+                    };
+                    final lastFeedingId = entries
+                        .where((e) => feedingTypes.contains(e.type))
+                        .map((e) => e.id)
+                        .firstOrNull;
 
-                return SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.pagePadding,
-                    AppSpacing.md,
-                    AppSpacing.pagePadding,
-                    AppSpacing.pagePadding,
-                  ),
-                  sliver: SliverList.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, i) => TimelineItemTile(
-                      entry: entries[i],
-                      isFirst: i == 0,
-                      isLast: i == entries.length - 1,
-                      showElapsed: isToday && lastFeedingId == entries[i].id,
-                      onTap: () => openEditSheet(context, ref, entries[i]),
-                    ),
-                  ),
-                );
-              },
+                    return ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.pagePadding,
+                        AppSpacing.md,
+                        AppSpacing.pagePadding,
+                        AppSpacing.pagePadding,
+                      ),
+                      itemCount: entries.length,
+                      itemBuilder: (context, i) => TimelineItemTile(
+                        entry: entries[i],
+                        isFirst: i == 0,
+                        isLast: i == entries.length - 1,
+                        showElapsed: isToday && lastFeedingId == entries[i].id,
+                        onTap: () => openEditSheet(context, ref, entries[i]),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
           ],
+          ),
         ),
       ),
+    ),
     );
+  }
+}
+
+Future<void> _onRefresh(BuildContext context, WidgetRef ref) async {
+  final l10n = context.l10n;
+  final messenger = ScaffoldMessenger.of(context);
+  try {
+    final family = await ref.read(myFamilyProvider.future);
+    if (family == null) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.networkError)));
+      return;
+    }
+    await ref.read(syncEngineProvider).pullRemoteData(family.id);
+    await ref.read(babyRepositoryProvider).fetchBabies(force: true);
+    ref.invalidate(babiesProvider);
+    ref.invalidate(homeSummaryProvider);
+    ref.invalidate(todayFeedingsProvider);
+    ref.invalidate(activeSleepProvider);
+    ref.invalidate(logTimelineProvider);
+    ref.invalidate(logDaySummaryProvider);
+    ref.invalidate(todayDiaryForCurrentUserProvider);
+  } catch (_) {
+    messenger.showSnackBar(SnackBar(content: Text(l10n.networkError)));
   }
 }
 

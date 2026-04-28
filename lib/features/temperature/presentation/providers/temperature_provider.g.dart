@@ -27,7 +27,7 @@ final temperatureRepositoryProvider =
 typedef TemperatureRepositoryRef =
     AutoDisposeProviderRef<TemperatureRepository>;
 String _$temperatureNotifierHash() =>
-    r'a353e68f31f3dbe2d9f28526d1aec0c74da50e81';
+    r'87f98bc2e92c2707e6aa2cb046c6f6ec483d4bd9';
 
 /// See also [TemperatureNotifier].
 @ProviderFor(TemperatureNotifier)

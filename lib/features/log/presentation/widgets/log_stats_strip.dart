@@ -6,6 +6,7 @@ import '../../../../shared/extensions/datetime_ext.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/models/tracking_category.dart';
 import '../../../../shared/models/volume_unit.dart';
+import '../../../../shared/utils/text_measure.dart';
 import '../../../../shared/providers/icon_settings_provider.dart';
 import '../../../../shared/providers/volume_unit_provider.dart';
 import '../../domain/models/timeline_entry.dart';
@@ -52,6 +53,17 @@ class _LogStatsStripState extends ConsumerState<LogStatsStrip> {
 
     final l10n = context.l10n;
     final breastDur = Duration(seconds: summary.breastTotalSec);
+    final chipWidth = computeAdaptiveCardWidth(
+      labels: visibleTypes
+          .map((t) => TrackingCategoryInfo.all[t]!.localizedLabel(l10n))
+          .toList(),
+      style: AppTypography.labelSmall.copyWith(fontSize: 10),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      baseline: 62,
+      horizontalPadding: 8,
+      maxCap: 100,
+    );
 
     String valueFor(TimelineEntryType type) {
       switch (type) {
@@ -93,6 +105,7 @@ class _LogStatsStripState extends ConsumerState<LogStatsStrip> {
                 bgColor: info.bgColor,
                 value: valueFor(type),
                 label: info.localizedLabel(context.l10n),
+                width: chipWidth,
               );
             }),
           ],
@@ -111,6 +124,7 @@ class _StatChip extends StatelessWidget {
     required this.bgColor,
     required this.value,
     required this.label,
+    required this.width,
   });
 
   final TimelineEntryType type;
@@ -120,13 +134,14 @@ class _StatChip extends StatelessWidget {
   final Color bgColor;
   final String value;
   final String label;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 62,
+        width: width,
         padding: const EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -169,6 +184,9 @@ class _StatChip extends StatelessWidget {
                     .withValues(alpha: 0.55),
                 fontSize: 10,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

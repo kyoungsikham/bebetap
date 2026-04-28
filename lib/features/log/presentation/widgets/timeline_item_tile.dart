@@ -67,7 +67,7 @@ class TimelineItemTile extends ConsumerWidget {
           SizedBox(
             width: 52,
             child: Padding(
-              padding: const EdgeInsets.only(top: 14),
+              padding: const EdgeInsets.only(top: 9),
               child: Text(
                 _formatTime(entry.occurredAt),
                 style: AppTypography.bodySmall.copyWith(
@@ -115,7 +115,7 @@ class TimelineItemTile extends ConsumerWidget {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: AppSpacing.md,
-                                vertical: 14,
+                                vertical: 9,
                               ),
                               child: Row(
                                 children: [

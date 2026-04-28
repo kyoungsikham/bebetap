@@ -43,7 +43,7 @@ class FeedingEntriesTable extends Table {
   TextColumn get babyId              => text()();
   TextColumn get familyId            => text()();
   TextColumn get recordedBy          => text().nullable()();
-  TextColumn get type                => text()(); // formula | breast | baby_food
+  TextColumn get type                => text()(); // formula | breast | pumped | baby_food
   IntColumn get amountMl             => integer().nullable()();
   IntColumn get durationLeftSec      => integer().nullable()();
   IntColumn get durationRightSec     => integer().nullable()();

@@ -20,7 +20,7 @@ import '../../features/family/presentation/screens/family_screen.dart';
 import '../../features/baby/presentation/screens/baby_manage_screen.dart';
 import '../../features/premium/presentation/screens/paywall_screen.dart';
 import '../../features/settings/presentation/screens/icon_settings_screen.dart';
-import '../../shared/providers/default_landing_provider.dart';
+import '../../features/settings/presentation/screens/widget_settings_screen.dart';
 import '../../shared/widgets/bottom_nav_bar.dart';
 import '../providers/auth_provider.dart';
 import '../widget/widget_action_handler.dart';
@@ -58,7 +58,7 @@ GoRouter appRouter(Ref ref) {
   ref.onDispose(notifier.dispose);
 
   return GoRouter(
-    initialLocation: defaultLandingPreloadedOrFallback().path,
+    initialLocation: AppRoutes.home,
     refreshListenable: notifier,
     redirect: (context, state) {
       final authAsync = ref.read(authStateProvider);
@@ -75,13 +75,20 @@ GoRouter appRouter(Ref ref) {
       //    bebetap://log/* → /log 로 이동하고 pendingWidgetTabProvider를 설정한다.
       //    bebetap://action/* 등 나머지는 홈으로 리다이렉트 (WidgetActionHandler가 처리).
       if (state.uri.scheme == 'bebetap') {
+        // bebetap://log  or  bebetap://log/temperature  → host="log", segs=[] or ["temperature"]
+        // bebetap://action/feeding/formula              → host="action", segs=["feeding","formula"]
+        final host = state.uri.host;
         final segs = state.uri.pathSegments;
-        if (segs.isNotEmpty && segs.first == 'log') {
-          final tab = segs.length > 1 ? segs[1] : null;
+        if (host == 'log') {
+          final tab = segs.isNotEmpty ? segs[0] : null;
           if (tab != null) {
             ref.read(pendingWidgetTabProvider.notifier).state = tab;
           }
           return AppRoutes.log;
+        }
+        if (host == 'action') {
+          Future.microtask(() =>
+              WidgetActionHandler.handleActionFromRef(state.uri, ref));
         }
         return AppRoutes.home;
       }
@@ -104,7 +111,7 @@ GoRouter appRouter(Ref ref) {
       // 3. 로그인/이메일인증 화면에서 인증됨 → 이동 대상 결정
       if (loc == AppRoutes.login || loc == AppRoutes.emailAuth) {
         if (babiesLoaded && !hasBaby) return AppRoutes.babySetup;
-        return defaultLandingPreloadedOrFallback().path;
+        return AppRoutes.home;
       }
 
       // 4. babies 로딩 중이면 현재 위치 유지 (섣부른 리다이렉트 방지)
@@ -157,6 +164,13 @@ GoRouter appRouter(Ref ref) {
         pageBuilder: (_, s) => _fadePage(
           key: s.pageKey,
           child: const IconSettingsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.widgetSettings,
+        pageBuilder: (_, s) => _fadePage(
+          key: s.pageKey,
+          child: const WidgetSettingsScreen(),
         ),
       ),
       GoRoute(

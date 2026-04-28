@@ -33,6 +33,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuIconSettings => 'Icon Settings';
 
   @override
+  String get menuWidgetSettings => 'Widget Settings';
+
+  @override
   String get menuTheme => 'Theme';
 
   @override
@@ -947,6 +950,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get iconSettingsHint => 'Drag to reorder, toggle to show/hide.';
+
+  @override
+  String get widgetSettingsTitle => 'Widget Settings';
+
+  @override
+  String get widgetSettingsTheme => 'Theme';
+
+  @override
+  String get widgetSettingsThemeSystem => 'System';
+
+  @override
+  String get widgetSettingsThemeLight => 'Light';
+
+  @override
+  String get widgetSettingsThemeDark => 'Dark';
+
+  @override
+  String get widgetSettingsOpacity => 'Opacity';
+
+  @override
+  String widgetSettingsOpacityLabel(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get widgetSettingsButtons => 'Button Selection';
+
+  @override
+  String get widgetSettingsButtonsHint =>
+      'Select up to 5 buttons. Drag to reorder.';
+
+  @override
+  String widgetSettingsSelectedCount(int count, int max) {
+    return '$count / $max';
+  }
+
+  @override
+  String get widgetSettingsMaxReached => 'You can select up to 5 buttons.';
+
+  @override
+  String get widgetSettingsOpacityHint =>
+      'Transparency may be limited depending on your device or launcher. On iOS, it blends with your home screen wallpaper.';
+
+  @override
+  String get widgetActionSaved => 'Saved';
 
   @override
   String get logout => 'Logout';

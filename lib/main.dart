@@ -7,9 +7,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app.dart';
 import 'core/config/ad_initializer.dart';
 import 'core/config/app_config.dart';
+import 'core/widget/widget_background_handler.dart';
 import 'features/premium/data/iap_service.dart';
 import 'features/premium/presentation/providers/iap_provider.dart';
-import 'shared/providers/default_landing_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,14 +31,12 @@ Future<void> main() async {
 
   // 홈 위젯 App Group 설정 (iOS)
   await HomeWidget.setAppGroupId('group.com.bebetap.app');
-
-  await preloadDefaultLanding();
+  // Android: 위젯 버튼 탭 시 앱을 띄우지 않고 background isolate에서 저장 처리
+  HomeWidget.registerInteractivityCallback(widgetBackgroundCallback);
 
   runApp(
     ProviderScope(
-      overrides: [
-        iapServiceProvider.overrideWithValue(iapService),
-      ],
+      overrides: [iapServiceProvider.overrideWithValue(iapService)],
       child: const BebeTapApp(),
     ),
   );

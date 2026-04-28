@@ -33,6 +33,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get menuIconSettings => '아이콘 설정';
 
   @override
+  String get menuWidgetSettings => '위젯 설정';
+
+  @override
   String get menuTheme => '테마 설정';
 
   @override
@@ -938,6 +941,50 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get iconSettingsHint => '드래그로 순서를 변경하고, 스위치로 표시 여부를 설정하세요.';
+
+  @override
+  String get widgetSettingsTitle => '위젯 설정';
+
+  @override
+  String get widgetSettingsTheme => '테마';
+
+  @override
+  String get widgetSettingsThemeSystem => '시스템';
+
+  @override
+  String get widgetSettingsThemeLight => '라이트';
+
+  @override
+  String get widgetSettingsThemeDark => '다크';
+
+  @override
+  String get widgetSettingsOpacity => '투명도';
+
+  @override
+  String widgetSettingsOpacityLabel(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get widgetSettingsButtons => '버튼 선택';
+
+  @override
+  String get widgetSettingsButtonsHint => '최대 5개까지 선택할 수 있어요. 드래그로 순서를 변경하세요.';
+
+  @override
+  String widgetSettingsSelectedCount(int count, int max) {
+    return '$count / $max';
+  }
+
+  @override
+  String get widgetSettingsMaxReached => '최대 5개까지만 선택할 수 있어요.';
+
+  @override
+  String get widgetSettingsOpacityHint =>
+      '기기·런처에 따라 투명도 반영이 제한될 수 있어요. iOS는 홈 배경 재질에 따라 자동 혼합됩니다.';
+
+  @override
+  String get widgetActionSaved => '저장됨';
 
   @override
   String get logout => '로그아웃';

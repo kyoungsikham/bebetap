@@ -33,6 +33,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get menuIconSettings => 'アイコン設定';
 
   @override
+  String get menuWidgetSettings => 'ウィジェット設定';
+
+  @override
   String get menuTheme => 'テーマ設定';
 
   @override
@@ -938,6 +941,50 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get iconSettingsHint => 'ドラッグで順序を変更し、スイッチで表示/非表示を設定してください。';
+
+  @override
+  String get widgetSettingsTitle => 'ウィジェット設定';
+
+  @override
+  String get widgetSettingsTheme => 'テーマ';
+
+  @override
+  String get widgetSettingsThemeSystem => 'システム';
+
+  @override
+  String get widgetSettingsThemeLight => 'ライト';
+
+  @override
+  String get widgetSettingsThemeDark => 'ダーク';
+
+  @override
+  String get widgetSettingsOpacity => '透明度';
+
+  @override
+  String widgetSettingsOpacityLabel(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get widgetSettingsButtons => 'ボタン選択';
+
+  @override
+  String get widgetSettingsButtonsHint => '最大5つまで選択できます。ドラッグで順序を変更できます。';
+
+  @override
+  String widgetSettingsSelectedCount(int count, int max) {
+    return '$count / $max';
+  }
+
+  @override
+  String get widgetSettingsMaxReached => '最大5つまで選択できます。';
+
+  @override
+  String get widgetSettingsOpacityHint =>
+      'デバイスやランチャーによって透明度の反映が制限される場合があります。iOSではホーム背景の素材と自動的にブレンドされます。';
+
+  @override
+  String get widgetActionSaved => '保存しました';
 
   @override
   String get logout => 'ログアウト';

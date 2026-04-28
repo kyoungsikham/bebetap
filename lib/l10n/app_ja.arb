@@ -11,6 +11,7 @@
   "menuBabyManage": "うちの子",
   "menuWidgetAdd": "ウィジェット追加",
   "menuIconSettings": "アイコン設定",
+  "menuWidgetSettings": "ウィジェット設定",
   "menuTheme": "テーマ設定",
   "themeLight": "ライト",
   "themeDark": "ダーク",
@@ -460,6 +461,31 @@
   "settings": "設定",
   "iconSettingsTitle": "アイコン設定",
   "iconSettingsHint": "ドラッグで順序を変更し、スイッチで表示/非表示を設定してください。",
+
+  "widgetSettingsTitle": "ウィジェット設定",
+  "widgetSettingsTheme": "テーマ",
+  "widgetSettingsThemeSystem": "システム",
+  "widgetSettingsThemeLight": "ライト",
+  "widgetSettingsThemeDark": "ダーク",
+  "widgetSettingsOpacity": "透明度",
+  "widgetSettingsOpacityLabel": "{percent}%",
+  "@widgetSettingsOpacityLabel": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "widgetSettingsButtons": "ボタン選択",
+  "widgetSettingsButtonsHint": "最大5つまで選択できます。ドラッグで順序を変更できます。",
+  "widgetSettingsSelectedCount": "{count} / {max}",
+  "@widgetSettingsSelectedCount": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "widgetSettingsMaxReached": "最大5つまで選択できます。",
+  "widgetSettingsOpacityHint": "デバイスやランチャーによって透明度の反映が制限される場合があります。iOSではホーム背景の素材と自動的にブレンドされます。",
+  "widgetActionSaved": "保存しました",
   "logout": "ログアウト",
 
   "pickerToday": "今日",

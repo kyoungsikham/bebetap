@@ -21,12 +21,14 @@ class BabyRepository {
   }
 
   /// 현재 로그인 사용자가 속한 가족의 아기 목록을 가져옵니다.
-  Future<List<Baby>> fetchBabies() async {
+  /// [force]가 true이면 5분 캐시를 무시하고 서버에서 즉시 재조회합니다.
+  Future<List<Baby>> fetchBabies({bool force = false}) async {
     final user = _client.auth.currentUser;
     if (user == null) return [];
 
-    // 유효한 캐시가 있으면 바로 반환
-    if (_cachedBabies != null &&
+    // 유효한 캐시가 있으면 바로 반환 (force 시 스킵)
+    if (!force &&
+        _cachedBabies != null &&
         _babiesCacheTime != null &&
         DateTime.now().difference(_babiesCacheTime!) < _cacheTtl) {
       return _cachedBabies!;

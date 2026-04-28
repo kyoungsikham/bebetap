@@ -9,11 +9,9 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../extensions/l10n_ext.dart';
-import '../models/default_landing.dart';
 import '../models/theme_mode_setting.dart';
 import '../models/volume_unit.dart';
 import '../providers/ad_free_provider.dart';
-import '../providers/default_landing_provider.dart';
 import '../providers/locale_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/volume_unit_provider.dart';
@@ -45,7 +43,7 @@ class HamburgerMenuPanel extends ConsumerStatefulWidget {
   ConsumerState<HamburgerMenuPanel> createState() => _HamburgerMenuPanelState();
 }
 
-enum _ExpandedSection { none, theme, language, unit, defaultLanding }
+enum _ExpandedSection { none, theme, language, unit }
 
 class _HamburgerMenuPanelState extends ConsumerState<HamburgerMenuPanel> {
   _ExpandedSection _expanded = _ExpandedSection.none;
@@ -64,8 +62,6 @@ class _HamburgerMenuPanelState extends ConsumerState<HamburgerMenuPanel> {
         ref.watch(themeSettingProvider).valueOrNull ?? const ThemeModeSetting();
     final currentUnit =
         ref.watch(volumeUnitProvider).valueOrNull ?? VolumeUnit.ml;
-    final currentLanding =
-        ref.watch(defaultLandingProvider).valueOrNull ?? DefaultLanding.log;
     final isPremium = ref.watch(adFreeProvider).valueOrNull ?? false;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -138,6 +134,16 @@ class _HamburgerMenuPanelState extends ConsumerState<HamburgerMenuPanel> {
                       Navigator.of(context, rootNavigator: true).pop();
                       Future.microtask(
                           () => router.push(AppRoutes.iconSettings));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.dashboard_customize_outlined),
+                    title: Text(l10n.menuWidgetSettings),
+                    onTap: () {
+                      final router = GoRouter.of(context);
+                      Navigator.of(context, rootNavigator: true).pop();
+                      Future.microtask(
+                          () => router.push(AppRoutes.widgetSettings));
                     },
                   ),
                   // 테마 설정
@@ -282,42 +288,6 @@ class _HamburgerMenuPanelState extends ConsumerState<HamburgerMenuPanel> {
                             onTap: () => ref
                                 .read(volumeUnitProvider.notifier)
                                 .setUnit(VolumeUnit.oz),
-                          ),
-                        ],
-                      ),
-                    ),
-                  // 기본 시작 화면
-                  ListTile(
-                    leading: const Icon(Icons.flag_outlined),
-                    title: Text(l10n.menuDefaultLanding),
-                    trailing: Icon(
-                      _expanded == _ExpandedSection.defaultLanding
-                          ? Icons.expand_less
-                          : Icons.expand_more,
-                      color: AppColors.onSurfaceMuted,
-                    ),
-                    onTap: () => _toggle(_ExpandedSection.defaultLanding),
-                  ),
-                  if (_expanded == _ExpandedSection.defaultLanding)
-                    Container(
-                      color: submenuColor,
-                      child: Column(
-                        children: [
-                          _DefaultLandingOption(
-                            label: l10n.menuDefaultLandingHome,
-                            isSelected: currentLanding == DefaultLanding.home,
-                            icon: Icons.home_outlined,
-                            onTap: () => ref
-                                .read(defaultLandingProvider.notifier)
-                                .setLanding(DefaultLanding.home),
-                          ),
-                          _DefaultLandingOption(
-                            label: l10n.menuDefaultLandingLog,
-                            isSelected: currentLanding == DefaultLanding.log,
-                            icon: Icons.list_alt_outlined,
-                            onTap: () => ref
-                                .read(defaultLandingProvider.notifier)
-                                .setLanding(DefaultLanding.log),
                           ),
                         ],
                       ),
@@ -508,52 +478,6 @@ class _LanguageOption extends StatelessWidget {
 
 class _UnitOption extends StatelessWidget {
   const _UnitOption({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-    required this.icon,
-  });
-
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final color = isSelected ? AppColors.primary : colorScheme.onSurface.withValues(alpha: 0.6);
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.pagePadding,
-          vertical: 10,
-        ),
-        child: Row(
-          children: [
-            const SizedBox(width: AppSpacing.md),
-            Icon(icon, size: 18, color: color),
-            const SizedBox(width: AppSpacing.md),
-            Text(
-              label,
-              style: AppTypography.bodyMedium.copyWith(
-                color: isSelected ? AppColors.primary : colorScheme.onSurface,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-              ),
-            ),
-            const Spacer(),
-            if (isSelected)
-              const Icon(Icons.check, color: AppColors.primary, size: 18),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DefaultLandingOption extends StatelessWidget {
-  const _DefaultLandingOption({
     required this.label,
     required this.isSelected,
     required this.onTap,

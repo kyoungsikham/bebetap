@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/providers/auth_provider.dart';
@@ -7,6 +8,8 @@ import '../../data/baby_repository_impl.dart';
 import '../../domain/models/baby.dart';
 
 part 'baby_provider.g.dart';
+
+const _kSelectedBabyIdKey = 'selected_baby_id';
 
 // ── Repository ────────────────────────────────────────────────────────────────
 
@@ -26,13 +29,35 @@ Future<List<Baby>> babies(Ref ref) {
 
 // ── Selected baby ─────────────────────────────────────────────────────────────
 
-/// 현재 선택된 아기 ID. null이면 목록의 첫 번째 아기를 사용.
-@riverpod
+/// 현재 선택된 아기 ID. SharedPreferences에 영구 저장되며, 로그아웃 시 초기화됨.
+@Riverpod(keepAlive: true)
 class SelectedBabyId extends _$SelectedBabyId {
   @override
-  String? build() => null;
+  String? build() {
+    _restoreFromPrefs();
+    ref.listen(authStateProvider, (_, next) {
+      if (next.value?.event == AuthChangeEvent.signedOut) _clear();
+    });
+    return null;
+  }
 
-  void select(String babyId) => state = babyId;
+  Future<void> _restoreFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString(_kSelectedBabyIdKey);
+    if (saved != null && state == null) state = saved;
+  }
+
+  Future<void> select(String babyId) async {
+    state = babyId;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_kSelectedBabyIdKey, babyId);
+  }
+
+  Future<void> _clear() async {
+    state = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kSelectedBabyIdKey);
+  }
 }
 
 /// 선택된 아기 (없으면 목록 첫 번째).

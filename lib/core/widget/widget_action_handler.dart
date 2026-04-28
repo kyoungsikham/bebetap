@@ -1,32 +1,23 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:home_widget/home_widget.dart';
 
+import '../../features/baby/domain/models/baby.dart';
+import '../../features/baby/presentation/providers/baby_provider.dart';
 import '../../features/diaper/presentation/providers/diaper_provider.dart';
+import '../../features/feeding/presentation/providers/feeding_provider.dart';
 import '../../features/sleep/presentation/providers/sleep_provider.dart';
 import '../router/app_routes.dart';
+import '../utils/app_keys.dart';
+import 'widget_refresh_helper.dart' show refreshWidgetFromWidget;
 
 /// 위젯 클릭으로 열어야 할 로그 탭을 임시 저장하는 provider.
-/// LogScreen이 이 값을 listen하여 바텀 시트를 자동으로 연다.
 final pendingWidgetTabProvider = StateProvider<String?>((ref) => null);
 
 /// 홈 화면 위젯 버튼 클릭 시 전달되는 URL을 처리하는 핸들러.
-///
-/// URL 스킴: `bebetap://action/CATEGORY/VALUE`
-///   - `bebetap://action/diaper/wet`
-///   - `bebetap://action/diaper/soiled`
-///   - `bebetap://action/diaper/both`
-///   - `bebetap://action/sleep/start`
-///   - `bebetap://action/sleep/end`
-///
-/// 로그 화면 이동 URL:
-///   - `bebetap://log/formula`
-///   - `bebetap://log/breast`
-///   - `bebetap://log/pumped`
-///   - `bebetap://log/baby_food`
 class WidgetActionHandler {
   WidgetActionHandler._();
 
@@ -36,12 +27,10 @@ class WidgetActionHandler {
   static void init(WidgetRef ref, GoRouter router) {
     _sub?.cancel();
 
-    // 앱이 종료된 상태에서 위젯 클릭으로 실행된 경우
     HomeWidget.initiallyLaunchedFromHomeWidget().then((uri) {
       if (uri != null) _handle(uri, ref, router);
     });
 
-    // 앱이 백그라운드/포그라운드 상태에서 위젯 클릭
     _sub = HomeWidget.widgetClicked.listen((uri) {
       if (uri != null) _handle(uri, ref, router);
     });
@@ -52,37 +41,108 @@ class WidgetActionHandler {
     _sub = null;
   }
 
+  /// GoRouter redirect 등 Ref 컨텍스트에서 action URI 를 직접 처리.
+  /// bebetap://action/feeding/formula → host="action", pathSegments=["feeding","formula"]
+  static void handleActionFromRef(Uri uri, Ref ref) {
+    if (uri.host != 'action') return;
+    final segments = uri.pathSegments;
+    if (segments.length < 2) return;
+    _saveAction(segments[0], segments[1], ref.read);
+  }
+
   static void _handle(Uri uri, WidgetRef ref, GoRouter router) {
     debugPrint('[WidgetAction] uri: $uri');
+    final host     = uri.host;
     final segments = uri.pathSegments;
-    if (segments.isEmpty) return;
 
-    switch (segments[0]) {
+    switch (host) {
       case 'action':
-        if (segments.length < 3) return;
-        _handleAction(segments[1], segments[2], ref);
+        if (segments.isEmpty) return;
+        if (segments[0] == 'refresh') {
+          refreshWidgetFromWidget(ref);
+          return;
+        }
+        // iOS: 위젯 헤더 ◂/▸ 탭 → 앱이 열리면서 아기 전환
+        if (segments[0] == 'baby' && segments.length >= 2) {
+          final dir = segments[1]; // 'prev' or 'next'
+          if (dir == 'prev' || dir == 'next') {
+            unawaited(_switchBaby(dir, ref));
+            return;
+          }
+        }
+        if (segments.length < 2) return;
+        _saveAction(segments[0], segments[1], ref.read);
+      case 'home':
+        router.go(AppRoutes.home);
       case 'log':
-        final tab = segments.length > 1 ? segments[1] : null;
-        ref.read(pendingWidgetTabProvider.notifier).state = tab;
-        router.go(AppRoutes.log);
+        router.go(AppRoutes.home);
     }
   }
 
-  static void _handleAction(String category, String value, WidgetRef ref) {
+  // read 함수만 받아 Ref/WidgetRef 모두 지원
+  static void _saveAction(
+    String category,
+    String value,
+    T Function<T>(ProviderListenable<T>) read,
+  ) {
+    final now = DateTime.now();
     switch (category) {
+      case 'feeding':
+        final notifier = read(feedingNotifierProvider.notifier);
+        switch (value) {
+          case 'formula':
+            notifier.saveFormula(amountMl: 0, startedAt: now);
+          case 'pumped':
+            notifier.savePumped(amountMl: 0, startedAt: now);
+          case 'babyFood':
+            notifier.saveBabyFood(amountMl: 0, startedAt: now);
+          case 'breast':
+            notifier.saveBreast(durationLeftSec: 0, durationRightSec: 0, startedAt: now);
+        }
       case 'diaper':
-        ref.read(diaperNotifierProvider.notifier).saveDiaper(type: value);
+        read(diaperNotifierProvider.notifier).saveDiaper(type: value);
       case 'sleep':
-        final sleepNotifier = ref.read(sleepSessionNotifierProvider.notifier);
-        if (value == 'start') {
-          sleepNotifier.startSleep();
-        } else if (value == 'end') {
-          // 활성 수면 ID를 읽어서 종료
-          final activeSleep = ref.read(activeSleepProvider).valueOrNull;
+        final sleepNotifier = read(sleepSessionNotifierProvider.notifier);
+        if (value == 'toggle') {
+          final activeSleep = read(activeSleepProvider).valueOrNull;
           if (activeSleep != null) {
             sleepNotifier.endSleep(activeSleep.id);
+          } else {
+            sleepNotifier.startSleep();
           }
+        } else if (value == 'start') {
+          sleepNotifier.startSleep();
+        } else if (value == 'end') {
+          final activeSleep = read(activeSleepProvider).valueOrNull;
+          if (activeSleep != null) sleepNotifier.endSleep(activeSleep.id);
         }
     }
+    _showSaved();
+  }
+
+  static Future<void> _switchBaby(String dir, WidgetRef ref) async {
+    final List<Baby> babies;
+    try {
+      babies = await ref.read(babiesProvider.future);
+    } catch (_) {
+      return;
+    }
+    if (babies.isEmpty) return;
+    final currentId = ref.read(selectedBabyIdProvider);
+    final idx = babies.indexWhere((b) => b.id == currentId);
+    final currentIdx = idx < 0 ? 0 : idx;
+    final n = babies.length;
+    final nextIdx = dir == 'prev' ? (currentIdx - 1 + n) % n : (currentIdx + 1) % n;
+    ref.read(selectedBabyIdProvider.notifier).select(babies[nextIdx].id);
+  }
+
+  static void _showSaved() {
+    rootScaffoldMessengerKey.currentState?.showSnackBar(
+      const SnackBar(
+        content: Text('저장됨'),
+        duration: Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 }

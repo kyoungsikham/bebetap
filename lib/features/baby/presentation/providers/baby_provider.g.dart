@@ -59,14 +59,14 @@ final selectedBabyProvider = AutoDisposeFutureProvider<Baby?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SelectedBabyRef = AutoDisposeFutureProviderRef<Baby?>;
-String _$selectedBabyIdHash() => r'd0e083d689d7585166701be0f144e6a53c26389f';
+String _$selectedBabyIdHash() => r'd66efb0f1eb996ff3e8a4cba92ea5ae0c9e53409';
 
-/// 현재 선택된 아기 ID. null이면 목록의 첫 번째 아기를 사용.
+/// 현재 선택된 아기 ID. SharedPreferences에 영구 저장되며, 로그아웃 시 초기화됨.
 ///
 /// Copied from [SelectedBabyId].
 @ProviderFor(SelectedBabyId)
 final selectedBabyIdProvider =
-    AutoDisposeNotifierProvider<SelectedBabyId, String?>.internal(
+    NotifierProvider<SelectedBabyId, String?>.internal(
       SelectedBabyId.new,
       name: r'selectedBabyIdProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -76,7 +76,7 @@ final selectedBabyIdProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$SelectedBabyId = AutoDisposeNotifier<String?>;
+typedef _$SelectedBabyId = Notifier<String?>;
 String _$babySetupNotifierHash() => r'413c1f55dbb1f72c5a697a14b656b82550cca680';
 
 /// 온보딩에서 가족 + 아기 생성을 처리하는 Notifier.

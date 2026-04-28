@@ -42,7 +42,7 @@ final logTimelineProvider =
 // ignore: unused_element
 typedef LogTimelineRef = AutoDisposeFutureProviderRef<List<TimelineEntry>>;
 String _$filteredLogTimelineHash() =>
-    r'cf8c521237aec2163a82a11e76e5d88673509926';
+    r'f0a26b6db74a9d54a458fef79e8dbb1801e8f589';
 
 /// See also [filteredLogTimeline].
 @ProviderFor(filteredLogTimeline)

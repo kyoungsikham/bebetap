@@ -40,9 +40,9 @@ final homeSummaryProvider = AutoDisposeFutureProvider<HomeSummary>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef HomeSummaryRef = AutoDisposeFutureProviderRef<HomeSummary>;
-String _$minuteTickerHash() => r'deef5ad210d0bdd3681e4eb6a731018d34d1eae1';
+String _$minuteTickerHash() => r'93c092f3e63b1e6ffcaaf3855b56ed84a30996fc';
 
-/// 1분마다 틱 — elapsed time 표시를 위해 UI 위젯이 구독
+/// 1초마다 틱 — elapsed time 표시를 위해 UI 위젯이 구독
 ///
 /// Copied from [minuteTicker].
 @ProviderFor(minuteTicker)

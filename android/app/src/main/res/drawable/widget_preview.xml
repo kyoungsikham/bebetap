@@ -1,65 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  위젯 피커 미리보기 이미지.
+  실제 위젯 구조(헤더 + 기록 3행 + 버튼 5개)를 모사한 vector layer-list.
+  고해상도 PNG(drawable-xxhdpi/widget_preview.png)가 제공되면 자동으로 대체됩니다.
+-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 흰 배경 -->
+
+    <!-- 카드 배경 -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#FFFFFF"/>
-            <corners android:radius="16dp"/>
+            <solid android:color="#FFFFFFFF"/>
+            <corners android:radius="22dp"/>
         </shape>
     </item>
-    <!-- 상단 앱 이름 영역 (회색 바) -->
+
+    <!-- BebeTap 라벨 (작은 회색 바) -->
     <item
         android:left="14dp"
-        android:top="14dp"
-        android:right="200dp"
-        android:bottom="148dp">
+        android:top="12dp"
+        android:right="220dp"
+        android:bottom="0dp">
         <shape android:shape="rectangle">
-            <solid android:color="#E0E0E8"/>
-            <corners android:radius="4dp"/>
+            <solid android:color="#FF8A8A9A"/>
+            <corners android:radius="2dp"/>
+            <size android:height="6dp"/>
         </shape>
     </item>
-    <!-- 헤더 텍스트 영역 -->
+
+    <!-- 헤더 텍스트 라인 (굵게) -->
     <item
         android:left="14dp"
-        android:top="36dp"
-        android:right="80dp"
-        android:bottom="124dp">
+        android:top="24dp"
+        android:right="70dp"
+        android:bottom="0dp">
         <shape android:shape="rectangle">
-            <solid android:color="#222222"/>
-            <corners android:radius="4dp"/>
-        </shape>
-    </item>
-    <!-- 기록 행 1 -->
-    <item
-        android:left="14dp"
-        android:top="80dp"
-        android:right="40dp"
-        android:bottom="102dp">
-        <shape android:shape="rectangle">
-            <solid android:color="#E0E0E8"/>
+            <solid android:color="#FF1C1C1E"/>
             <corners android:radius="3dp"/>
+            <size android:height="10dp"/>
         </shape>
     </item>
-    <!-- 기록 행 2 -->
+
+    <!-- 기록 행 1 배경 (파스텔 그레이) -->
     <item
         android:left="14dp"
-        android:top="108dp"
-        android:right="60dp"
-        android:bottom="130dp">
+        android:top="44dp"
+        android:right="14dp"
+        android:bottom="0dp">
         <shape android:shape="rectangle">
-            <solid android:color="#E0E0E8"/>
-            <corners android:radius="3dp"/>
+            <solid android:color="#FFF0F0F4"/>
+            <corners android:radius="8dp"/>
+            <size android:height="16dp"/>
         </shape>
     </item>
-    <!-- 기록 행 3 -->
+    <!-- 기록 행 1 dot — 빨강 (기저귀) -->
+    <item
+        android:left="20dp"
+        android:top="50dp"
+        android:right="0dp"
+        android:bottom="0dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFF25858"/>
+            <size android:width="8dp" android:height="8dp"/>
+        </shape>
+    </item>
+
+    <!-- 기록 행 2 배경 -->
     <item
         android:left="14dp"
-        android:top="136dp"
-        android:right="50dp"
-        android:bottom="158dp">
+        android:top="66dp"
+        android:right="14dp"
+        android:bottom="0dp">
         <shape android:shape="rectangle">
-            <solid android:color="#E0E0E8"/>
-            <corners android:radius="3dp"/>
+            <solid android:color="#FFF0F0F4"/>
+            <corners android:radius="8dp"/>
+            <size android:height="16dp"/>
         </shape>
     </item>
+    <!-- 기록 행 2 dot — 보라 (모유) -->
+    <item
+        android:left="20dp"
+        android:top="72dp"
+        android:right="0dp"
+        android:bottom="0dp">
+        <shape android:shape="oval">
+            <solid android:color="#FF7B68EE"/>
+            <size android:width="8dp" android:height="8dp"/>
+        </shape>
+    </item>
+
+    <!-- 기록 행 3 배경 -->
+    <item
+        android:left="14dp"
+        android:top="88dp"
+        android:right="14dp"
+        android:bottom="0dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFF0F0F4"/>
+            <corners android:radius="8dp"/>
+            <size android:height="16dp"/>
+        </shape>
+    </item>
+    <!-- 기록 행 3 dot — 주황 (수면) -->
+    <item
+        android:left="20dp"
+        android:top="94dp"
+        android:right="0dp"
+        android:bottom="0dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFF9933"/>
+            <size android:width="8dp" android:height="8dp"/>
+        </shape>
+    </item>
+
+    <!-- 버튼 1 — 분유 (파란 파스텔) -->
+    <item
+        android:left="14dp"
+        android:top="116dp"
+        android:right="0dp"
+        android:bottom="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFE3EAFF"/>
+            <corners android:radius="18dp"/>
+            <size android:width="44dp" android:height="36dp"/>
+        </shape>
+    </item>
+
+    <!-- 버튼 2 — 모유 (보라 파스텔) -->
+    <item
+        android:left="64dp"
+        android:top="116dp"
+        android:right="0dp"
+        android:bottom="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFE8E3FB"/>
+            <corners android:radius="18dp"/>
+            <size android:width="44dp" android:height="36dp"/>
+        </shape>
+    </item>
+
+    <!-- 버튼 3 — 유축 (초록 파스텔) -->
+    <item
+        android:left="114dp"
+        android:top="116dp"
+        android:right="0dp"
+        android:bottom="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFDFF1EA"/>
+            <corners android:radius="18dp"/>
+            <size android:width="44dp" android:height="36dp"/>
+        </shape>
+    </item>
+
+    <!-- 버튼 4 — 수면 (주황 파스텔) -->
+    <item
+        android:left="164dp"
+        android:top="116dp"
+        android:right="0dp"
+        android:bottom="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFE8CE"/>
+            <corners android:radius="18dp"/>
+            <size android:width="44dp" android:height="36dp"/>
+        </shape>
+    </item>
+
+    <!-- 버튼 5 — 기저귀 (빨강 파스텔) -->
+    <item
+        android:left="214dp"
+        android:top="116dp"
+        android:right="14dp"
+        android:bottom="12dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFCE0E0"/>
+            <corners android:radius="18dp"/>
+            <size android:width="44dp" android:height="36dp"/>
+        </shape>
+    </item>
+
 </layer-list>

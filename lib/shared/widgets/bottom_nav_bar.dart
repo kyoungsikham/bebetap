@@ -68,6 +68,10 @@ class ScaffoldWithBottomNav extends StatelessWidget {
               child: BottomNavigationBar(
                 currentIndex: currentIndex,
                 onTap: (i) => context.go(_tabPaths[i]),
+                type: BottomNavigationBarType.fixed,
+                iconSize: 22,
+                selectedFontSize: 11,
+                unselectedFontSize: 11,
                 items: List.generate(
                   _tabPaths.length,
                   (i) => BottomNavigationBarItem(

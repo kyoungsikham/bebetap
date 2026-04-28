@@ -83,6 +83,7 @@ void familyRealtime(Ref ref) {
       });
       // 초기 데이터 pull: 가족 구성원 로그인 시 기존 기록 가져오기
       await ref.read(syncEngineProvider).pullRemoteData(family.id);
+      ref.read(syncEngineProvider).trigger();
       ref.invalidate(homeSummaryProvider);
       ref.invalidate(todayFeedingsProvider);
       ref.invalidate(logTimelineProvider);

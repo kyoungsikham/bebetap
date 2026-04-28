@@ -23,7 +23,7 @@ final diaperRepositoryProvider = AutoDisposeProvider<DiaperRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DiaperRepositoryRef = AutoDisposeProviderRef<DiaperRepository>;
-String _$diaperNotifierHash() => r'7e33960b14e3af50898e50d1529daedb451ef272';
+String _$diaperNotifierHash() => r'49d15c4199819cd44b848c3a0644632b64678cf5';
 
 /// See also [DiaperNotifier].
 @ProviderFor(DiaperNotifier)

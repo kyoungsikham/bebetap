@@ -11,6 +11,7 @@
   "menuBabyManage": "우리 아이",
   "menuWidgetAdd": "위젯 추가",
   "menuIconSettings": "아이콘 설정",
+  "menuWidgetSettings": "위젯 설정",
   "menuTheme": "테마 설정",
   "themeLight": "라이트",
   "themeDark": "다크",
@@ -460,6 +461,31 @@
   "settings": "설정",
   "iconSettingsTitle": "아이콘 설정",
   "iconSettingsHint": "드래그로 순서를 변경하고, 스위치로 표시 여부를 설정하세요.",
+
+  "widgetSettingsTitle": "위젯 설정",
+  "widgetSettingsTheme": "테마",
+  "widgetSettingsThemeSystem": "시스템",
+  "widgetSettingsThemeLight": "라이트",
+  "widgetSettingsThemeDark": "다크",
+  "widgetSettingsOpacity": "투명도",
+  "widgetSettingsOpacityLabel": "{percent}%",
+  "@widgetSettingsOpacityLabel": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "widgetSettingsButtons": "버튼 선택",
+  "widgetSettingsButtonsHint": "최대 5개까지 선택할 수 있어요. 드래그로 순서를 변경하세요.",
+  "widgetSettingsSelectedCount": "{count} / {max}",
+  "@widgetSettingsSelectedCount": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "widgetSettingsMaxReached": "최대 5개까지만 선택할 수 있어요.",
+  "widgetSettingsOpacityHint": "기기·런처에 따라 투명도 반영이 제한될 수 있어요. iOS는 홈 배경 재질에 따라 자동 혼합됩니다.",
+  "widgetActionSaved": "저장됨",
   "logout": "로그아웃",
 
   "pickerToday": "오늘",

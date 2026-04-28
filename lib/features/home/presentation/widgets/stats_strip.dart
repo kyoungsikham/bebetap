@@ -10,9 +10,16 @@ import '../../../../shared/models/volume_unit.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/extensions/l10n_ext.dart';
 import '../../../../shared/providers/volume_unit_provider.dart';
+import '../../../../shared/utils/text_measure.dart';
 import '../../domain/models/home_summary.dart';
 import '../providers/home_provider.dart';
 import '../../../log/domain/models/timeline_entry.dart';
+
+double _labelFontSizeForCount(int count) => switch (count) {
+      >= 6 => 8.5,
+      5 => 9.0,
+      _ => 10.0,
+    };
 
 /// 오늘 요약 수치 띠 — 기록된 항목만 동적으로 표시
 class StatsStrip extends ConsumerWidget {
@@ -31,6 +38,17 @@ class StatsStrip extends ConsumerWidget {
         if (items.isEmpty) return const SizedBox.shrink();
 
         final scrollable = items.length > 4;
+        final cardWidth = computeAdaptiveCardWidth(
+          labels: items.map((e) => e.label).toList(),
+          style: AppTypography.labelSmall.copyWith(
+            fontSize: _labelFontSizeForCount(items.length),
+          ),
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          baseline: 68,
+          horizontalPadding: 8,
+          maxCap: 110,
+        );
 
         return Container(
           padding: EdgeInsets.symmetric(
@@ -50,7 +68,7 @@ class StatsStrip extends ConsumerWidget {
                       for (int i = 0; i < items.length; i++) ...[
                         if (i > 0) _Divider(),
                         SizedBox(
-                          width: 68,
+                          width: cardWidth,
                           child: _StatItem(
                             icon: items[i].icon,
                             value: items[i].value,
@@ -155,11 +173,6 @@ class _StatItem extends StatelessWidget {
         _ => 13.0,
       };
 
-  double get _labelFontSize => switch (count) {
-        >= 6 => 8.5,
-        5 => 9.0,
-        _ => 10.0,
-      };
 
   @override
   Widget build(BuildContext context) {
@@ -181,12 +194,15 @@ class _StatItem extends StatelessWidget {
         Text(
           label,
           style: AppTypography.labelSmall.copyWith(
-            fontSize: _labelFontSize,
+            fontSize: _labelFontSizeForCount(count),
             color: Theme.of(context)
                 .colorScheme
                 .onSurface
                 .withValues(alpha: 0.55),
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

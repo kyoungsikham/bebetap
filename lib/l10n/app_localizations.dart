@@ -148,6 +148,12 @@ abstract class AppLocalizations {
   /// **'Icon Settings'**
   String get menuIconSettings;
 
+  /// No description provided for @menuWidgetSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Widget Settings'**
+  String get menuWidgetSettings;
+
   /// No description provided for @menuTheme.
   ///
   /// In en, this message translates to:
@@ -1845,6 +1851,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Drag to reorder, toggle to show/hide.'**
   String get iconSettingsHint;
+
+  /// No description provided for @widgetSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Widget Settings'**
+  String get widgetSettingsTitle;
+
+  /// No description provided for @widgetSettingsTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get widgetSettingsTheme;
+
+  /// No description provided for @widgetSettingsThemeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get widgetSettingsThemeSystem;
+
+  /// No description provided for @widgetSettingsThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get widgetSettingsThemeLight;
+
+  /// No description provided for @widgetSettingsThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get widgetSettingsThemeDark;
+
+  /// No description provided for @widgetSettingsOpacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Opacity'**
+  String get widgetSettingsOpacity;
+
+  /// No description provided for @widgetSettingsOpacityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String widgetSettingsOpacityLabel(int percent);
+
+  /// No description provided for @widgetSettingsButtons.
+  ///
+  /// In en, this message translates to:
+  /// **'Button Selection'**
+  String get widgetSettingsButtons;
+
+  /// No description provided for @widgetSettingsButtonsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select up to 5 buttons. Drag to reorder.'**
+  String get widgetSettingsButtonsHint;
+
+  /// No description provided for @widgetSettingsSelectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} / {max}'**
+  String widgetSettingsSelectedCount(int count, int max);
+
+  /// No description provided for @widgetSettingsMaxReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You can select up to 5 buttons.'**
+  String get widgetSettingsMaxReached;
+
+  /// No description provided for @widgetSettingsOpacityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Transparency may be limited depending on your device or launcher. On iOS, it blends with your home screen wallpaper.'**
+  String get widgetSettingsOpacityHint;
+
+  /// No description provided for @widgetActionSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get widgetActionSaved;
 
   /// No description provided for @logout.
   ///

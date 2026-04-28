@@ -11,6 +11,7 @@
   "menuBabyManage": "Our Little One",
   "menuWidgetAdd": "Add Widget",
   "menuIconSettings": "Icon Settings",
+  "menuWidgetSettings": "Widget Settings",
   "menuTheme": "Theme",
   "themeLight": "Light",
   "themeDark": "Dark",
@@ -470,6 +471,31 @@
   "settings": "Settings",
   "iconSettingsTitle": "Icon Settings",
   "iconSettingsHint": "Drag to reorder, toggle to show/hide.",
+
+  "widgetSettingsTitle": "Widget Settings",
+  "widgetSettingsTheme": "Theme",
+  "widgetSettingsThemeSystem": "System",
+  "widgetSettingsThemeLight": "Light",
+  "widgetSettingsThemeDark": "Dark",
+  "widgetSettingsOpacity": "Opacity",
+  "widgetSettingsOpacityLabel": "{percent}%",
+  "@widgetSettingsOpacityLabel": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "widgetSettingsButtons": "Button Selection",
+  "widgetSettingsButtonsHint": "Select up to 5 buttons. Drag to reorder.",
+  "widgetSettingsSelectedCount": "{count} / {max}",
+  "@widgetSettingsSelectedCount": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "widgetSettingsMaxReached": "You can select up to 5 buttons.",
+  "widgetSettingsOpacityHint": "Transparency may be limited depending on your device or launcher. On iOS, it blends with your home screen wallpaper.",
+  "widgetActionSaved": "Saved",
   "logout": "Logout",
 
   "pickerToday": "Today",

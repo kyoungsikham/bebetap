@@ -42,11 +42,18 @@
                 <data android:scheme="bebetap"/>
             </intent-filter>
         </activity>
-        <!-- BebeTap 위젯 (단일) -->
+        <!-- BebeTap 위젯 4x2 -->
         <receiver android:name=".glance.BebeTapWidgetReceiver" android:exported="true"
             android:permission="android.permission.BIND_APPWIDGET">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/bebetap_widget_info" />
+        </receiver>
+        <!-- BebeTap 위젯 2x2 (미니) -->
+        <receiver android:name=".glance.BebeTapCompactWidgetReceiver" android:exported="true"
+            android:label="BebeTap 미니"
+            android:permission="android.permission.BIND_APPWIDGET">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/bebetap_compact_widget_info" />
         </receiver>
 
         <!-- AdMob App ID (테스트용 ID - 출시 전 실제 ID로 교체 필요) -->
