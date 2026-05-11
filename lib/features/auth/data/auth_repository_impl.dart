@@ -123,23 +123,52 @@ class AuthRepository {
   }
 
   // ── Naver ─────────────────────────────────────────────────────────────────
-  /// 네이티브 Naver SDK → Supabase Edge Function으로 토큰 교환.
-  /// TODO: Naver Developers에서 앱 등록 후
-  ///       lib/core/config/app_config.dart에 clientId/clientSecret 추가.
-  ///       supabase/functions/naver-auth Edge Function 배포 필요.
-  Future<void> signInWithNaver() async {
+
+  /// Naver SDK에서 access_token만 획득 (Supabase 로그인 X).
+  Future<SocialCredential?> getNaverCredential() async {
     final result = await FlutterNaverLogin.logIn();
-    if (result.status != NaverLoginStatus.loggedIn) {
-      throw Exception('네이버 로그인이 취소되었습니다');
+    if (result.status != NaverLoginStatus.loggedIn) return null; // 사용자 취소
+
+    final token = result.accessToken;
+    if (token == null || token.accessToken.isEmpty) {
+      throw Exception('네이버 access token을 받지 못했습니다');
     }
-    // TODO: Edge Function으로 토큰 교환
-    // final tokenResult = await FlutterNaverLogin.currentAccessToken;
-    // final response = await _client.functions.invoke(
-    //   'naver-auth',
-    //   body: {'access_token': tokenResult.accessToken},
-    // );
-    // await _client.auth.setSession(response.data['access_token']);
-    throw UnimplementedError('네이버 로그인은 Edge Function 배포 후 활성화됩니다');
+
+    return SocialCredential(
+      provider: 'naver',
+      idToken: '', // Naver는 id_token 미발급
+      accessToken: token.accessToken,
+      email: result.account?.email,
+    );
+  }
+
+  /// Naver credential로 Edge Function 호출 → Supabase 세션 생성.
+  Future<void> completeNaverSignIn(SocialCredential credential) async {
+    final response = await _client.functions.invoke(
+      'naver-auth',
+      body: {'access_token': credential.accessToken},
+    );
+
+    if (response.status != 200) {
+      throw Exception('네이버 Edge Function 오류: ${response.data}');
+    }
+
+    final data = response.data as Map<String, dynamic>;
+    final tokenHash = data['token_hash'] as String;
+    final email = data['email'] as String;
+
+    await _client.auth.verifyOTP(
+      email: email,
+      tokenHash: tokenHash,
+      type: OtpType.magiclink,
+    );
+  }
+
+  /// 기존 호환용: 한 번에 네이버 로그인.
+  Future<void> signInWithNaver() async {
+    final credential = await getNaverCredential();
+    if (credential == null) return;
+    await completeNaverSignIn(credential);
   }
 
   // ── Facebook ──────────────────────────────────────────────────────────────

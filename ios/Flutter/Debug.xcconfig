@@ -1,2 +1,5 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
+// 네이버 로그인 키 — 네이버 개발자센터에서 발급받은 실제 값으로 교체
+NAVER_CONSUMER_KEY=YOUR_NAVER_CLIENT_ID
+NAVER_CONSUMER_SECRET=YOUR_NAVER_CLIENT_SECRET

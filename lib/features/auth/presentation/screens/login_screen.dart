@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -102,12 +104,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  bool _isCancelError(Object e) {
+    if (e is PlatformException) {
+      final code = e.code.toUpperCase();
+      return code == 'CANCELED' || code == 'CANCELLED';
+    }
+    return false;
+  }
+
   Future<void> _runSocial(Future<void> Function() fn) async {
     if (_loading) return;
     setState(() => _loading = true);
     try {
       await fn();
     } catch (e) {
+      if (_isCancelError(e)) return;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.l10n.loginFailed(e.toString()))),
@@ -132,6 +143,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (credential == null) return; // 사용자 취소
       await completeSignIn(credential);
     } catch (e) {
+      if (_isCancelError(e)) return;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.l10n.loginFailed(e.toString()))),
@@ -289,54 +301,52 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: AppSpacing.lg),
 
               if (!isLoading) ...[
-                _SocialLoginButton(
-                  icon: Icons.g_mobiledata,
-                  label: context.l10n.continueWithGoogle,
-                  onTap: () => _socialSignInWithCheck(
-                    getCredential: repo.getGoogleCredential,
-                    completeSignIn: repo.completeGoogleSignIn,
-                    providerName: 'Google',
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _SocialIconButton(
+                      assetPath: 'assets/icons/social/google.svg',
+                      color: Colors.white,
+                      onTap: () => _socialSignInWithCheck(
+                        getCredential: repo.getGoogleCredential,
+                        completeSignIn: repo.completeGoogleSignIn,
+                        providerName: 'Google',
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.lg),
+                    _SocialIconButton(
+                      assetPath: 'assets/icons/social/kakao.svg',
+                      color: const Color(0xFFFEE500),
+                      onTap: () => _socialSignInWithCheck(
+                        getCredential: repo.getKakaoCredential,
+                        completeSignIn: repo.completeKakaoSignIn,
+                        providerName: '카카오',
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.lg),
+                    _SocialIconButton(
+                      assetPath: 'assets/icons/social/facebook.svg',
+                      color: const Color(0xFF1877F2),
+                      onTap: () => _runSocial(repo.signInWithFacebook),
+                    ),
+                    const SizedBox(width: AppSpacing.lg),
+                    _SocialIconButton(
+                      assetPath: 'assets/icons/social/line.svg',
+                      color: const Color(0xFF06C755),
+                      onTap: () => _runSocial(repo.signInWithLine),
+                    ),
+                    const SizedBox(width: AppSpacing.lg),
+                    _SocialIconButton(
+                      assetPath: 'assets/icons/social/naver.svg',
+                      color: const Color(0xFF03C75A),
+                      onTap: () => _socialSignInWithCheck(
+                        getCredential: repo.getNaverCredential,
+                        completeSignIn: repo.completeNaverSignIn,
+                        providerName: '네이버',
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: AppSpacing.sm),
-                _SocialLoginButton(
-                  icon: Icons.chat_bubble,
-                  label: context.l10n.continueWithKakao,
-                  color: const Color(0xFFFEE500),
-                  textColor: AppColors.onSurface,
-                  onTap: () => _socialSignInWithCheck(
-                    getCredential: repo.getKakaoCredential,
-                    completeSignIn: repo.completeKakaoSignIn,
-                    providerName: '카카오',
-                  ),
-                ),
-                // const SizedBox(height: AppSpacing.sm),
-                // _SocialLoginButton(
-                //   icon: Icons.apple,
-                //   label: 'Apple로 계속하기',
-                //   onTap: () => _runSocial(repo.signInWithApple),
-                // ),
-                const SizedBox(height: AppSpacing.sm),
-                _SocialLoginButton(
-                  icon: Icons.facebook,
-                  label: context.l10n.continueWithFacebook,
-                  color: const Color(0xFF1877F2),
-                  onTap: () => _runSocial(repo.signInWithFacebook),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                _SocialLoginButton(
-                  icon: Icons.chat,
-                  label: context.l10n.continueWithLine,
-                  color: const Color(0xFF06C755),
-                  onTap: () => _runSocial(repo.signInWithLine),
-                ),
-                // const SizedBox(height: AppSpacing.sm),
-                // _SocialLoginButton(
-                //   icon: Icons.eco,
-                //   label: '네이버로 계속하기',
-                //   color: const Color(0xFF03C75A),
-                //   onTap: () => _runSocial(repo.signInWithNaver),
-                // ),
               ],
 
               const SizedBox(height: AppSpacing.xxl),
@@ -387,43 +397,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 }
 
-class _SocialLoginButton extends StatelessWidget {
-  const _SocialLoginButton({
-    required this.icon,
-    required this.label,
+class _SocialIconButton extends StatelessWidget {
+  const _SocialIconButton({
+    required this.assetPath,
     required this.onTap,
     this.color,
-    this.textColor,
   });
 
-  final IconData icon;
-  final String label;
+  final String assetPath;
   final VoidCallback onTap;
   final Color? color;
-  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
     final bg = color ?? AppColors.surfaceVariant;
-    final fg = textColor ?? (color != null ? Colors.white : AppColors.onSurface);
 
-    return SizedBox(
-      height: 52,
-      child: ElevatedButton.icon(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: bg,
-          foregroundColor: fg,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: color == null
-                ? const BorderSide(color: AppColors.divider)
-                : BorderSide.none,
-          ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(28),
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          color: bg,
+          shape: BoxShape.circle,
+          border: color == null
+              ? Border.all(color: AppColors.divider)
+              : null,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        icon: Icon(icon, size: 20),
-        label: Text(label, style: AppTypography.labelLarge.copyWith(color: fg)),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: SvgPicture.asset(assetPath),
+        ),
       ),
     );
   }

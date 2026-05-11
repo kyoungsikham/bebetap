@@ -79,7 +79,28 @@
 				<string>bebetap</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>bebetapnaverlogin</string>
+			</array>
+		</dict>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
+	</array>
+	<key>NaverConsumerKey</key>
+	<string>$(NAVER_CONSUMER_KEY)</string>
+	<key>NaverConsumerSecret</key>
+	<string>$(NAVER_CONSUMER_SECRET)</string>
+	<key>NaverServiceAppUrlScheme</key>
+	<string>bebetapnaverlogin</string>
+	<key>NaverServiceAppName</key>
+	<string>BebeTap</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511</string>
 	<key>GIDClientID</key>
