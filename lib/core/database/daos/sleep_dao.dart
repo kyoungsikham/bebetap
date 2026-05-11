@@ -99,6 +99,16 @@ class SleepDao extends DatabaseAccessor<AppDatabase> with _$SleepDaoMixin {
             ..limit(1))
           .getSingleOrNull();
 
+  Future<List<SleepEntriesTableData>> getRecentSleeps(
+    String babyId, {
+    int limit = 3,
+  }) =>
+      (select(sleepEntriesTable)
+            ..where((t) => t.babyId.equals(babyId) & t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.desc(t.startedAt)])
+            ..limit(limit))
+          .get();
+
   Future<SleepEntriesTableData?> getSleepById(String id) =>
       (select(sleepEntriesTable)..where((t) => t.id.equals(id)))
           .getSingleOrNull();

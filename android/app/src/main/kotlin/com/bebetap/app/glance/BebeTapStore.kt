@@ -30,15 +30,16 @@ class BebeTapStore(context: Context) {
     val lastTempTime: String     get() = prefs.getString("lastTempTime", "") ?: ""
 }
 
-/** ISO8601 문자열 → "N분" 또는 "Nh Nm" (단위만, "전" 없음) */
-fun elapsedShortLabel(iso: String): String {
+/** ISO8601 문자열 → "N분" 또는 "Nh Nm" (단위만, "전" 없음)
+ *  widget_unit_min 키 값으로 단위 문자를 교체해 다국어 지원 */
+fun elapsedShortLabel(iso: String, unitMin: String = "분"): String {
     if (iso.isEmpty()) return ""
     return try {
         val instant = Instant.parse(iso)
         val minutes = ChronoUnit.MINUTES.between(instant, Instant.now())
         if (minutes < 0) ""
-        else if (minutes < 60) "${minutes}분"
-        else "${minutes / 60}시간 ${minutes % 60}분"
+        else if (minutes < 60) "$minutes$unitMin"
+        else "${minutes / 60}h${minutes % 60}$unitMin"
     } catch (e: Exception) { "" }
 }
 

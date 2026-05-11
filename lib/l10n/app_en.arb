@@ -659,5 +659,39 @@
     "placeholders": { "percent": { "type": "String" } }
   },
   "statsFeedingSame": "Feeding intake similar to last period",
-  "statsSummaryTitle": "Summary"
+  "statsSummaryTitle": "Summary",
+
+  "widgetLabelFormula": "Formula",
+  "widgetLabelBreast": "Breast",
+  "widgetLabelPumped": "Pumped",
+  "widgetLabelBabyFood": "Baby Food",
+  "widgetLabelDiaper": "Diaper",
+  "widgetLabelSleep": "Sleep",
+  "widgetLabelTemperature": "Temp",
+  "widgetDetailDiaperWet": "Wet",
+  "widgetDetailDiaperSoiled": "Soiled",
+  "widgetDetailDiaperBoth": "Wet+Soiled",
+  "widgetDetailDiaperChange": "Change",
+  "widgetDetailSleepActive": "Sleeping",
+  "widgetEmptyShort": "No records",
+  "widgetEmptyToday": "No records today",
+  "widgetEmptyHint": "Add a record to see it here",
+  "widgetTitleFallback": "Records",
+  "widgetDurationMin": "{m}m",
+  "@widgetDurationMin": {
+    "placeholders": { "m": { "type": "int" } }
+  },
+  "widgetDurationHm": "{h}h {m}m",
+  "@widgetDurationHm": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "m": { "type": "int" }
+    }
+  },
+  "widgetDiaperCount": "{n}×",
+  "@widgetDiaperCount": {
+    "placeholders": { "n": { "type": "int" } }
+  },
+  "widgetUnitMin": "m",
+  "widgetAgoSuffix": " ago"
 }

@@ -2,10 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' hide Family;
 import 'package:riverpod_annotation/riverpod_annotation.dart' hide Family;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'dart:async' show unawaited;
+
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/providers/database_provider.dart';
 import '../../../../core/providers/sync_provider.dart';
 import '../../../../core/sync/realtime_listener.dart';
+import '../../../../core/widget/widget_refresh_helper.dart';
 import '../../../baby/presentation/providers/baby_provider.dart';
 import '../../../diary/presentation/providers/diary_provider.dart';
 import '../../../feeding/presentation/providers/feeding_provider.dart';
@@ -80,6 +83,7 @@ void familyRealtime(Ref ref) {
         ref.invalidate(logTimelineProvider);
         ref.invalidate(logDaySummaryProvider);
         ref.invalidate(todayDiaryForCurrentUserProvider);
+        unawaited(refreshWidget(ref));
       });
       // 초기 데이터 pull: 가족 구성원 로그인 시 기존 기록 가져오기
       await ref.read(syncEngineProvider).pullRemoteData(family.id);
@@ -89,6 +93,7 @@ void familyRealtime(Ref ref) {
       ref.invalidate(logTimelineProvider);
       ref.invalidate(logDaySummaryProvider);
       ref.invalidate(todayDiaryForCurrentUserProvider);
+      unawaited(refreshWidget(ref));
     } else {
       listener.unsubscribe();
     }

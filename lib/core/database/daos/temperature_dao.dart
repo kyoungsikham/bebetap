@@ -45,6 +45,16 @@ class TemperatureDao extends DatabaseAccessor<AppDatabase>
             ..limit(1))
           .getSingleOrNull();
 
+  Future<List<TemperatureEntriesTableData>> getRecentTemperatures(
+    String babyId, {
+    int limit = 3,
+  }) =>
+      (select(temperatureEntriesTable)
+            ..where((t) => t.babyId.equals(babyId) & t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.desc(t.occurredAt)])
+            ..limit(limit))
+          .get();
+
   Future<void> upsertTemperature(TemperatureEntriesTableCompanion entry) =>
       into(temperatureEntriesTable).insertOnConflictUpdate(entry);
 

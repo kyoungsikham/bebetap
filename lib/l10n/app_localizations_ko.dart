@@ -1268,4 +1268,73 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get statsSummaryTitle => '요약';
+
+  @override
+  String get widgetLabelFormula => '분유';
+
+  @override
+  String get widgetLabelBreast => '모유';
+
+  @override
+  String get widgetLabelPumped => '유축';
+
+  @override
+  String get widgetLabelBabyFood => '이유식';
+
+  @override
+  String get widgetLabelDiaper => '기저귀';
+
+  @override
+  String get widgetLabelSleep => '수면';
+
+  @override
+  String get widgetLabelTemperature => '체온';
+
+  @override
+  String get widgetDetailDiaperWet => '소변';
+
+  @override
+  String get widgetDetailDiaperSoiled => '대변';
+
+  @override
+  String get widgetDetailDiaperBoth => '소변+대변';
+
+  @override
+  String get widgetDetailDiaperChange => '교체';
+
+  @override
+  String get widgetDetailSleepActive => '자는 중';
+
+  @override
+  String get widgetEmptyShort => '기록 없음';
+
+  @override
+  String get widgetEmptyToday => '오늘 기록 없음';
+
+  @override
+  String get widgetEmptyHint => '기록을 추가하면 여기에 표시됩니다';
+
+  @override
+  String get widgetTitleFallback => '기록';
+
+  @override
+  String widgetDurationMin(int m) {
+    return '$m분';
+  }
+
+  @override
+  String widgetDurationHm(int h, int m) {
+    return '$h시간 $m분';
+  }
+
+  @override
+  String widgetDiaperCount(int n) {
+    return '$n회';
+  }
+
+  @override
+  String get widgetUnitMin => '분';
+
+  @override
+  String get widgetAgoSuffix => ' 전';
 }

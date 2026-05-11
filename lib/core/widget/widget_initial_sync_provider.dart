@@ -17,5 +17,6 @@ final widgetInitialSyncProvider = FutureProvider<void>((ref) async {
 
   final settings = await ref.watch(widgetSettingsProvider.future);
   unawaited(WidgetSyncService.pushSettings(settings));
+  // refreshWidget이 모든 아기의 per-baby 키를 포함해 한 번에 갱신한다
   unawaited(refreshWidget(ref));
 });

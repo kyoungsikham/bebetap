@@ -1281,4 +1281,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statsSummaryTitle => 'Summary';
+
+  @override
+  String get widgetLabelFormula => 'Formula';
+
+  @override
+  String get widgetLabelBreast => 'Breast';
+
+  @override
+  String get widgetLabelPumped => 'Pumped';
+
+  @override
+  String get widgetLabelBabyFood => 'Baby Food';
+
+  @override
+  String get widgetLabelDiaper => 'Diaper';
+
+  @override
+  String get widgetLabelSleep => 'Sleep';
+
+  @override
+  String get widgetLabelTemperature => 'Temp';
+
+  @override
+  String get widgetDetailDiaperWet => 'Wet';
+
+  @override
+  String get widgetDetailDiaperSoiled => 'Soiled';
+
+  @override
+  String get widgetDetailDiaperBoth => 'Wet+Soiled';
+
+  @override
+  String get widgetDetailDiaperChange => 'Change';
+
+  @override
+  String get widgetDetailSleepActive => 'Sleeping';
+
+  @override
+  String get widgetEmptyShort => 'No records';
+
+  @override
+  String get widgetEmptyToday => 'No records today';
+
+  @override
+  String get widgetEmptyHint => 'Add a record to see it here';
+
+  @override
+  String get widgetTitleFallback => 'Records';
+
+  @override
+  String widgetDurationMin(int m) {
+    return '${m}m';
+  }
+
+  @override
+  String widgetDurationHm(int h, int m) {
+    return '${h}h ${m}m';
+  }
+
+  @override
+  String widgetDiaperCount(int n) {
+    return '$n×';
+  }
+
+  @override
+  String get widgetUnitMin => 'm';
+
+  @override
+  String get widgetAgoSuffix => ' ago';
 }

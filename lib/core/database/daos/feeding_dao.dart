@@ -29,6 +29,16 @@ class FeedingDao extends DatabaseAccessor<AppDatabase> with _$FeedingDaoMixin {
             ..limit(1))
           .getSingleOrNull();
 
+  Future<List<FeedingEntriesTableData>> getRecentFeedingsByBaby(
+    String babyId, {
+    int limit = 3,
+  }) =>
+      (select(feedingEntriesTable)
+            ..where((t) => t.babyId.equals(babyId) & t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.desc(t.startedAt)])
+            ..limit(limit))
+          .get();
+
   Future<FeedingEntriesTableData?> getLastFeedingByBabyAndType(
     String babyId,
     String type,

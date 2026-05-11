@@ -19,6 +19,7 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		FD72E7E6F77EBC2813F06280 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22076B43B9349863153DE5B1 /* Pods_RunnerTests.framework */; };
 		BB00100100100100AA000002 /* BebetapWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00100100100100AA000001 /* BebetapWidget.swift */; };
+		BB00100100100100AA000020 /* BabySelectionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00100100100100AA000019 /* BabySelectionIntent.swift */; };
 		BB00100100100100AA000005 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB00100100100100AA000004 /* Info.plist */; };
 		BB00100100100100AA000011 /* BebetapWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB00100100100100AA000003 /* BebetapWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -91,6 +92,7 @@
 		C98144A28BC8F32973A3DDFB /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		FE492C01DEC7E80CEE8CB6BC /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BB00100100100100AA000001 /* BebetapWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BebetapWidget.swift; sourceTree = "<group>"; };
+		BB00100100100100AA000019 /* BabySelectionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabySelectionIntent.swift; sourceTree = "<group>"; };
 		BB00100100100100AA000003 /* BebetapWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BebetapWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB00100100100100AA000004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB00100100100100AA000006 /* BebetapWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BebetapWidget.entitlements; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				BB00100100100100AA000001 /* BebetapWidget.swift */,
+				BB00100100100100AA000019 /* BabySelectionIntent.swift */,
 				BB00100100100100AA000004 /* Info.plist */,
 				BB00100100100100AA000006 /* BebetapWidget.entitlements */,
 			);
@@ -495,6 +498,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB00100100100100AA000002 /* BebetapWidget.swift in Sources */,
+				BB00100100100100AA000020 /* BabySelectionIntent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

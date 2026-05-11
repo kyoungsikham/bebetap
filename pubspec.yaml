@@ -40,6 +40,7 @@ dependencies:
   flutter_web_auth_2: ^4.0.1
 
   # UI
+  flutter_svg: ^2.0.10+1
   flutter_animate: ^4.5.2
   shimmer: ^3.0.0
   gap: ^3.0.1
@@ -81,6 +82,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+
+  assets:
+    - assets/icons/social/
 
 flutter_launcher_icons:
   android: true

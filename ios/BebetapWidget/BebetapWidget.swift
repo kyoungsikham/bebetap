@@ -7,37 +7,76 @@ private let kAppGroup = "group.com.bebetap.app"
 
 struct BebeTapStore {
     let defaults: UserDefaults?
+    let pinnedBabyId: String?
 
-    init() { defaults = UserDefaults(suiteName: kAppGroup) }
+    init(pinnedBabyId: String? = nil) {
+        defaults = UserDefaults(suiteName: kAppGroup)
+        self.pinnedBabyId = pinnedBabyId
+    }
 
-    var babyName: String { defaults?.string(forKey: "widget_baby_name") ?? "" }
+    // pinnedBabyId 접미사 키 우선, 없으면 전역 키 fallback
+    private func str(_ key: String, fallback: String = "") -> String {
+        if let id = pinnedBabyId,
+           let v = defaults?.string(forKey: "\(key)_\(id)"), !v.isEmpty {
+            return v
+        }
+        return defaults?.string(forKey: key) ?? fallback
+    }
 
     // 아기 목록 — "|" 구분자로 저장된 ids/names
     var babyIds:   [String] { (defaults?.string(forKey: "widget_baby_ids")   ?? "").split(separator: "|").map(String.init).filter { !$0.isEmpty } }
     var babyNames: [String] { (defaults?.string(forKey: "widget_baby_names") ?? "").split(separator: "|").map(String.init).filter { !$0.isEmpty } }
-    var babyCount: Int      { max(babyIds.count, 1) }
+    var babyCount: Int      { pinnedBabyId != nil ? 1 : max(babyIds.count, 1) }
 
-    var r1Label: String  { defaults?.string(forKey: "r1_label")  ?? "" }
-    var r1Detail: String { defaults?.string(forKey: "r1_detail") ?? "" }
-    var r1Time: Date?    { isoDate(defaults?.string(forKey: "r1_time")) }
+    var babyName: String {
+        if let id = pinnedBabyId, let idx = babyIds.firstIndex(of: id), babyNames.indices.contains(idx) {
+            return babyNames[idx]
+        }
+        return defaults?.string(forKey: "widget_baby_name") ?? ""
+    }
 
-    var r2Label: String  { defaults?.string(forKey: "r2_label")  ?? "" }
-    var r2Detail: String { defaults?.string(forKey: "r2_detail") ?? "" }
-    var r2Time: Date?    { isoDate(defaults?.string(forKey: "r2_time")) }
+    var r1Label: String  { str("r1_label") }
+    var r1Detail: String { str("r1_detail") }
+    var r1Time: Date?    { isoDate(str("r1_time")) }
+    var r1Color: String  { str("r1_color") }
 
-    var r3Label: String  { defaults?.string(forKey: "r3_label")  ?? "" }
-    var r3Detail: String { defaults?.string(forKey: "r3_detail") ?? "" }
-    var r3Time: Date?    { isoDate(defaults?.string(forKey: "r3_time")) }
+    var r2Label: String  { str("r2_label") }
+    var r2Detail: String { str("r2_detail") }
+    var r2Time: Date?    { isoDate(str("r2_time")) }
+    var r2Color: String  { str("r2_color") }
 
-    // MARK: Today totals
-    var todayFormulaMl: Int   { Int(defaults?.string(forKey: "today_formula_ml")   ?? "0") ?? 0 }
-    var todayPumpedMl: Int    { Int(defaults?.string(forKey: "today_pumped_ml")    ?? "0") ?? 0 }
-    var todayBabyFoodMl: Int  { Int(defaults?.string(forKey: "today_babyfood_ml") ?? "0") ?? 0 }
-    var todayBreastSec: Int   { Int(defaults?.string(forKey: "today_breast_sec")  ?? "0") ?? 0 }
-    var todayDiaperCount: Int { Int(defaults?.string(forKey: "today_diaper_count") ?? "0") ?? 0 }
-    var todaySleepMin: Int    { Int(defaults?.string(forKey: "today_sleep_min")    ?? "0") ?? 0 }
+    var r3Label: String  { str("r3_label") }
+    var r3Detail: String { str("r3_detail") }
+    var r3Time: Date?    { isoDate(str("r3_time")) }
+    var r3Color: String  { str("r3_color") }
 
-    // MARK: Widget settings
+    // MARK: Today totals (per-baby 접미사 지원)
+    var todayFormulaMl: Int   { Int(str("today_formula_ml",   fallback: "0")) ?? 0 }
+    var todayPumpedMl: Int    { Int(str("today_pumped_ml",    fallback: "0")) ?? 0 }
+    var todayBabyFoodMl: Int  { Int(str("today_babyfood_ml", fallback: "0")) ?? 0 }
+    var todayBreastSec: Int   { Int(str("today_breast_sec",  fallback: "0")) ?? 0 }
+    var todayDiaperCount: Int { Int(str("today_diaper_count",fallback: "0")) ?? 0 }
+    var todaySleepMin: Int    { Int(str("today_sleep_min",   fallback: "0")) ?? 0 }
+    // MARK: Today totals — 번역된 라벨 + 포맷된 값 (라벨은 전역, 값은 per-baby)
+    var todayFormulaLabel: String  { defaults?.string(forKey: "today_formula_label")  ?? "분유" }
+    var todayBreastLabel: String   { defaults?.string(forKey: "today_breast_label")   ?? "모유" }
+    var todayPumpedLabel: String   { defaults?.string(forKey: "today_pumped_label")   ?? "유축" }
+    var todayBabyFoodLabel: String { defaults?.string(forKey: "today_babyfood_label") ?? "이유식" }
+    var todayDiaperLabel: String   { defaults?.string(forKey: "today_diaper_label")   ?? "기저귀" }
+    var todaySleepLabel: String    { defaults?.string(forKey: "today_sleep_label")    ?? "수면" }
+    var todayBreastValue: String   { str("today_breast_value") }
+    var todaySleepValue: String    { str("today_sleep_value") }
+    var todayDiaperValue: String   { str("today_diaper_value") }
+
+    // MARK: 다국어 정적 텍스트 (전역)
+    var emptyShort: String    { defaults?.string(forKey: "widget_empty_short")    ?? "기록 없음" }
+    var emptyToday: String    { defaults?.string(forKey: "widget_empty_today")    ?? "오늘 기록 없음" }
+    var emptyHint: String     { defaults?.string(forKey: "widget_empty_hint")     ?? "기록을 추가하면 여기에 표시됩니다" }
+    var titleFallback: String { defaults?.string(forKey: "widget_title_fallback") ?? "기록" }
+    var unitMin: String       { defaults?.string(forKey: "widget_unit_min")       ?? "분" }
+    var agoSuffix: String     { defaults?.string(forKey: "widget_ago_suffix")     ?? " 전" }
+
+    // MARK: Widget settings (전역)
     var themeMode: String { defaults?.string(forKey: "widget_theme") ?? "system" }
     var opacity: Double   { Double(defaults?.string(forKey: "widget_opacity") ?? "1.00") ?? 1.0 }
 
@@ -62,18 +101,18 @@ struct BebeTapStore {
 
 // MARK: - Helpers
 
-private func elapsedShort(from date: Date?) -> String {
+private func elapsedShort(from date: Date?, unitMin: String = "분") -> String {
     guard let date else { return "" }
     let elapsed = Int(Date().timeIntervalSince(date))
     guard elapsed >= 0 else { return "" }
     let h = elapsed / 3600, m = (elapsed % 3600) / 60
-    return h > 0 ? "\(h)시간 \(m)분" : "\(m)분"
+    return h > 0 ? "\(h)h\(m)\(unitMin)" : "\(m)\(unitMin)"
 }
 
-// "N분 전" / "Nh Nm 전" — 경과시간 짧은 포맷
-private func elapsedShortAgo(from date: Date?) -> String {
-    let s = elapsedShort(from: date)
-    return s.isEmpty ? "" : "\(s) 전"
+// 경과시간 "N분 전" / "Nh Nm 전" — unitMin/agoSuffix로 다국어 처리
+private func elapsedShortAgo(from date: Date?, unitMin: String = "분", agoSuffix: String = " 전") -> String {
+    let s = elapsedShort(from: date, unitMin: unitMin)
+    return s.isEmpty ? "" : "\(s)\(agoSuffix)"
 }
 
 private func actionURL(_ path: String) -> URL {
@@ -85,19 +124,35 @@ private func actionURL(_ path: String) -> URL {
 struct BebeTapEntry: TimelineEntry {
     let date: Date
     let store: BebeTapStore
+    let configuration: BabySelectionIntent
 }
 
-struct BebeTapProvider: TimelineProvider {
+struct BebeTapProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> BebeTapEntry {
-        BebeTapEntry(date: Date(), store: BebeTapStore())
+        let cfg = BabySelectionIntent()
+        return BebeTapEntry(date: Date(),
+                            store: BebeTapStore(pinnedBabyId: _resolvedBabyId(cfg)),
+                            configuration: cfg)
     }
-    func getSnapshot(in context: Context, completion: @escaping (BebeTapEntry) -> Void) {
-        completion(placeholder(in: context))
+    func snapshot(for configuration: BabySelectionIntent, in context: Context) async -> BebeTapEntry {
+        BebeTapEntry(date: Date(),
+                     store: BebeTapStore(pinnedBabyId: _resolvedBabyId(configuration)),
+                     configuration: configuration)
     }
-    func getTimeline(in context: Context, completion: @escaping (Timeline<BebeTapEntry>) -> Void) {
-        let entry = BebeTapEntry(date: Date(), store: BebeTapStore())
-        let next = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
-        completion(Timeline(entries: [entry], policy: .after(next)))
+    func timeline(for configuration: BabySelectionIntent, in context: Context) async -> Timeline<BebeTapEntry> {
+        let store = BebeTapStore(pinnedBabyId: _resolvedBabyId(configuration))
+        let entry = BebeTapEntry(date: Date(), store: store, configuration: configuration)
+        let next  = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
+        return Timeline(entries: [entry], policy: .after(next))
+    }
+
+    // 사용자가 아기를 선택하지 않은 위젯은 첫 번째 등록 아기로 fallback
+    private func _resolvedBabyId(_ configuration: BabySelectionIntent) -> String? {
+        if let id = configuration.baby?.id { return id }
+        let d = UserDefaults(suiteName: kAppGroup)
+        let ids = (d?.string(forKey: "widget_baby_ids") ?? "")
+            .split(separator: "|").map(String.init).filter { !$0.isEmpty }
+        return ids.first
     }
 }
 
@@ -111,14 +166,14 @@ private extension Color {
     static let bbOrange = Color(red: 1.0,   green: 0.6,   blue: 0.2)
     static let bbRed    = Color(red: 0.949, green: 0.345, blue: 0.345)
 
-    static func bbForLabel(_ label: String) -> Color {
-        switch label {
-        case "분유", "이유식": return .bbBlue
-        case "모유":           return .bbPurple
-        case "유축":           return .bbGreen
-        case "수면":           return .bbOrange
-        case "기저귀", "체온":  return .bbRed
-        default:               return .bbGray
+    static func bbForCategory(_ category: String) -> Color {
+        switch category {
+        case "formula", "babyFood": return .bbBlue
+        case "breast":              return .bbPurple
+        case "pumped":              return .bbGreen
+        case "sleep":               return .bbOrange
+        case "diaper", "temperature": return .bbRed
+        default:                    return .bbGray
         }
     }
 }
@@ -129,12 +184,15 @@ private struct RecordRow: View {
     let label: String
     let detail: String
     let time: Date?
+    let colorCategory: String
+    var unitMin: String = "분"
+    var agoSuffix: String = " 전"
     var rowOpacity: Double = 1.0
 
     var body: some View {
         HStack(spacing: 0) {
             Circle()
-                .fill(Color.bbForLabel(label))
+                .fill(Color.bbForCategory(colorCategory))
                 .frame(width: 8, height: 8)
             Spacer().frame(width: 5)
             Text(label)
@@ -146,7 +204,7 @@ private struct RecordRow: View {
                 .foregroundColor(.primary)
                 .lineLimit(1)
             Spacer(minLength: 4)
-            Text(elapsedShortAgo(from: time))
+            Text(elapsedShortAgo(from: time, unitMin: unitMin, agoSuffix: agoSuffix))
                 .font(.system(size: 10))
                 .foregroundColor(.bbGray)
                 .lineLimit(1)
@@ -197,24 +255,25 @@ struct BebeTapWidgetView: View {
         }
     }
 
-    // 오늘 총량 목록 — 값이 있는 카테고리만
-    private var allTotalItems: [(String, String)] {
-        var items: [(String, String)] = []
-        if store.todayFormulaMl   > 0 { items.append(("분유",   "\(store.todayFormulaMl)ml")) }
-        let bH = store.todayBreastSec / 3600, bM = (store.todayBreastSec % 3600) / 60
-        if store.todayBreastSec   > 0 { items.append(("모유",   bH > 0 ? "\(bH)h\(bM)m" : "\(bM)분")) }
-        if store.todayPumpedMl    > 0 { items.append(("유축",   "\(store.todayPumpedMl)ml")) }
-        if store.todayBabyFoodMl  > 0 { items.append(("이유식", "\(store.todayBabyFoodMl)ml")) }
-        if store.todayDiaperCount > 0 { items.append(("기저귀", "\(store.todayDiaperCount)회")) }
-        let sH = store.todaySleepMin / 60, sM = store.todaySleepMin % 60
-        if store.todaySleepMin    > 0 { items.append(("수면",   sH > 0 ? "\(sH)h\(sM)m" : "\(sM)분")) }
+    // 오늘 총량 목록 — (category, label, value) — 번역된 라벨+값은 Dart에서 push
+    private var allTotalItems: [(String, String, String)] {
+        var items: [(String, String, String)] = []
+        if store.todayFormulaMl   > 0 { items.append(("formula",  store.todayFormulaLabel,  "\(store.todayFormulaMl)ml")) }
+        if store.todayBreastSec   > 0, !store.todayBreastValue.isEmpty {
+            items.append(("breast",   store.todayBreastLabel,  store.todayBreastValue)) }
+        if store.todayPumpedMl    > 0 { items.append(("pumped",   store.todayPumpedLabel,   "\(store.todayPumpedMl)ml")) }
+        if store.todayBabyFoodMl  > 0 { items.append(("babyFood", store.todayBabyFoodLabel, "\(store.todayBabyFoodMl)ml")) }
+        if store.todayDiaperCount > 0, !store.todayDiaperValue.isEmpty {
+            items.append(("diaper",   store.todayDiaperLabel,  store.todayDiaperValue)) }
+        if store.todaySleepMin    > 0, !store.todaySleepValue.isEmpty {
+            items.append(("sleep",    store.todaySleepLabel,   store.todaySleepValue)) }
         return items
     }
 
-    private var recentRows: [(String, String, Date?)] {
-        [(store.r1Label, store.r1Detail, store.r1Time),
-         (store.r2Label, store.r2Detail, store.r2Time),
-         (store.r3Label, store.r3Detail, store.r3Time)].filter { !$0.0.isEmpty }
+    private var recentRows: [(String, String, Date?, String)] {
+        [(store.r1Label, store.r1Detail, store.r1Time, store.r1Color),
+         (store.r2Label, store.r2Detail, store.r2Time, store.r2Color),
+         (store.r3Label, store.r3Detail, store.r3Time, store.r3Color)].filter { !$0.0.isEmpty }
     }
 
     var body: some View {
@@ -242,7 +301,7 @@ struct BebeTapWidgetView: View {
                     }
                 }
                 Link(destination: actionURL("home")) {
-                    Text(store.babyName.isEmpty ? "기록" : store.babyName)
+                    Text(store.babyName.isEmpty ? store.titleFallback : store.babyName)
                         .font(.system(size: 12, weight: .bold))
                         .foregroundColor(.primary)
                         .lineLimit(1)
@@ -260,13 +319,15 @@ struct BebeTapWidgetView: View {
 
             // 최근 기록 3건
             if rows.isEmpty {
-                Text("기록 없음")
+                Text(store.emptyShort)
                     .font(.system(size: 10))
                     .foregroundColor(.bbGray)
             } else {
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                         RecordRow(label: row.0, detail: row.1, time: row.2,
+                                  colorCategory: row.3,
+                                  unitMin: store.unitMin, agoSuffix: store.agoSuffix,
                                   rowOpacity: store.opacity)
                     }
                 }
@@ -280,9 +341,9 @@ struct BebeTapWidgetView: View {
                     ForEach(Array(totals.prefix(2).enumerated()), id: \.offset) { _, item in
                         HStack(spacing: 2) {
                             Circle()
-                                .fill(Color.bbForLabel(item.0))
+                                .fill(Color.bbForCategory(item.0))
                                 .frame(width: 5, height: 5)
-                            Text("\(item.0) \(item.1)")
+                            Text("\(item.1) \(item.2)")
                                 .font(.system(size: 9))
                                 .foregroundColor(.bbGray)
                                 .lineLimit(1)
@@ -318,7 +379,7 @@ struct BebeTapWidgetView: View {
                     }
                 }
                 Link(destination: actionURL("home")) {
-                    Text(store.babyName.isEmpty ? "기록" : store.babyName)
+                    Text(store.babyName.isEmpty ? store.titleFallback : store.babyName)
                         .font(.system(size: 13, weight: .bold))
                         .foregroundColor(.primary)
                         .lineLimit(1)
@@ -337,13 +398,15 @@ struct BebeTapWidgetView: View {
             // 최근 기록 3건
             Link(destination: actionURL("home")) {
                 if rows.isEmpty {
-                    Text("기록을 추가하면 여기에 표시됩니다")
+                    Text(store.emptyHint)
                         .font(.system(size: 10))
                         .foregroundColor(.bbGray)
                 } else {
                     VStack(alignment: .leading, spacing: 6) {
                         ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                             RecordRow(label: row.0, detail: row.1, time: row.2,
+                                      colorCategory: row.3,
+                                      unitMin: store.unitMin, agoSuffix: store.agoSuffix,
                                       rowOpacity: store.opacity)
                         }
                     }
@@ -354,7 +417,7 @@ struct BebeTapWidgetView: View {
 
             // 오늘 총량 (값이 있는 카테고리 전부 가로 나열)
             if totals.isEmpty {
-                Text("오늘 기록 없음")
+                Text(store.emptyToday)
                     .font(.system(size: 10))
                     .foregroundColor(.bbGray)
             } else {
@@ -362,9 +425,9 @@ struct BebeTapWidgetView: View {
                     ForEach(Array(totals.enumerated()), id: \.offset) { _, item in
                         HStack(spacing: 3) {
                             Circle()
-                                .fill(Color.bbForLabel(item.0))
+                                .fill(Color.bbForCategory(item.0))
                                 .frame(width: 5, height: 5)
-                            Text("\(item.0) \(item.1)")
+                            Text("\(item.1) \(item.2)")
                                 .font(.system(size: 10))
                                 .foregroundColor(.bbGray)
                                 .lineLimit(1)
@@ -389,12 +452,12 @@ struct BebeTapWidget: Widget {
     let kind = "BebeTapWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: BebeTapProvider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: BabySelectionIntent.self, provider: BebeTapProvider()) { entry in
             BebeTapWidgetView(entry: entry)
         }
         .configurationDisplayName("BebeTap")
         .description("최근 기록 3건과 오늘 총량을 표시합니다.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
 

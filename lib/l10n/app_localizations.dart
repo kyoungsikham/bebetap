@@ -2415,6 +2415,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Summary'**
   String get statsSummaryTitle;
+
+  /// No description provided for @widgetLabelFormula.
+  ///
+  /// In en, this message translates to:
+  /// **'Formula'**
+  String get widgetLabelFormula;
+
+  /// No description provided for @widgetLabelBreast.
+  ///
+  /// In en, this message translates to:
+  /// **'Breast'**
+  String get widgetLabelBreast;
+
+  /// No description provided for @widgetLabelPumped.
+  ///
+  /// In en, this message translates to:
+  /// **'Pumped'**
+  String get widgetLabelPumped;
+
+  /// No description provided for @widgetLabelBabyFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Baby Food'**
+  String get widgetLabelBabyFood;
+
+  /// No description provided for @widgetLabelDiaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Diaper'**
+  String get widgetLabelDiaper;
+
+  /// No description provided for @widgetLabelSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep'**
+  String get widgetLabelSleep;
+
+  /// No description provided for @widgetLabelTemperature.
+  ///
+  /// In en, this message translates to:
+  /// **'Temp'**
+  String get widgetLabelTemperature;
+
+  /// No description provided for @widgetDetailDiaperWet.
+  ///
+  /// In en, this message translates to:
+  /// **'Wet'**
+  String get widgetDetailDiaperWet;
+
+  /// No description provided for @widgetDetailDiaperSoiled.
+  ///
+  /// In en, this message translates to:
+  /// **'Soiled'**
+  String get widgetDetailDiaperSoiled;
+
+  /// No description provided for @widgetDetailDiaperBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Wet+Soiled'**
+  String get widgetDetailDiaperBoth;
+
+  /// No description provided for @widgetDetailDiaperChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get widgetDetailDiaperChange;
+
+  /// No description provided for @widgetDetailSleepActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleeping'**
+  String get widgetDetailSleepActive;
+
+  /// No description provided for @widgetEmptyShort.
+  ///
+  /// In en, this message translates to:
+  /// **'No records'**
+  String get widgetEmptyShort;
+
+  /// No description provided for @widgetEmptyToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No records today'**
+  String get widgetEmptyToday;
+
+  /// No description provided for @widgetEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a record to see it here'**
+  String get widgetEmptyHint;
+
+  /// No description provided for @widgetTitleFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get widgetTitleFallback;
+
+  /// No description provided for @widgetDurationMin.
+  ///
+  /// In en, this message translates to:
+  /// **'{m}m'**
+  String widgetDurationMin(int m);
+
+  /// No description provided for @widgetDurationHm.
+  ///
+  /// In en, this message translates to:
+  /// **'{h}h {m}m'**
+  String widgetDurationHm(int h, int m);
+
+  /// No description provided for @widgetDiaperCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n}×'**
+  String widgetDiaperCount(int n);
+
+  /// No description provided for @widgetUnitMin.
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get widgetUnitMin;
+
+  /// No description provided for @widgetAgoSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **' ago'**
+  String get widgetAgoSuffix;
 }
 
 class _AppLocalizationsDelegate

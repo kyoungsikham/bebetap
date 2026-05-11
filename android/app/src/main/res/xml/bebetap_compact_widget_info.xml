@@ -8,4 +8,6 @@
     android:initialLayout="@layout/widget_loading"
     android:resizeMode="none"
     android:widgetCategory="home_screen"
-    android:previewImage="@drawable/widget_compact_preview" />
+    android:previewImage="@drawable/widget_compact_preview"
+    android:configure="com.bebetap.app.glance.BebeTapWidgetConfigureActivity"
+    android:widgetFeatures="reconfigurable" />

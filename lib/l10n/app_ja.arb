@@ -649,5 +649,39 @@
     "placeholders": { "percent": { "type": "String" } }
   },
   "statsFeedingSame": "授乳量は前回とほぼ同じです",
-  "statsSummaryTitle": "サマリー"
+  "statsSummaryTitle": "サマリー",
+
+  "widgetLabelFormula": "ミルク",
+  "widgetLabelBreast": "母乳",
+  "widgetLabelPumped": "搾乳",
+  "widgetLabelBabyFood": "離乳食",
+  "widgetLabelDiaper": "おむつ",
+  "widgetLabelSleep": "睡眠",
+  "widgetLabelTemperature": "体温",
+  "widgetDetailDiaperWet": "おしっこ",
+  "widgetDetailDiaperSoiled": "うんち",
+  "widgetDetailDiaperBoth": "おしっこ+うんち",
+  "widgetDetailDiaperChange": "交換",
+  "widgetDetailSleepActive": "睡眠中",
+  "widgetEmptyShort": "記録なし",
+  "widgetEmptyToday": "今日の記録なし",
+  "widgetEmptyHint": "記録を追加すると、ここに表示されます",
+  "widgetTitleFallback": "記録",
+  "widgetDurationMin": "{m}分",
+  "@widgetDurationMin": {
+    "placeholders": { "m": { "type": "int" } }
+  },
+  "widgetDurationHm": "{h}時間{m}分",
+  "@widgetDurationHm": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "m": { "type": "int" }
+    }
+  },
+  "widgetDiaperCount": "{n}回",
+  "@widgetDiaperCount": {
+    "placeholders": { "n": { "type": "int" } }
+  },
+  "widgetUnitMin": "分",
+  "widgetAgoSuffix": "前"
 }

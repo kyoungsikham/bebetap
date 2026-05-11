@@ -1268,4 +1268,73 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get statsSummaryTitle => 'サマリー';
+
+  @override
+  String get widgetLabelFormula => 'ミルク';
+
+  @override
+  String get widgetLabelBreast => '母乳';
+
+  @override
+  String get widgetLabelPumped => '搾乳';
+
+  @override
+  String get widgetLabelBabyFood => '離乳食';
+
+  @override
+  String get widgetLabelDiaper => 'おむつ';
+
+  @override
+  String get widgetLabelSleep => '睡眠';
+
+  @override
+  String get widgetLabelTemperature => '体温';
+
+  @override
+  String get widgetDetailDiaperWet => 'おしっこ';
+
+  @override
+  String get widgetDetailDiaperSoiled => 'うんち';
+
+  @override
+  String get widgetDetailDiaperBoth => 'おしっこ+うんち';
+
+  @override
+  String get widgetDetailDiaperChange => '交換';
+
+  @override
+  String get widgetDetailSleepActive => '睡眠中';
+
+  @override
+  String get widgetEmptyShort => '記録なし';
+
+  @override
+  String get widgetEmptyToday => '今日の記録なし';
+
+  @override
+  String get widgetEmptyHint => '記録を追加すると、ここに表示されます';
+
+  @override
+  String get widgetTitleFallback => '記録';
+
+  @override
+  String widgetDurationMin(int m) {
+    return '$m分';
+  }
+
+  @override
+  String widgetDurationHm(int h, int m) {
+    return '$h時間$m分';
+  }
+
+  @override
+  String widgetDiaperCount(int n) {
+    return '$n回';
+  }
+
+  @override
+  String get widgetUnitMin => '分';
+
+  @override
+  String get widgetAgoSuffix => '前';
 }

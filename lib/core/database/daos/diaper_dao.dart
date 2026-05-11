@@ -29,6 +29,16 @@ class DiaperDao extends DatabaseAccessor<AppDatabase> with _$DiaperDaoMixin {
             ..limit(1))
           .getSingleOrNull();
 
+  Future<List<DiaperEntriesTableData>> getRecentDiapers(
+    String babyId, {
+    int limit = 3,
+  }) =>
+      (select(diaperEntriesTable)
+            ..where((t) => t.babyId.equals(babyId) & t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.desc(t.occurredAt)])
+            ..limit(limit))
+          .get();
+
   Future<void> upsertDiaper(DiaperEntriesTableCompanion entry) =>
       into(diaperEntriesTable).insertOnConflictUpdate(entry);
 

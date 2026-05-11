@@ -649,5 +649,39 @@
     "placeholders": { "percent": { "type": "String" } }
   },
   "statsFeedingSame": "수유량이 이전과 비슷해요",
-  "statsSummaryTitle": "요약"
+  "statsSummaryTitle": "요약",
+
+  "widgetLabelFormula": "분유",
+  "widgetLabelBreast": "모유",
+  "widgetLabelPumped": "유축",
+  "widgetLabelBabyFood": "이유식",
+  "widgetLabelDiaper": "기저귀",
+  "widgetLabelSleep": "수면",
+  "widgetLabelTemperature": "체온",
+  "widgetDetailDiaperWet": "소변",
+  "widgetDetailDiaperSoiled": "대변",
+  "widgetDetailDiaperBoth": "소변+대변",
+  "widgetDetailDiaperChange": "교체",
+  "widgetDetailSleepActive": "자는 중",
+  "widgetEmptyShort": "기록 없음",
+  "widgetEmptyToday": "오늘 기록 없음",
+  "widgetEmptyHint": "기록을 추가하면 여기에 표시됩니다",
+  "widgetTitleFallback": "기록",
+  "widgetDurationMin": "{m}분",
+  "@widgetDurationMin": {
+    "placeholders": { "m": { "type": "int" } }
+  },
+  "widgetDurationHm": "{h}시간 {m}분",
+  "@widgetDurationHm": {
+    "placeholders": {
+      "h": { "type": "int" },
+      "m": { "type": "int" }
+    }
+  },
+  "widgetDiaperCount": "{n}회",
+  "@widgetDiaperCount": {
+    "placeholders": { "n": { "type": "int" } }
+  },
+  "widgetUnitMin": "분",
+  "widgetAgoSuffix": " 전"
 }

@@ -43,6 +43,16 @@ object WidgetColors {
         else            -> Gray
     }
 
+    // r1_color / r2_color / r3_color 키의 enum 값 ("formula", "breast", ...) 기반 색상
+    fun colorForCategory(category: String): Color = when (category) {
+        "formula", "babyFood" -> Blue
+        "breast"              -> Purple
+        "pumped"              -> Green
+        "sleep"               -> Orange
+        "diaper", "temperature" -> Red
+        else                  -> Gray
+    }
+
     data class ButtonSpec(
         val label: String,
         val color: Color,

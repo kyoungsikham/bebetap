@@ -66,13 +66,6 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
     // 결과는 _onPurchaseResult 콜백에서 처리
   }
 
-  Future<void> _onRestoreTap() async {
-    setState(() => _loading = true);
-    await ref.read(iapServiceProvider).restore();
-    // 복원 결과도 purchaseStream → _onPurchaseResult로 수신
-    if (mounted) setState(() => _loading = false);
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -125,22 +118,12 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // 혜택 설명
-              Center(
-                child: Text(
-                  l10n.paywallBenefit,
-                  style: AppTypography.bodyLarge.copyWith(
-                    color: cs.onSurface.withValues(alpha: 0.7),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xl),
-
               // 혜택 체크리스트 (1개)
-              _BenefitRow(
-                icon: Icons.ads_click_outlined,
-                label: l10n.paywallBenefit,
+              Center(
+                child: _BenefitRow(
+                  icon: Icons.ads_click_outlined,
+                  label: l10n.paywallBenefit,
+                ),
               ),
 
               const Spacer(),
@@ -233,20 +216,6 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                 ),
               ],
 
-              const SizedBox(height: AppSpacing.sm),
-
-              // 구매 복원 버튼
-              Center(
-                child: TextButton(
-                  onPressed: _loading ? null : _onRestoreTap,
-                  child: Text(
-                    l10n.paywallRestoreCta,
-                    style: AppTypography.bodySmall.copyWith(
-                      color: cs.onSurface.withValues(alpha: 0.5),
-                    ),
-                  ),
-                ),
-              ),
               const SizedBox(height: AppSpacing.sm),
             ],
           ),
