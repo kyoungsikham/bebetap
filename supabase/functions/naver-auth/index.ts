@@ -1,7 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const NAVER_CLIENT_ID = Deno.env.get('NAVER_CLIENT_ID')!
-
 Deno.serve(async (req: Request) => {
   if (req.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405 })
@@ -34,7 +32,6 @@ Deno.serve(async (req: Request) => {
   const naverEmail = profile.email
   const naverName = profile.name ?? 'Naver User'
   const naverPicture = profile.profile_image
-  // 이메일 미동의 시 결정론적 fallback
   const userEmail = naverEmail ?? `naver_${naverId}@naver.bebetap.app`
 
   // 2. Supabase Admin 클라이언트
@@ -56,28 +53,40 @@ Deno.serve(async (req: Request) => {
     },
   })
 
-  // 4. Magic link 생성 → hashed_token 추출
+  // 4. Magic link 생성
   const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
     type: 'magiclink',
     email: userEmail,
-    options: {
-      redirectTo: 'com.bebetap.app://login-callback',
-    },
+    options: { redirectTo: 'com.bebetap.app://login-callback' },
   })
 
   if (linkError || !linkData) {
     return new Response(`Link generation failed: ${linkError?.message}`, { status: 500 })
   }
 
-  // 5. Flutter가 verifyOTP(tokenHash, type: magiclink)로 세션 생성
+  // 5. action_link을 서버에서 직접 호출 → com.bebetap.app://login-callback#refresh_token=... 캡처
+  const verifyRes = await fetch(linkData.properties.action_link, {
+    method: 'GET',
+    redirect: 'manual',
+  })
+
+  const location = verifyRes.headers.get('Location') ?? ''
+  if (!location.startsWith('com.bebetap.app://')) {
+    return new Response(`Unexpected redirect location: ${location}`, { status: 500 })
+  }
+
+  // URL fragment에서 refresh_token 파싱
+  const fragment = location.includes('#') ? location.split('#')[1] : ''
+  const params = new URLSearchParams(fragment)
+  const refreshToken = params.get('refresh_token')
+
+  if (!refreshToken) {
+    return new Response(`refresh_token not found in redirect: ${location}`, { status: 500 })
+  }
+
+  // 6. Flutter가 setSession(refreshToken)으로 세션 생성 (Line 패턴과 동일)
   return new Response(
-    JSON.stringify({
-      token_hash: linkData.properties.hashed_token,
-      email: userEmail,
-    }),
-    {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    },
+    JSON.stringify({ refresh_token: refreshToken }),
+    { status: 200, headers: { 'Content-Type': 'application/json' } },
   )
 })

@@ -237,15 +237,14 @@ class _BenefitRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 20, color: AppColors.primary),
           const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Text(
-              label,
-              style: AppTypography.bodyMedium.copyWith(
-                color: cs.onSurface.withValues(alpha: 0.85),
-              ),
+          Text(
+            label,
+            style: AppTypography.bodyMedium.copyWith(
+              color: cs.onSurface.withValues(alpha: 0.85),
             ),
           ),
         ],

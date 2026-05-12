@@ -3,6 +3,6 @@
     <string name="app_name">bebetap</string>
     <string name="widget_bebetap_description">최근 기록 3건과 마지막 수유 경과 시간을 표시합니다</string>
     <!-- 네이버 로그인 키 — 네이버 개발자센터에서 발급받은 실제 값으로 교체 -->
-    <string name="naver_client_id">YOUR_NAVER_CLIENT_ID</string>
-    <string name="naver_client_secret">YOUR_NAVER_CLIENT_SECRET</string>
+    <string name="naver_client_id">hUt_kLBPM1hykiHErMjb</string>
+    <string name="naver_client_secret">UqyrNvucDx</string>
 </resources>

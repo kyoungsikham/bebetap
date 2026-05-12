@@ -87,6 +87,10 @@
         <meta-data
             android:name="com.naver.sdk.clientName"
             android:value="BebeTap" />
+        <activity
+            android:name="com.navercorp.nid.oauth.view.NidOAuthBridgeActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <!-- AdMob App ID (테스트용 ID - 출시 전 실제 ID로 교체 필요) -->
         <meta-data

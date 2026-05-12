@@ -4,6 +4,7 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_naver_login/interface/types/naver_login_status.dart';
+import 'package:flutter_naver_login/interface/types/naver_token.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// 소셜 로그인 credential (SDK에서 획득한 토큰 + 이메일).
@@ -127,10 +128,18 @@ class AuthRepository {
   /// Naver SDK에서 access_token만 획득 (Supabase 로그인 X).
   Future<SocialCredential?> getNaverCredential() async {
     final result = await FlutterNaverLogin.logIn();
-    if (result.status != NaverLoginStatus.loggedIn) return null; // 사용자 취소
 
-    final token = result.accessToken;
+    if (result.status == NaverLoginStatus.loggedOut) return null; // 사용자 취소
+    if (result.status == NaverLoginStatus.error) {
+      throw Exception('네이버 로그인 실패: ${result.errorMessage ?? "알 수 없는 오류"}');
+    }
+
+    // result.accessToken이 null인 경우 별도 호출로 토큰 획득
+    NaverToken? token = result.accessToken;
     if (token == null || token.accessToken.isEmpty) {
+      token = await FlutterNaverLogin.getCurrentAccessToken();
+    }
+    if (token.accessToken.isEmpty) {
       throw Exception('네이버 access token을 받지 못했습니다');
     }
 
@@ -142,26 +151,24 @@ class AuthRepository {
     );
   }
 
-  /// Naver credential로 Edge Function 호출 → Supabase 세션 생성.
+  /// Naver credential로 Edge Function 호출 → Supabase 세션 생성 (Line 패턴).
   Future<void> completeNaverSignIn(SocialCredential credential) async {
     final response = await _client.functions.invoke(
       'naver-auth',
       body: {'access_token': credential.accessToken},
     );
 
-    if (response.status != 200) {
-      throw Exception('네이버 Edge Function 오류: ${response.data}');
+    final data = response.data;
+    if (data == null || data is! Map) {
+      throw Exception('naver-auth 응답 파싱 실패: $data');
     }
 
-    final data = response.data as Map<String, dynamic>;
-    final tokenHash = data['token_hash'] as String;
-    final email = data['email'] as String;
+    final refreshToken = data['refresh_token'] as String?;
+    if (refreshToken == null) {
+      throw Exception('naver-auth 응답에 refresh_token 없음: $data');
+    }
 
-    await _client.auth.verifyOTP(
-      email: email,
-      tokenHash: tokenHash,
-      type: OtpType.magiclink,
-    );
+    await _client.auth.setSession(refreshToken);
   }
 
   /// 기존 호환용: 한 번에 네이버 로그인.
