@@ -258,11 +258,11 @@ class WidgetSyncService {
   static void _update() {
     unawaited(HomeWidget.updateWidget(
       iOSName: iosKind,
-      androidName: androidReceiver,
+      qualifiedAndroidName: androidReceiver,
     ));
     unawaited(HomeWidget.updateWidget(
       iOSName: iosKind,
-      androidName: androidCompactReceiver,
+      qualifiedAndroidName: androidCompactReceiver,
     ));
   }
 }

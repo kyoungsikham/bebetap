@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.updateAll
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
 import kotlinx.coroutines.CoroutineScope
@@ -125,19 +126,37 @@ class BebeTapWidgetConfigureActivity : Activity() {
         setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId))
         finish()
 
-        // finish() 후 즉시 + 단계별 updateAll:
-        // - 0ms : pre-populate 데이터로 즉시 렌더링 (이름·임시 레코드)
-        // - 2000ms: background isolate DB 재조회 완료 후 최신 데이터 반영
-        // - 5000ms: 안전망 (네트워크 지연 등)
+        // finish() 후 즉시 + 단계별 갱신:
+        // updateAll() 대신 getGlanceIdBy(appWidgetId)로 이 위젯만 직접 지정 →
+        // Glance DataStore 미초기화 상태에서도 올바른 GlanceId(=AppWidgetId)를 사용해
+        // provideGlance()가 getAppWidgetId()에서 정확한 ID를 반환하도록 한다.
         CoroutineScope(Dispatchers.Main).launch {
-            try { BebeTapWidget().updateAll(applicationContext) } catch (_: Exception) {}
-            try { BebeTapCompactWidget().updateAll(applicationContext) } catch (_: Exception) {}
+            val glanceId = try {
+                GlanceAppWidgetManager(applicationContext).getGlanceIdBy(appWidgetId)
+            } catch (_: Exception) { null }
+            if (glanceId != null) {
+                try { BebeTapWidget().update(applicationContext, glanceId) } catch (_: Exception) {}
+                try { BebeTapCompactWidget().update(applicationContext, glanceId) } catch (_: Exception) {}
+            } else {
+                try { BebeTapWidget().updateAll(applicationContext) } catch (_: Exception) {}
+                try { BebeTapCompactWidget().updateAll(applicationContext) } catch (_: Exception) {}
+            }
             delay(2000)
-            try { BebeTapWidget().updateAll(applicationContext) } catch (_: Exception) {}
-            try { BebeTapCompactWidget().updateAll(applicationContext) } catch (_: Exception) {}
+            if (glanceId != null) {
+                try { BebeTapWidget().update(applicationContext, glanceId) } catch (_: Exception) {}
+                try { BebeTapCompactWidget().update(applicationContext, glanceId) } catch (_: Exception) {}
+            } else {
+                try { BebeTapWidget().updateAll(applicationContext) } catch (_: Exception) {}
+                try { BebeTapCompactWidget().updateAll(applicationContext) } catch (_: Exception) {}
+            }
             delay(3000)
-            try { BebeTapWidget().updateAll(applicationContext) } catch (_: Exception) {}
-            try { BebeTapCompactWidget().updateAll(applicationContext) } catch (_: Exception) {}
+            if (glanceId != null) {
+                try { BebeTapWidget().update(applicationContext, glanceId) } catch (_: Exception) {}
+                try { BebeTapCompactWidget().update(applicationContext, glanceId) } catch (_: Exception) {}
+            } else {
+                try { BebeTapWidget().updateAll(applicationContext) } catch (_: Exception) {}
+                try { BebeTapCompactWidget().updateAll(applicationContext) } catch (_: Exception) {}
+            }
         }
     }
 }
